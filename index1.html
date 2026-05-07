@@ -223,6 +223,47 @@ textarea.form-control{resize:vertical;min-height:80px}
 .calc-history-result{font-weight:700;color:var(--primary)}
 
 #bill-invoice{border-radius:12px;overflow:hidden}
+
+/* ===== CHATBOT ===== */
+.chat-page{display:flex;flex-direction:column;height:calc(100vh - 140px);padding:0!important}
+.chat-header-bar{padding:14px 16px;background:linear-gradient(135deg,rgba(59,130,246,0.15),rgba(139,92,246,0.12));border-bottom:1px solid var(--glass-border);display:flex;align-items:center;gap:12px;flex-shrink:0}
+.chat-bot-avatar{width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--accent));display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0;box-shadow:0 4px 14px rgba(59,130,246,0.4)}
+.chat-bot-info .chat-bot-name{font-family:'Syne',sans-serif;font-weight:700;font-size:0.95rem}
+.chat-bot-info .chat-bot-sub{font-size:0.72rem;color:var(--text-secondary)}
+.chat-online-dot{width:8px;height:8px;background:#10B981;border-radius:50%;display:inline-block;margin-right:4px;animation:pulse-dot 2s infinite}
+@keyframes pulse-dot{0%,100%{opacity:1}50%{opacity:0.4}}
+
+.chat-messages{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:12px;scroll-behavior:smooth}
+.chat-bubble-wrap{display:flex;align-items:flex-end;gap:8px}
+.chat-bubble-wrap.user{flex-direction:row-reverse}
+.chat-bubble-wrap .bubble-avatar{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--accent));display:flex;align-items:center;justify-content:center;font-size:0.7rem;flex-shrink:0}
+.chat-bubble{max-width:82%;padding:12px 15px;border-radius:18px;font-size:0.85rem;line-height:1.55;position:relative;word-break:break-word}
+.chat-bubble.bot{background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.1);border-bottom-left-radius:4px}
+.chat-bubble.user{background:linear-gradient(135deg,var(--primary),var(--accent));color:#fff;border-bottom-right-radius:4px}
+.chat-time{font-size:0.62rem;color:var(--text-secondary);margin-top:4px;text-align:right}
+.chat-bubble.bot .chat-time{text-align:left}
+.chat-typing{display:flex;align-items:center;gap:4px;padding:12px 15px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.1);border-radius:18px;border-bottom-left-radius:4px;width:fit-content}
+.chat-typing span{width:7px;height:7px;background:var(--text-secondary);border-radius:50%;animation:typing-bounce 1.2s infinite}
+.chat-typing span:nth-child(2){animation-delay:0.2s}
+.chat-typing span:nth-child(3){animation-delay:0.4s}
+@keyframes typing-bounce{0%,80%,100%{transform:translateY(0)}40%{transform:translateY(-6px)}}
+
+.chat-suggestions{display:flex;flex-wrap:wrap;gap:6px;padding:8px 16px;flex-shrink:0;border-top:1px solid var(--glass-border);background:rgba(6,13,26,0.6)}
+.chat-chip{padding:5px 12px;border-radius:20px;font-size:0.72rem;font-weight:600;cursor:pointer;border:1px solid rgba(59,130,246,0.35);background:rgba(59,130,246,0.1);color:#93C5FD;transition:0.2s;white-space:nowrap}
+.chat-chip:hover{background:rgba(59,130,246,0.25);border-color:var(--primary)}
+
+.chat-input-bar{display:flex;gap:8px;padding:10px 12px;border-top:1px solid var(--glass-border);background:rgba(6,13,26,0.9);backdrop-filter:blur(16px);flex-shrink:0}
+.chat-input{flex:1;padding:11px 14px;background:rgba(255,255,255,0.07);border:1px solid var(--glass-border);border-radius:24px;color:var(--text-primary);font-size:0.88rem;font-family:'DM Sans',sans-serif;outline:none;transition:0.2s}
+.chat-input:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(59,130,246,0.15)}
+.chat-input::placeholder{color:rgba(148,163,184,0.5)}
+.chat-send-btn{width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--accent));border:none;color:#fff;font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:0.2s;box-shadow:0 4px 14px rgba(59,130,246,0.4)}
+.chat-send-btn:hover{transform:scale(1.08);box-shadow:0 6px 20px rgba(59,130,246,0.55)}
+.chat-send-btn:active{transform:scale(0.95)}
+
+.med-result-card{background:rgba(59,130,246,0.08);border:1px solid rgba(59,130,246,0.2);border-radius:12px;padding:10px 12px;margin-top:8px}
+.med-result-name{font-weight:700;color:#60A5FA;font-size:0.88rem;margin-bottom:4px}
+.med-result-use{font-size:0.8rem;color:var(--text-secondary);line-height:1.4}
+.med-result-form{display:inline-block;padding:2px 8px;border-radius:10px;background:rgba(139,92,246,0.2);color:#A78BFA;font-size:0.68rem;font-weight:600;margin-bottom:4px}
 </style>
 </head>
 <body>
@@ -472,6 +513,31 @@ textarea.form-control{resize:vertical;min-height:80px}
     </div>
   </div>
 
+  <!-- CHATBOT PAGE -->
+  <div class="page chat-page" id="page-chat">
+    <div class="chat-header-bar">
+      <div class="chat-bot-avatar">🤖</div>
+      <div class="chat-bot-info">
+        <div class="chat-bot-name">MedBot Assistant</div>
+        <div class="chat-bot-sub"><span class="chat-online-dot"></span>WOLTER PHARMACEUTICAL PVT. LTD.</div>
+      </div>
+    </div>
+    <div class="chat-messages" id="chat-messages"></div>
+    <div class="chat-suggestions" id="chat-suggestions">
+      <button class="chat-chip" onclick="chatChip('एसिडिटी / GERD')">एसिडिटी / GERD</button>
+      <button class="chat-chip" onclick="chatChip('बुखार / Fever')">बुखार / Fever</button>
+      <button class="chat-chip" onclick="chatChip('जोड़ों का दर्द')">जोड़ों का दर्द</button>
+      <button class="chat-chip" onclick="chatChip('एलर्जी / Allergy')">एलर्जी / Allergy</button>
+      <button class="chat-chip" onclick="chatChip('खून की कमी / Anemia')">खून की कमी</button>
+      <button class="chat-chip" onclick="chatChip('उल्टी / Nausea')">उल्टी / Nausea</button>
+      <button class="chat-chip" onclick="chatChip('माइग्रेन / Migraine')">माइग्रेन</button>
+      <button class="chat-chip" onclick="chatChip('infection बैक्टीरिया')">Infection</button>
+    </div>
+    <div class="chat-input-bar">
+      <input type="text" class="chat-input" id="chat-input" placeholder="बीमारी या लक्षण लिखें..." onkeydown="if(event.key==='Enter')sendChat()">
+      <button class="chat-send-btn" onclick="sendChat()"><i class="fas fa-paper-plane"></i></button>
+    </div>
+  </div>
 </div><!-- end #app -->
 
 <!-- BOTTOM NAV -->
@@ -483,6 +549,7 @@ textarea.form-control{resize:vertical;min-height:80px}
   <button class="nav-item" onclick="navigate('settings',this)"><i class="fas fa-cog"></i><span>Settings</span></button>
   <button class="nav-item" onclick="navigate('calc',this)"><i class="fas fa-calculator"></i><span>Calc</span></button>
   <button class="nav-item" onclick="navigate('bill',this)"><i class="fas fa-receipt"></i><span>Bill</span></button>
+  <button class="nav-item" onclick="navigate('chat',this)" id="nav-chat"><i class="fas fa-robot"></i><span>MedBot</span></button>
   
   <!-- Expense Page Link -->
   <a href="expense.html" class="nav-item" style="text-decoration: none; color: inherit; display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 6px 0; font-size: 0.58rem; font-weight: 500; text-transform: uppercase;">
@@ -678,6 +745,142 @@ textarea.form-control{resize:vertical;min-height:80px}
 
 <!-- ===== JAVASCRIPT ===== -->
 <script>
+// ===================== CHATBOT DATA =====================
+const WOJTER_MEDICINES = [
+  {
+    name: "Esomeprazole (EC) + Domperidone (SR) Capsules",
+    form: "Capsule",
+    use: "GERD, एसिड रिफ्लक्स, अपच, हार्टबर्न, पेप्टिक अल्सर, तीव्र एसिडिटी, रिफ्लक्स ओसोफेजाइटिस",
+    keywords: ["gerd","acid reflux","acidity","एसिडिटी","heartburn","जलन","dyspepsia","अपच","peptic ulcer","अल्सर","reflux","esophagitis","ओसोफेजाइटिस","stomach acid","खट्टी डकार","पेट में जलन","pet mein jalan","acidity"]
+  },
+  {
+    name: "Ginseng + Multivitamins + Multiminerals Softgel Capsules",
+    form: "Softgel Capsule",
+    use: "Post-COVID थकान, विटामिन की कमी, डायबिटीज (सहायक), सामान्य कमजोरी (सभी आयु)",
+    keywords: ["post covid","fatigue","थकान","weakness","कमजोरी","vitamin deficiency","विटामिन","multivitamin","diabetes","डायबिटीज","general weakness","कमज़ोरी","tiredness","energy","ऊर्जा","mineral"]
+  },
+  {
+    name: "Ferrous Ascorbate 30 mg + Folic Acid 550 mcg Tablets",
+    form: "Tablet",
+    use: "आयरन की कमी से होने वाला एनीमिया, RBC उत्पादन, गर्भावस्था में एनीमिया",
+    keywords: ["anemia","एनीमिया","iron deficiency","आयरन की कमी","folic acid","rbc","pregnancy anemia","गर्भावस्था","खून की कमी","hemoglobin","हीमोग्लोबिन","blood deficiency","pale"]
+  },
+  {
+    name: "Aceclofenac 100mg + Paracetamol 150mg + Serratiopeptidase 15mg Tablets",
+    form: "Tablet",
+    use: "ऑस्टियोआर्थराइटिस, रूमेटोइड आर्थराइटिस, जोड़ों का दर्द, शरीर दर्द, मांसपेशियों का दर्द, बुखार",
+    keywords: ["osteoarthritis","rheumatoid","arthritis","जोड़ों का दर्द","joint pain","body ache","शरीर दर्द","musculoskeletal","spondylitis","fever","बुखार","pain","दर्द","swelling","सूजन","pyrexia","ache","ankylosing"]
+  },
+  {
+    name: "Cefixime 200mg + Ofloxacin 200mg Tablets",
+    form: "Tablet",
+    use: "बहुरोगाणु संक्रमण, दस्त, पेचिश, साइनसाइटिस, पित्त संक्रमण, स्त्री रोग संक्रमण, दंत संक्रमण",
+    keywords: ["infection","संक्रमण","diarrhea","दस्त","dysentery","पेचिश","sinusitis","साइनस","biliary","gynecological","dental infection","दांत","osteomyelitis","post surgical","bacterial","बैक्टीरिया","polymicrobial"]
+  },
+  {
+    name: "Bilastine 20mg (Bilotec)",
+    form: "Tablet",
+    use: "एलर्जिक राइनाइटिस, नाक बंद, पित्ती (Urticaria), आँखों में खुजली/पानी",
+    keywords: ["allergy","एलर्जी","rhinitis","nasal congestion","नाक बंद","urticaria","पित्ती","antihistamine","itching","खुजली","sneezing","छींक","hay fever","rhinoconjunctivitis","watery eyes","आँखों में पानी"]
+  },
+  {
+    name: "Ondansetron Injection",
+    form: "Injection",
+    use: "कीमोथेरेपी से होने वाली उल्टी, गैस्ट्रिक डिसमोटिलिटी, GI संक्रमण, ऑपरेशन के बाद मतली",
+    keywords: ["nausea","उल्टी","vomiting","मतली","chemotherapy","post operative","gastric","gi infection","antiemetic","ondansetron"]
+  },
+  {
+    name: "Paracetamol Tablets (Analgesic & Antipyretic)",
+    form: "Tablet",
+    use: "सिरदर्द, हल्का से मध्यम दर्द, बुखार",
+    keywords: ["headache","सिरदर्द","fever","बुखार","mild pain","दर्द","paracetamol","temperature","तापमान","antipyretic","analgesic"]
+  },
+  {
+    name: "Ferrous Ascorbate 100mg + Folic Acid + Zinc Tablets",
+    form: "Tablet",
+    use: "उच्च जैवउपलब्धता आयरन थेरेपी, GI सहिष्णुता के साथ एनीमिया उपचार",
+    keywords: ["anemia","एनीमिया","iron","आयरन","zinc","जिंक","folic acid","hemoglobin","हीमोग्लोबिन","gi tolerance","खून की कमी"]
+  },
+  {
+    name: "Methylcobalamin + Folic Acid Tablets",
+    form: "Tablet",
+    use: "मेनार्च, मेनोपॉज, नर्व हेल्थ, B12 की कमी, न्यूरोपैथी",
+    keywords: ["menarche","menopause","मेनोपॉज","nerve","नर्व","neuropathy","न्यूरोपैथी","b12","methylcobalamin","vitamin b12","numbness","सुन्नपन","tingling"]
+  },
+  {
+    name: "Ceftriaxone for Injection (Maxsol)",
+    form: "Injection",
+    use: "निचले श्वसन संक्रमण, त्वचा संक्रमण, UTI, मेनिनजाइटिस, सूजाक, जोड़ों का संक्रमण",
+    keywords: ["respiratory infection","श्वसन","skin infection","uti","urinary","पेशाब","meningitis","gonorrhea","pelvic inflammatory","ceftriaxone","serious infection","maxsol"]
+  },
+  {
+    name: "Ceftriaxone + Sulbactam Injection (OXSO 1.5gm)",
+    form: "Injection",
+    use: "गंभीर संक्रमण, प्रतिरोधी जीवाणु, ऑपरेशन के बाद संक्रमण",
+    keywords: ["serious infection","resistant bacteria","प्रतिरोधी","post surgical infection","oxso","sulbactam","severe bacterial"]
+  },
+  {
+    name: "Naproxen 500mg + Domperidone 10mg Tablets",
+    form: "Tablet",
+    use: "तीव्र माइग्रेन, सिरदर्द, मांसपेशियों में दर्द, दांत दर्द, रूमेटोइड स्थितियां, NSAID से उल्टी",
+    keywords: ["migraine","माइग्रेन","headache","सिरदर्द","muscle ache","dental pain","दांत दर्द","rheumatoid","naproxen","नाप्रोक्सेन"]
+  },
+  {
+    name: "Pantoprazole 40mg Injection (PANWOL-JO)",
+    form: "Injection",
+    use: "इरोसिव एसोफेजाइटिस, GERD, गैस्ट्राइटिस, अल्सर, NSAID-प्रेरित अपच, पेट फूलना",
+    keywords: ["gerd","gastritis","गैस्ट्राइटिस","erosive esophagitis","ulcer","अल्सर","nsaid dyspepsia","bloating","पेट फूलना","pantoprazole","panwol","acid"]
+  },
+  {
+    name: "Tranexamic Acid Injection",
+    form: "Injection",
+    use: "आघात में रक्तस्राव, प्रोस्टेटेक्टॉमी, हीमोफिलिया, सर्जरी में खून बंद करना",
+    keywords: ["bleeding","रक्तस्राव","hemophilia","हीमोफिलिया","trauma bleeding","prostatectomy","surgical bleeding","tranexamic","hemorrhage","blood stop"]
+  },
+  {
+    name: "Aceclofenac 100mg + Paracetamol Tablets (without Serratiopeptidase)",
+    form: "Tablet",
+    use: "ऑस्टियोआर्थराइटिस, रूमेटोइड आर्थराइटिस, दर्द और बुखार",
+    keywords: ["osteoarthritis","rheumatoid","pain","दर्द","fever","बुखार","ankylosing","joint pain","aceclofenac","paracetamol"]
+  },
+  {
+    name: "Serratiopeptidase Tablets",
+    form: "Tablet",
+    use: "सूजन-रोधी, एडिमा विरोधी, सर्जरी के बाद सूजन, आर्थोपेडिक, ENT, दंत, स्त्री रोग",
+    keywords: ["anti inflammatory","सूजन","edema","एडिमा","post surgery swelling","serratiopeptidase","orthopedic","ent","dental swelling","inflammation"]
+  },
+  {
+    name: "Drotaverine 80mg + Aceclofenac 100mg Tablets (Wrotin-A)",
+    form: "Tablet",
+    use: "दर्दनाक माहवारी (Dysmenorrhea), स्मूथ मसल स्पैज्म, IUCD दर्द, पेट में ऐंठन",
+    keywords: ["dysmenorrhea","period pain","पीरियड दर्द","माहवारी","periods","मासिक धर्म","cramps","ऐंठन","smooth muscle spasm","wrotin","uterine spasm","iucd","menstrual cramps","पेट में मरोड़"]
+  },
+  {
+    name: "Amikacin Injection (Amirocin)",
+    form: "Injection",
+    use: "गंभीर ग्राम-नेगेटिव संक्रमण, Gentamicin-प्रतिरोधी, नवजात सेप्सिस, TB (सहायक)",
+    keywords: ["gram negative","serious infection","neonatal sepsis","नवजात","tb","tuberculosis","amikacin","amirocin","bacteremia","resistant gentamicin"]
+  },
+  {
+    name: "Amoxicillin + Potassium Clavulanate + Lactic Acid Bacillus Tablets (WOXY-CV)",
+    form: "Tablet",
+    use: "श्वसन पथ संक्रमण (ऊपरी और निचले), त्वचा संक्रमण, ब्रोंकाइटिस, सर्जिकल प्रोफिलैक्सिस",
+    keywords: ["respiratory","श्वसन","upper respiratory","lower respiratory","bronchitis","ब्रोंकाइटिस","skin infection","त्वचा","amoxicillin","clavulanate","woxy","rtj","rti","throat infection","गला"]
+  }
+];
+
+let chatInitialized = false;
+
+function initChat(){
+  if(chatInitialized) return;
+  chatInitialized = true;
+  const msgs = document.getElementById('chat-messages');
+  msgs.innerHTML = '';
+  addBotMessage('🙏 नमस्ते! मैं **MedBot** हूं — Wolter Pharmaceutical Pvt. Ltd. का स्मार्ट मेडिकल असिस्टेंट।\n\nकोई भी बीमारी, लक्षण या कंडीशन बताएं, मैं हमारी कंपनी की उपयुक्त दवा सुझाऊंगा।\n\n*नीचे दिए chips पर क्लिक करें या खुद टाइप करें।*');
+}
+
+// navigate defined below in NAVIGATION section
+
 // ===================== DATA =====================
 const MEDICINES = [
   "Esomeprazole + Domperidone Capsules",
@@ -747,6 +950,110 @@ function refreshPage(page){
   if(page==='settings') renderSettings();
   if(page==='calc') renderCalcHistory();
   if(page==='bill') renderBillPage();
+<<<<<<< HEAD:index1.html
+=======
+  if(page==='chat') initChat();
+}
+
+// ===================== CHATBOT LOGIC =====================
+function nowTime(){
+  return new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'});
+}
+
+function addBotMessage(text){
+  const msgs=document.getElementById('chat-messages');
+  const wrap=document.createElement('div');
+  wrap.className='chat-bubble-wrap';
+  wrap.innerHTML=`
+    <div class="bubble-avatar">🤖</div>
+    <div>
+      <div class="chat-bubble bot">${formatChatText(text)}</div>
+      <div class="chat-time chat-bubble bot" style="background:none;border:none;padding:2px 4px">${nowTime()}</div>
+    </div>`;
+  msgs.appendChild(wrap);
+  msgs.scrollTop=msgs.scrollHeight;
+}
+
+function addUserMessage(text){
+  const msgs=document.getElementById('chat-messages');
+  const wrap=document.createElement('div');
+  wrap.className='chat-bubble-wrap user';
+  wrap.innerHTML=`
+    <div class="bubble-avatar" style="background:linear-gradient(135deg,#10B981,#059669)">👤</div>
+    <div>
+      <div class="chat-bubble user">${esc(text)}</div>
+      <div class="chat-time" style="text-align:right">${nowTime()}</div>
+    </div>`;
+  msgs.appendChild(wrap);
+  msgs.scrollTop=msgs.scrollHeight;
+}
+
+function showTyping(){
+  const msgs=document.getElementById('chat-messages');
+  const wrap=document.createElement('div');
+  wrap.className='chat-bubble-wrap';
+  wrap.id='chat-typing-indicator';
+  wrap.innerHTML=`
+    <div class="bubble-avatar">🤖</div>
+    <div class="chat-typing"><span></span><span></span><span></span></div>`;
+  msgs.appendChild(wrap);
+  msgs.scrollTop=msgs.scrollHeight;
+}
+
+function hideTyping(){
+  const el=document.getElementById('chat-typing-indicator');
+  if(el) el.remove();
+}
+
+function formatChatText(t){
+  return t
+    .replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>')
+    .replace(/\*(.*?)\*/g,'<em>$1</em>')
+    .replace(/\n/g,'<br>');
+}
+
+function queryMedicines(query){
+  const q=query.toLowerCase();
+  const matched=[];
+  WOJTER_MEDICINES.forEach(med=>{
+    const score=med.keywords.filter(kw=>q.includes(kw)||kw.includes(q.split(' ')[0])).length;
+    if(score>0) matched.push({...med,score});
+  });
+  matched.sort((a,b)=>b.score-a.score);
+  return matched.slice(0,3);
+}
+
+function buildMedReply(results, query){
+  if(results.length===0){
+    return `❌ **"${query}"** के लिए Wolter pharmaceutical  की कोई दवा हमारी सूची में नहीं है।\n\nकृपया डॉक्टर से संपर्क करें। 🏥`;
+  }
+  let reply=`✅ **"${query}"** के लिए Wolter pharmaceutical  की दवाएं:\n`;
+  results.forEach((med,i)=>{
+    reply+=`\n---\n💊 **${med.name}**\n<span class="med-result-form">${med.form}</span>\n📌 ${med.use}`;
+  });
+  reply+='\n\n⚠️ *यह सुझाव केवल MR/Doctor reference के लिए है। डायग्नोसिस डॉक्टर करेंगे।*';
+  return reply;
+}
+
+function sendChat(){
+  const input=document.getElementById('chat-input');
+  const query=(input.value||'').trim();
+  if(!query) return;
+  input.value='';
+  addUserMessage(query);
+  showTyping();
+  setTimeout(()=>{
+    hideTyping();
+    const results=queryMedicines(query);
+    const reply=buildMedReply(results,query);
+    addBotMessage(reply);
+  },900+Math.random()*400);
+}
+
+function chatChip(text){
+  document.getElementById('chat-input').value=text;
+  sendChat();
+>>>>>>> origin/main:index.html
 }
 
 function fabAction(){
@@ -759,6 +1066,7 @@ function fmtRs(n){return '₹'+(Number(n)||0).toLocaleString('en-IN',{maximumFra
 function fmtDate(s){if(!s)return '';const d=new Date(s);return isNaN(d)?s:d.toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'})}
 function todayStr(){return new Date().toISOString().slice(0,10)}
 function genId(){return Date.now()+Math.floor(Math.random()*1000)}
+function esc(s){const d=document.createElement('div');d.textContent=s||'';return d.innerHTML}
 
 function toast(msg,type='info'){
   const el=document.createElement('div');
