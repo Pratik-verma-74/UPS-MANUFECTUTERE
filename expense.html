@@ -1134,7 +1134,11 @@ tbody tr.holiday-row { background: rgba(139,92,246,0.06); }
           </div>
           <div class="form-group">
             <label>Total KM</label>
-            <input type="number" id="f-km" placeholder="0" min="0" />
+            <input type="number" id="f-km" placeholder="0" min="0" oninput="handleKmInput('f')" />
+          </div>
+          <div class="form-group" style="background: rgba(37,99,235,0.05); border-radius: 12px; padding: 8px;">
+            <label style="color: var(--primary-light);">KM Rate (₹2.5)</label>
+            <input type="number" id="f-km-rate-val" readonly placeholder="0" style="background: transparent; border: none; font-weight: 700; color: var(--primary-light);" />
           </div>
           <div class="form-group">
             <label>Oil Expense (₹)</label>
@@ -1408,7 +1412,11 @@ tbody tr.holiday-row { background: rgba(139,92,246,0.06); }
       </div>
       <div class="form-group">
         <label>KM</label>
-        <input type="number" id="e-km" />
+        <input type="number" id="e-km" oninput="handleKmInput('e')" />
+      </div>
+      <div class="form-group" style="background: rgba(37,99,235,0.05); border-radius: 12px; padding: 8px;">
+        <label style="color: var(--primary-light);">KM Rate (₹2.5)</label>
+        <input type="number" id="e-km-rate-val" readonly placeholder="0" style="background: transparent; border: none; font-weight: 700; color: var(--primary-light);" />
       </div>
       <div class="form-group">
         <label>Oil (₹)</label>
@@ -1667,6 +1675,15 @@ function calcEditTotal() {
   document.getElementById('e-calc-total').textContent = '₹' + (oil + other).toLocaleString('en-IN');
 }
 
+function handleKmInput(prefix) {
+  const km = parseFloat(document.getElementById(prefix + '-km').value) || 0;
+  const rateVal = km * 2.5;
+  document.getElementById(prefix + '-km-rate-val').value = rateVal;
+  document.getElementById(prefix + '-oil').value = rateVal;
+  if (prefix === 'f') calcTotal();
+  else calcEditTotal();
+}
+
 /* ========================================================
    SAVE ENTRY
 ======================================================== */
@@ -1706,7 +1723,10 @@ function saveEntry() {
   navigate('entries');
 }
 function clearForm() {
-  ['f-from','f-to','f-km','f-oil','f-other','f-calls','f-notes'].forEach(id => document.getElementById(id).value = '');
+  ['f-from','f-to','f-km','f-oil','f-other','f-calls','f-notes','f-km-rate-val'].forEach(id => {
+    const el = document.getElementById(id);
+    if(el) el.value = '';
+  });
   document.getElementById('f-holiday').value = '';
   calcTotal();
   setToday();
@@ -1729,6 +1749,7 @@ function openEditModal(id) {
   document.getElementById('e-calls').value = e.calls;
   document.getElementById('e-notes').value = e.notes;
   document.getElementById('e-holiday').value = e.holiday || '';
+  document.getElementById('e-km-rate-val').value = (e.km || 0) * 2.5;
   calcEditTotal();
   document.getElementById('edit-modal').classList.add('open');
 }
