@@ -609,6 +609,7 @@
                                 <thead>
                                     <tr>
                                         <th>MR Name</th>
+                                        <th>Designation</th>
                                         <th>Contact Email</th>
                                         <th>Status</th>
                                         <th>Actions</th>
@@ -630,6 +631,10 @@
                         <div class="input-group">
                             <label class="stat-label">Email ID</label>
                             <input type="email" id="add-mr-email" class="input-field" placeholder="Enter Official Email">
+                        </div>
+                        <div class="input-group">
+                            <label class="stat-label">Designation / Post</label>
+                            <input type="text" id="add-mr-post" class="input-field" placeholder="e.g. Senior MR, Area Manager">
                         </div>
                         <button class="btn-action btn-primary" style="width:100%; justify-content:center; height:50px; margin-top:10px" onclick="addMRManually()">
                             <i class="fas fa-check-double"></i> Create & Activate
@@ -1174,6 +1179,11 @@
                     <td>
                         <div style="font-weight:700">${m.name}</div>
                     </td>
+                    <td>
+                        <div style="font-size:0.7rem; color:var(--accent); font-weight:700; text-transform:uppercase; background:rgba(139,92,246,0.1); padding:2px 8px; border-radius:6px; display:inline-block">
+                            ${m.designation || 'Medical Representative'}
+                        </div>
+                    </td>
                     <td style="font-size:0.8rem; color:var(--text-dim)">${m.email}</td>
                     <td>
                         <span class="badge ${m.isApproved ? 'badge-success' : 'badge-pending'}">
@@ -1205,7 +1215,8 @@
             const q = document.getElementById('team-search').value.toLowerCase();
             const filtered = allMRs.filter(m => 
                 m.name.toLowerCase().includes(q) || 
-                m.email.toLowerCase().includes(q)
+                m.email.toLowerCase().includes(q) ||
+                (m.designation && m.designation.toLowerCase().includes(q))
             );
             renderTeam(filtered);
         }
@@ -1213,6 +1224,7 @@
         async function addMRManually() {
             const name = document.getElementById('add-mr-name').value.trim();
             const email = document.getElementById('add-mr-email').value.trim();
+            const post = document.getElementById('add-mr-post').value.trim();
             
             if(!name || !email) return alert("Please fill name and email");
             
@@ -1221,6 +1233,7 @@
                 await databases.createDocument(DB_ID, 'employees', id, {
                     name: name,
                     email: email,
+                    designation: post || 'Medical Representative',
                     isApproved: true,
                     userId: id,
                     lastLogin: new Date().toISOString()
@@ -1228,6 +1241,7 @@
                 alert("MR Added & Approved Successfully!");
                 document.getElementById('add-mr-name').value = '';
                 document.getElementById('add-mr-email').value = '';
+                document.getElementById('add-mr-post').value = '';
                 loadDashboardData();
             } catch(e) { 
                 if(e.code === 409) alert("This email is already in the team.");
