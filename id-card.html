@@ -6,7 +6,14 @@
   <title>Premium MR Identity - Wolter Pharma</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/appwrite@14.0.1"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script>
+    // FORCE CACHE KILL
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.getRegistrations().then(regs => regs.forEach(r => r.unregister()));
+    }
+  </script>
   <style>
     :root {
       --primary: #1e3a8a;
@@ -236,6 +243,28 @@
   <div id="capture-area"></div>
 
   <script>
+    const { Client, Account, Databases, Query } = Appwrite;
+    const client = new Client().setEndpoint('https://nyc.cloud.appwrite.io/v1').setProject('69fec2ae0012dadf853f');
+    const account = new Account(client);
+    const databases = new Databases(client);
+    const DB_ID = '69ff3a310008961aa77d';
+
+    async function initPortal() {
+        try {
+            const user = await account.get();
+            const uid = user.email.replace(/[@.]/g, '-');
+            const emp = await databases.getDocument(DB_ID, 'employees', uid);
+            
+            document.getElementById('in-name').value = emp.name || user.name;
+            document.getElementById('in-role').value = emp.designation || 'Medical Representative';
+            document.getElementById('in-mobile').value = emp.mobile || '';
+            updateCard();
+        } catch(e) {
+            console.log("Auth needed or fetch failed");
+        }
+    }
+    initPortal();
+
     function handlePhoto(e) {
       const file = e.target.files[0];
       if (file) {
