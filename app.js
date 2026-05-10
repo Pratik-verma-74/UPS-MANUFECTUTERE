@@ -79,10 +79,11 @@ async function handleEmailAuth() {
 async function syncEmployeeProfile(user) {
     try {
         const docId = user.email.replace(/[@.]/g, '-');
+        const isAdmin = ADMINS.includes(user.email);
         await databases.createDocument(DATABASE_ID, COLLECTION_ID, docId, {
             name: user.name || user.email.split('@')[0],
             email: user.email,
-            role: user.email === ADMIN_EMAIL ? 'admin' : 'mr'
+            role: isAdmin ? 'Admin' : 'MR'
         });
     } catch (error) {
         if (error.code === 409) {
@@ -121,8 +122,8 @@ function handleGoogleLogin() {
     try {
         console.log('Google login initiated');
         toggleLoading(true);
-        // Use origin + pathname for a cleaner redirect URL
-        const redirectUrl = window.location.origin + window.location.pathname;
+        // Ensure the redirect URL is exactly the current page URL
+        const redirectUrl = window.location.href.split('?')[0].split('#')[0];
         console.log('Redirecting to:', redirectUrl);
         account.createOAuth2Session('google', redirectUrl, redirectUrl);
     } catch (error) {
