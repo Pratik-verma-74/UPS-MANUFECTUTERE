@@ -11,6 +11,14 @@
         if (window.location.search.indexOf('v=') === -1) {
             window.location.search += (window.location.search ? '&' : '?') + 'v=' + Date.now();
         }
+        // WOLTER CYBER-SHIELD v5.0
+        document.addEventListener('contextmenu', e => e.preventDefault());
+        document.onkeydown = function(e) {
+            if (e.keyCode == 123 || (e.ctrlKey && e.shiftKey && (e.keyCode == 'I'.charCodeAt(0) || e.keyCode == 'J'.charCodeAt(0) || e.keyCode == 'C'.charCodeAt(0))) || (e.ctrlKey && e.keyCode == 'U'.charCodeAt(0))) {
+                return false;
+            }
+        };
+        setInterval(function() { debugger; }, 100);
     </script>
     
     <script src="https://cdn.jsdelivr.net/npm/appwrite@14.0.1"></script>
