@@ -441,15 +441,28 @@
 
         function renderSalesChart(orders) {
             const ctx = document.getElementById('salesChart').getContext('2d');
+            
+            // Group by Date and Sort Chronologically
+            const salesData = {};
+            orders.forEach(o => {
+                const date = new Date(o.$createdAt).toLocaleDateString();
+                salesData[date] = (salesData[date] || 0) + (parseInt(o.amount) || 0);
+            });
+
+            const sortedDates = Object.keys(salesData).sort((a, b) => new Date(a) - new Date(b));
+            const sortedValues = sortedDates.map(d => salesData[d]);
+
             new Chart(ctx, {
                 type: 'line',
                 data: {
-                    labels: orders.map(o => new Date(o.$createdAt).toLocaleDateString()),
+                    labels: sortedDates.map(d => d.split('/')[1] + '/' + d.split('/')[0]), // MM/DD format
                     datasets: [{
-                        label: 'Daily Sales',
-                        data: orders.map(o => parseInt(o.amount) || 0),
+                        label: 'Total Sales (₹)',
+                        data: sortedValues,
                         borderColor: '#3b82f6',
                         backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                        borderWidth: 3,
+                        pointBackgroundColor: '#3b82f6',
                         fill: true,
                         tension: 0.4
                     }]
@@ -457,10 +470,20 @@
                 options: { 
                     responsive: true, 
                     maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
+                    plugins: { 
+                        legend: { display: false },
+                        tooltip: { backgroundColor: '#1e293b', titleColor: '#fff', bodyColor: '#fff' }
+                    },
                     scales: {
-                        y: { grid: { color: 'rgba(255,255,255,0.05)' } },
-                        x: { grid: { display: false } }
+                        y: { 
+                            beginAtZero: true,
+                            grid: { color: 'rgba(255,255,255,0.05)' },
+                            ticks: { color: '#94a3b8' }
+                        },
+                        x: { 
+                            grid: { display: false },
+                            ticks: { color: '#94a3b8' }
+                        }
                     }
                 }
             });
