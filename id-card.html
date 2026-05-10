@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Premium MR Identity - Wolter Pharma</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <style>
+    :root {
+      --primary: #1e3a8a;
+      --accent: #10b981;
+      --bg: #020617;
+      --card-white: #ffffff;
+      --glass-border: rgba(255, 255, 255, 0.1);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0 }
+    body { font-family: 'Outfit', sans-serif; background: var(--bg); color: #f8fafc; padding: 40px 20px; }
+
+    .container { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
+    @media (max-width: 950px) { .container { grid-template-columns: 1fr; } }
+
+    /* FORM STYLES */
+    .form-card { background: rgba(30, 41, 59, 0.4); backdrop-filter: blur(20px); padding: 35px; border-radius: 30px; border: 1px solid var(--glass-border); box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); }
+    .form-group { margin-bottom: 22px; }
+    .form-label { display: block; font-size: 0.65rem; font-weight: 800; color: #94a3b8; text-transform: uppercase; margin-bottom: 8px; letter-spacing: 1.5px; }
+    .form-control { width: 100%; padding: 14px; background: rgba(15, 23, 42, 0.6); border: 1px solid var(--glass-border); border-radius: 16px; color: white; font-family: inherit; font-size: 0.95rem; outline: none; transition: 0.3s; }
+    .form-control:focus { border-color: var(--primary); box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15); }
+
+    /* PREVIEW SECTION */
+    .preview-section { display: flex; flex-direction: column; align-items: center; gap: 30px; }
+    
+    .flip-card { width: 330px; height: 520px; perspective: 1500px; cursor: pointer; }
+    .flip-card-inner { position: relative; width: 100%; height: 100%; transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1); transform-style: preserve-3d; }
+    .flip-card.flipped .flip-card-inner { transform: rotateY(180deg); }
+
+    .card-face { 
+      position: absolute; width: 100%; height: 100%; -webkit-backface-visibility: hidden; backface-visibility: hidden; 
+      border-radius: 24px; overflow: hidden; background: white; color: #0f172a; 
+      box-shadow: 0 30px 60px rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.2);
+    }
+    
+    .card-face::before {
+      content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+      background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%231e3a8a' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+      opacity: 0.8;
+    }
+
+    .card-back { transform: rotateY(180deg); background: #fdfdfd; }
+
+    /* FRONT DESIGN */
+    .card-top { background: linear-gradient(135deg, #1e3a8a, #1e40af); padding: 25px 20px; color: white; position: relative; overflow: hidden; }
+    .card-top::after { content: ''; position: absolute; right: -20px; top: -20px; width: 100px; height: 100px; background: rgba(255,255,255,0.1); border-radius: 50%; }
+    
+    .mkt-label { font-size: 0.5rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; opacity: 0.8; margin-bottom: 2px; }
+    .brand-title { font-family: 'Syne', sans-serif; font-size: 1.5rem; font-weight: 800; line-height: 1; }
+    .brand-sub { font-size: 0.65rem; font-weight: 600; letter-spacing: 0.5px; opacity: 0.9; margin-top: 4px; }
+
+    .photo-frame { 
+      width: 140px; height: 160px; margin: 30px auto 20px; background: #fff; 
+      border-radius: 12px; border: 4px solid white; box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+      overflow: hidden; position: relative; z-index: 5;
+    }
+    #preview-img { width: 100%; height: 100%; object-fit: cover; transition: 0.3s; }
+
+    .user-details { text-align: center; padding: 0 30px; }
+    .user-name { font-family: 'Syne', sans-serif; font-size: 1.5rem; font-weight: 800; color: #1e293b; margin-bottom: 2px; }
+    .user-role { font-size: 0.7rem; font-weight: 800; color: var(--accent); text-transform: uppercase; letter-spacing: 2.5px; margin-bottom: 25px; }
+
+    .field-row { display: flex; flex-direction: column; text-align: left; margin-bottom: 15px; }
+    .field-lbl { font-size: 0.5rem; font-weight: 800; color: #94a3b8; text-transform: uppercase; margin-bottom: 2px; }
+    .field-val { font-size: 0.85rem; font-weight: 700; color: #1e293b; }
+
+    .front-footer { 
+      position: absolute; bottom: 0; width: 100%; padding: 15px 30px; 
+      background: #f8fafc; border-top: 1px solid #f1f5f9; display: flex; justify-content: space-between; align-items: center; 
+    }
+    .hologram { 
+      width: 35px; height: 35px; background: linear-gradient(45deg, #10b981, #3b82f6, #8b5cf6, #10b981); 
+      border-radius: 50%; opacity: 0.6; filter: blur(2px); animation: hueRotate 3s infinite linear;
+    }
+    @keyframes hueRotate { to { filter: hue-rotate(360deg) blur(2px); } }
+
+    /* BACK DESIGN */
+    .back-header { height: 15px; background: var(--primary); }
+    .back-body { padding: 30px; text-align: left; }
+    .back-brand { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1rem; color: var(--primary); margin-bottom: 30px; display: flex; align-items: center; gap: 8px; }
+    .back-brand i { font-size: 1.2rem; }
+
+    .address-card { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 16px; padding: 20px; margin-bottom: 25px; }
+    .qr-placeholder { width: 70px; height: 70px; background: #fff; border: 1px solid #e2e8f0; padding: 5px; margin: 0 auto 15px; }
+    
+    .barcode-area { width: 100%; height: 30px; background: repeating-linear-gradient(90deg, #000, #000 1px, #fff 1px, #fff 4px); margin-top: 40px; opacity: 0.7; }
+
+    .btn-main { 
+      background: linear-gradient(135deg, #1e3a8a, #3b82f6); color: white; padding: 18px 40px; 
+      border-radius: 20px; border: none; font-weight: 800; cursor: pointer; transition: 0.3s;
+      display: flex; align-items: center; gap: 12px; font-family: inherit; font-size: 1rem;
+    }
+    .btn-main:hover { transform: translateY(-5px); box-shadow: 0 15px 30px rgba(30, 58, 138, 0.3); }
+
+    #capture-area { position: absolute; left: -9999px; display: flex; gap: 20px; padding: 20px; background: #020617; }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <div style="grid-column: 1 / -1; margin-bottom: 20px;">
+      <a href="mr.html" style="color: var(--accent); text-decoration: none; font-weight: 800; font-size: 0.8rem; display: flex; align-items: center; gap: 8px; text-transform: uppercase; letter-spacing: 1px;">
+        <i class="fas fa-arrow-left"></i> Back to Dashboard
+      </a>
+    </div>
+    <div class="form-card">
+      <h2 style="font-family:Syne; font-size:1.8rem; margin-bottom:30px">Identity Portal</h2>
+      
+      <div class="form-group">
+        <label class="form-label">Full Name</label>
+        <input type="text" id="in-name" class="form-control" placeholder="Pratik Verma" oninput="updateCard()">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Designation / Post</label>
+        <input type="text" id="in-role" class="form-control" placeholder="e.g. Admin, Sales Manager" value="Medical Representative" oninput="updateCard()">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Employee ID (Manual or Auto)</label>
+        <input type="text" id="in-eid" class="form-control" placeholder="Leave blank for auto-generate" oninput="updateCard()">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Residential Address</label>
+        <textarea id="in-address" class="form-control" style="height:80px; resize:none" placeholder="Home address for back side..." oninput="updateCard()"></textarea>
+      </div>
+
+      <div style="display:grid; grid-template-columns: 1fr 1fr; gap:15px">
+        <div class="form-group">
+          <label class="form-label">Date of Birth</label>
+          <input type="date" id="in-dob" class="form-control" oninput="updateCard()">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Mobile Number</label>
+          <input type="tel" id="in-mobile" class="form-control" placeholder="9876543210" oninput="updateCard()">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Profile Image</label>
+        <input type="file" id="photo-input" class="form-control" accept="image/*" onchange="handlePhoto(event)">
+      </div>
+
+      <div class="form-group" id="zoom-control" style="display:none">
+        <label class="form-label">Photo Scale Adjustment</label>
+        <input type="range" id="photo-zoom" min="1" max="4" step="0.1" value="1" oninput="updateCard()" style="width:100%">
+      </div>
+    </div>
+
+    <div class="preview-section">
+      <p style="font-size:0.7rem; color:#94a3b8; text-transform:uppercase; font-weight:800; letter-spacing:2px">Tap to view reverse side</p>
+      
+      <div class="flip-card" onclick="this.classList.toggle('flipped')">
+        <div class="flip-card-inner">
+          <!-- FRONT -->
+          <div class="card-face">
+            <div class="card-top">
+              <div class="mkt-label">Marketed by:</div>
+              <div class="brand-title">Wolter</div>
+              <div class="brand-sub">Pharmaceutical Pvt. Ltd.</div>
+            </div>
+
+            <div class="photo-frame">
+              <img id="preview-img" src="https://ui-avatars.com/api/?name=MR&background=f1f5f9&color=cbd5e1" alt="MR Photo">
+            </div>
+
+            <div class="user-details">
+              <div class="user-name" id="card-name">MR. NAME</div>
+              <div class="user-role" id="card-role">Medical Representative</div>
+              
+              <div class="field-row">
+                <span class="field-lbl">Employee Identity</span>
+                <span class="field-val" id="card-eid">PV-AUTO-XXXX</span>
+              </div>
+              <div class="field-row">
+                <span class="field-lbl">Contact Hotline</span>
+                <span class="field-val" id="card-mobile">+91 0000000000</span>
+              </div>
+            </div>
+
+            <div class="front-footer">
+              <div style="text-align:left"><div class="field-lbl">Validation</div><div class="field-val" style="font-size:0.6rem">DECEMBER 2026</div></div>
+              <div class="hologram"></div>
+            </div>
+          </div>
+
+          <!-- BACK -->
+          <div class="card-face card-back">
+            <div class="back-header"></div>
+            <div class="back-body">
+              <div class="back-brand"><i class="fas fa-notes-medical"></i> Wolter Pharma</div>
+              
+              <div class="address-card">
+                <div class="field-lbl" style="color:var(--primary); margin-bottom:8px">Residential Address</div>
+                <div id="card-res-address" style="font-size:0.8rem; font-weight:600; line-height:1.5; color:#334155">
+                  Update your address in the form to see it here...
+                </div>
+              </div>
+
+              <div class="address-card" style="background:#fff">
+                <div class="field-lbl" style="color:var(--accent); margin-bottom:8px">Corporate HQ</div>
+                <div style="font-size:0.65rem; font-weight:600; color:#64748b; line-height:1.6">
+                  Office No. 507, 5th Floor, Gravity,<br>Nr. Swaminarayan Family, Nikol,<br>Ahmedabad, Gujarat - 382350
+                </div>
+              </div>
+
+              <div class="qr-placeholder">
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=WolterPharma-MR-Identity" style="width:100%">
+              </div>
+
+              <div class="barcode-area"></div>
+            </div>
+            <div style="position:absolute; bottom:20px; width:100%; text-align:center; font-size:0.5rem; font-weight:800; color:#94a3b8; letter-spacing:1px">
+              WWW.WOLTERPHARMACEUTICAL.COM
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <button class="btn-main" onclick="downloadHD()">
+        <i class="fas fa-shield-alt"></i> Export Professional HD ID
+      </button>
+    </div>
+  </div>
+
+  <div id="capture-area"></div>
+
+  <script>
+    function handlePhoto(e) {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(event) {
+          document.getElementById('preview-img').src = event.target.result;
+          document.getElementById('zoom-control').style.display = 'block';
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
+    function updateCard() {
+      const name = document.getElementById('in-name').value || "MR. NAME";
+      const role = document.getElementById('in-role').value || "Medical Representative";
+      const eidManual = document.getElementById('in-eid').value;
+      const dob = document.getElementById('in-dob').value;
+      const mobile = document.getElementById('in-mobile').value || "+91 0000000000";
+      const address = document.getElementById('in-address').value || "Residential address will be displayed here.";
+      const zoom = document.getElementById('photo-zoom').value;
+
+      document.getElementById('card-name').textContent = name.toUpperCase();
+      document.getElementById('card-role').textContent = role.toUpperCase();
+      document.getElementById('card-mobile').textContent = mobile;
+      document.getElementById('card-res-address').textContent = address;
+      document.getElementById('preview-img').style.transform = `scale(${zoom})`;
+
+      // ID LOGIC
+      if (eidManual) {
+        document.getElementById('card-eid').textContent = eidManual.toUpperCase();
+      } else if (dob) {
+        const dPart = dob.replace(/-/g, '').substring(2);
+        const namePart = name.substring(0, 3).toUpperCase();
+        document.getElementById('card-eid').textContent = `PV-${namePart}-${dPart}-${Math.floor(100+Math.random()*900)}`;
+      } else {
+        document.getElementById('card-eid').textContent = "PV-AUTO-XXXX";
+      }
+    }
+
+    async function downloadHD() {
+      const faces = document.querySelectorAll('.card-face');
+      const captureArea = document.getElementById('capture-area');
+      captureArea.innerHTML = '';
+      
+      faces.forEach(face => {
+        const copy = face.cloneNode(true);
+        copy.style.position = 'relative';
+        copy.style.transform = 'none';
+        copy.style.float = 'left';
+        captureArea.appendChild(copy);
+      });
+
+      html2canvas(captureArea, {
+        scale: 4,
+        useCORS: true,
+        backgroundColor: '#020617'
+      }).then(canvas => {
+        const link = document.createElement('a');
+        link.download = `Wolter_Premium_ID.png`;
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+      });
+    }
+    
+    // Initial call
+    updateCard();
+  </script>
+</body>
+</html>

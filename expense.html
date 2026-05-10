@@ -11,6 +11,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet" />
+
 <style>
 /* ===================== CSS VARIABLES ===================== */
 :root {
@@ -953,7 +954,7 @@ tbody tr.holiday-row { background: rgba(139,92,246,0.06); }
     </div>
     <nav class="sidebar-nav">
       <div class="nav-section-label">MR App</div>
-      <a href="index.html" class="nav-item" style="text-decoration: none;">
+      <a href="mr.html" class="nav-item" style="text-decoration: none;">
         <span class="nav-icon">💊</span> Main MR App
       </a>
       <div class="nav-section-label">Main</div>
@@ -1007,7 +1008,7 @@ tbody tr.holiday-row { background: rgba(139,92,246,0.06); }
       </div>
       <div class="topbar-right">
         <div class="streak-badge" id="streak-badge">🔥 0 days</div>
-        <a href="index.html" class="icon-btn" title="Back to MR App" style="text-decoration: none;">🏠</a>
+        <a href="mr.html" class="icon-btn" title="Back to MR App" style="text-decoration: none;">🏠</a>
         <div class="icon-btn" onclick="toggleDarkMode()" title="Toggle Dark Mode">🌙</div>
         <div class="icon-btn" onclick="showNotifPanel()" title="Notifications">
           🔔<span class="notif-dot" id="notif-dot" style="display:none"></span>
@@ -1489,13 +1490,24 @@ tbody tr.holiday-row { background: rgba(139,92,246,0.06); }
       <span class="icon">📅</span>
       <span>Report</span>
     </div>
-    <div class="m-nav-item" onclick="window.location.href='index.html'">
+    <div class="m-nav-item" onclick="window.location.href='mr.html'">
       <span class="icon">💊</span>
       <span>Exit</span>
     </div>
   </nav>
 
-<script>
+<script type="module">
+import { account } from './appwrite.js';
+
+async function checkAuth() {
+    try {
+        await account.get();
+    } catch (error) {
+        window.location.href = 'login.html';
+    }
+}
+checkAuth();
+
 /* ========================================================
    GLOBAL STATE
 ======================================================== */
@@ -1509,9 +1521,7 @@ let monthlyKmChart = null;
 const DAYS = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
 const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 
-/* ========================================================
-   INIT
-======================================================== */
+
 window.onload = function() {
   loadData();
   loadSettings();
@@ -2522,6 +2532,36 @@ function generatePDF() {
 /* ========================================================
    KEYBOARD SHORTCUT
 ======================================================== */
+// ===================== EXPOSE FUNCTIONS TO WINDOW =====================
+window.navigate = navigate;
+window.toggleSidebar = toggleSidebar;
+window.closeSidebar = closeSidebar;
+window.toggleDarkMode = toggleDarkMode;
+window.saveSettings = saveSettings;
+window.scheduleNotification = scheduleNotification;
+window.requestNotifPermission = requestNotifPermission;
+window.clearAllData = clearAllData;
+window.loadSampleData = loadSampleData;
+window.closeEditModal = closeEditModal;
+window.openEditModal = openEditModal;
+window.updateEntry = updateEntry;
+window.deleteEntry = deleteEntry;
+window.saveEntry = saveEntry;
+window.exportCSV = exportCSV;
+window.generatePDF = generatePDF;
+window.backupData = backupData;
+window.restoreData = restoreData;
+window.showNotifPanel = showNotifPanel;
+window.printReport = printReport;
+window.handleKmInput = handleKmInput;
+window.calcTotal = calcTotal;
+window.calcEditTotal = calcEditTotal;
+window.clearForm = clearForm;
+window.renderEntriesTable = renderEntriesTable;
+window.renderMonthlySummary = renderMonthlySummary;
+window.autoFillDay = autoFillDay;
+window.updateDashboard = updateDashboard;
+
 document.addEventListener('keydown', function(e) {
   if (e.key === 'Escape') {
     closeEditModal();
