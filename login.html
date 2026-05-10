@@ -44,17 +44,37 @@
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
         }
 
-        .logo {
+        .logo-container {
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .logo-main {
             font-family: 'Syne', sans-serif;
             font-size: 2.2rem;
             font-weight: 800;
-            display: block;
             background: linear-gradient(135deg, var(--primary), var(--accent));
             -webkit-background-clip: text;
             background-clip: text;
             -webkit-text-fill-color: transparent;
-            color: var(--primary);
-            margin-bottom: 30px;
+            line-height: 1.1;
+        }
+
+        .logo-sub {
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            margin-top: 4px;
+        }
+
+        .copyright-footer {
+            margin-top: 40px;
+            font-size: 0.65rem;
+            color: rgba(148, 163, 184, 0.4);
+            letter-spacing: 0.05em;
         }
 
         .form-group { margin-bottom: 20px; text-align: left; }
@@ -94,7 +114,10 @@
 </head>
 <body>
     <div class="login-card">
-        <div class="logo">💊 Wolter Pharma</div>
+        <div class="logo-container">
+            <div class="logo-main">💊 Wolter</div>
+            <div class="logo-sub">Pharmaceutical Pvt. Ltd.</div>
+        </div>
         
         <div id="loader" class="hidden">
             <i class="fas fa-spinner fa-spin fa-2x"></i>
@@ -127,9 +150,12 @@
         </div>
 
         <div id="error-alert" class="alert alert-error"></div>
-        <div id="success-alert" class="alert alert-success"></div>
-    </div>
+        <div id="success-alert" class="alert alert-success">        </div>
 
+        <div class="copyright-footer">
+            © Created by Pratik Verma
+        </div>
+    </div>
     <script type="module" src="app.js"></script>
 </body>
 </html>

@@ -343,14 +343,39 @@
       pointer-events: none
     }
 
-    .loading-logo {
+    .logo-container {
+      line-height: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center
+    }
+
+    .logo-main {
       font-family: 'Syne', sans-serif;
+      font-size: 1.3rem;
       font-weight: 800;
-      font-size: 1.8rem;
-      background: linear-gradient(135deg, var(--primary), var(--accent));
+      background: linear-gradient(135deg, #fff, #93C5FD);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
-      background-clip: text
+      letter-spacing: -0.02em
+    }
+
+    .logo-sub {
+      font-size: 0.55rem;
+      color: rgba(255, 255, 255, 0.6);
+      font-weight: 500;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      margin-top: 1px
+    }
+
+    .copyright-footer {
+      text-align: center;
+      padding: 15px 0 90px;
+      font-size: 0.6rem;
+      color: rgba(148, 163, 184, 0.4);
+      letter-spacing: 0.05em;
+      font-weight: 500
     }
 
     .loading-spinner {
@@ -1804,7 +1829,10 @@
 
   <!-- LOADING SCREEN -->
   <div id="loading-screen">
-    <div class="loading-logo">💊 Wolter Pro</div>
+    <div class="logo-container" style="align-items:center; transform:scale(1.5); margin-bottom:30px">
+      <div class="logo-main">💊 Wolter</div>
+      <div class="logo-sub">Pharmaceutical Pvt. Ltd.</div>
+    </div>
     <div class="loading-spinner"></div>
     <div class="loading-text" id="loading-text">Connecting to Wolter Cloud...</div>
   </div>
@@ -1881,7 +1909,10 @@
     <header class="app-header">
       <div style="display:flex;align-items:center;gap:10px">
         <button class="menu-btn" onclick="openSidebar()" title="Menu"><i class="fas fa-bars"></i></button>
-        <div class="logo">💊 Wolter Pro</div>
+        <div class="logo-container">
+          <div class="logo-main">💊 Wolter</div>
+          <div class="logo-sub">Pharmaceutical Pvt. Ltd.</div>
+        </div>
       </div>
       <div class="header-right">
         <span class="sync-indicator" id="sync-status-header" style="font-size:0.65rem">
@@ -2227,6 +2258,9 @@
           <p>No visits scheduled for today.</p>
         </div>
       </div>
+    </div>
+    <div class="copyright-footer">
+      © Created by Pratik Verma
     </div>
   </div><!-- end #app -->
 
