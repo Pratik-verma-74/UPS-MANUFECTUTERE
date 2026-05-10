@@ -128,10 +128,11 @@
         }
 
         function redirect(user) {
-            if(user.email === 'pratikverma025@gmail.com' || user.email === 'wolterpharma@gmail.com') {
-                location.href = 'admin.html';
+            console.log("[Login] Redirecting user: " + user.email);
+            if(user.email === 'pratikverma025@gmail.com' || user.email === 'wolterpharma@gmail.com' || user.email === 'pratikverma153@gmail.com') {
+                if(!window.location.href.includes('admin.html')) location.href = 'admin.html';
             } else {
-                location.href = 'dashboard.html';
+                if(!window.location.href.includes('dashboard.html')) location.href = 'dashboard.html';
             }
         }
 
