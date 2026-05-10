@@ -91,14 +91,28 @@
         <h2 style="color:var(--primary); margin-bottom:30px;">💊 Wolter Admin</h2>
         <nav>
             <div class="nav-link active" onclick="showSection('dash')"><i class="fas fa-th-large"></i> Dashboard</div>
-            <div class="nav-link" onclick="showSection('team')"><i class="fas fa-users"></i> Team MR</div>
-            <div class="nav-link" onclick="location.href='attendance.html'"><i class="fas fa-calendar"></i> Attendance</div>
-            <div class="nav-link" onclick="doLogout()"><i class="fas fa-sign-out-alt"></i> Logout</div>
+            <div class="nav-link" onclick="showSection('team')"><i class="fas fa-users-eq"></i> Team Management</div>
+            <div class="nav-link" onclick="showSection('id-gen')"><i class="fas fa-id-card"></i> ID Generator</div>
+            <div class="nav-link" onclick="showSection('tracking')"><i class="fas fa-map-marker-alt"></i> Live Tracking</div>
+            <div class="nav-link" onclick="showSection('attendance')"><i class="fas fa-calendar-check"></i> Attendance</div>
+            <div class="nav-link" onclick="showSection('orders')"><i class="fas fa-shopping-cart"></i> Orders History</div>
+            <div class="nav-link" onclick="doLogout()" style="margin-top:20px; color:#f43f5e"><i class="fas fa-sign-out-alt"></i> Logout</div>
         </nav>
     </aside>
 
     <main class="main-content">
+        <header style="display:flex; justify-content:space-between; align-items:center; margin-bottom:30px;">
+            <div id="admin-info">
+                <h4 id="admin-name">Admin</h4>
+            </div>
+            <div class="notif-bell" style="position:relative; cursor:pointer">
+                <i class="fas fa-bell fa-lg"></i>
+                <span id="notif-badge" style="position:absolute; top:-8px; right:-8px; background:#f43f5e; color:#fff; border-radius:50%; width:18px; height:18px; font-size:10px; display:none; align-items:center; justify-content:center">0</span>
+            </div>
+        </header>
+
         <div id="dash" class="section active">
+            <!-- DASHBOARD CONTENT (Same as before) -->
             <h1 style="margin-bottom:30px">Dashboard Overview</h1>
             <div class="stat-grid">
                 <div class="glass-card stat-card">
@@ -114,18 +128,35 @@
                     <div class="stat-value" id="count-orders">0</div>
                 </div>
             </div>
-            
             <div class="glass-card">
-                <h3>Sales Performance</h3>
+                <h3>Recent Sales Performance</h3>
                 <canvas id="salesChart" style="max-height:300px"></canvas>
             </div>
         </div>
 
         <div id="team" class="section">
-            <h1>Team Management</h1>
-            <div class="glass-card">
-                <div id="team-list">Loading Team...</div>
-            </div>
+            <h1>MR Team Management</h1>
+            <div class="glass-card" id="team-list">Loading Team...</div>
+        </div>
+
+        <div id="id-gen" class="section">
+            <h1>ID Card Generator</h1>
+            <div class="glass-card">Feature Coming Soon (Restore Mode)</div>
+        </div>
+
+        <div id="tracking" class="section">
+            <h1>Live MR Tracking</h1>
+            <div class="glass-card" id="map-container" style="height:400px">Map Loading...</div>
+        </div>
+
+        <div id="attendance" class="section">
+            <h1>Attendance Tracking</h1>
+            <div class="glass-card" id="attendance-list">Loading Attendance...</div>
+        </div>
+
+        <div id="orders" class="section">
+            <h1>Orders History</h1>
+            <div class="glass-card" id="orders-list">Loading Orders...</div>
         </div>
     </main>
 
