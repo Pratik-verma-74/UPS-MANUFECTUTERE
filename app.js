@@ -3,7 +3,7 @@ import { account, databases, ID } from './appwrite.js';
 console.log('App.js initialized');
 
 // Configuration
-const ADMIN_EMAIL = 'pratikverma025@gmail.com'; 
+const ADMINS = ['pratikverma025@gmail.com', 'wolterpharma@gmail.com'];
 const DATABASE_ID = '69ff3a310008961aa77d';
 const COLLECTION_ID = 'employees';
 
@@ -99,7 +99,7 @@ async function syncEmployeeProfile(user) {
 
 async function redirectByRole(user) {
     await syncEmployeeProfile(user);
-    if (user.email === ADMIN_EMAIL) {
+    if (ADMINS.includes(user.email)) {
         window.location.href = 'admin.html';
     } else {
         window.location.href = 'dashboard.html';

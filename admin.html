@@ -23,130 +23,292 @@
     <style>
         :root {
             --primary: #3b82f6;
-            --primary-glow: rgba(59, 130, 246, 0.5);
-            --bg-deep: #050a14;
-            --sidebar-bg: #0a1120;
-            --glass: rgba(16, 24, 39, 0.6);
-            --card-border: rgba(255, 255, 255, 0.08);
-            --text-main: #f1f5f9;
+            --primary-light: #60a5fa;
+            --primary-dark: #1d4ed8;
+            --accent: #10b981;
+            --warning: #f59e0b;
+            --danger: #f43f5e;
+            --bg-deep: #020617;
+            --bg-surface: #0f172a;
+            --glass: rgba(15, 23, 42, 0.7);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --text-main: #f8fafc;
             --text-dim: #94a3b8;
+            --shadow-glow: 0 0 30px rgba(59, 130, 246, 0.15);
+            --radius: 20px;
         }
+
+        * { margin:0; padding:0; box-sizing: border-box; }
 
         body {
-            margin: 0;
             background: var(--bg-deep);
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(59, 130, 246, 0.15) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(16, 185, 129, 0.1) 0px, transparent 50%);
             color: var(--text-main);
             font-family: 'Outfit', sans-serif;
+            min-height: 100vh;
             display: flex;
-            height: 100vh;
-            overflow: hidden;
+            overflow-x: hidden;
         }
 
-        /* SIDEBAR */
+        /* NEW SIDEBAR DESIGN */
         .sidebar {
             width: 280px;
-            background: var(--sidebar-bg);
-            border-right: 1px solid var(--card-border);
+            background: var(--bg-surface);
+            border-right: 1px solid var(--glass-border);
             display: flex;
             flex-direction: column;
-            padding: 24px;
-            flex-shrink: 0;
+            padding: 30px 20px;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 1000;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
         }
 
-        .brand-section {
+        .brand-box {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 0 10px 40px;
+        }
+        .brand-icon {
+            width: 42px; height: 42px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 8px 16px rgba(59, 130, 246, 0.3);
+        }
+
+        .nav-link {
             display: flex;
             align-items: center;
             gap: 12px;
-            margin-bottom: 40px;
-        }
-        .brand-logo {
-            width: 35px;
-            height: 35px;
-            background: var(--primary);
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 0 15px var(--primary-glow);
-        }
-
-        .profile-card {
-            text-align: center;
-            margin-bottom: 40px;
-        }
-        .profile-img {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            border: 3px solid var(--primary);
-            margin-bottom: 15px;
-            padding: 3px;
-            object-fit: cover;
-        }
-
-        .nav-menu { flex: 1; }
-        .nav-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 12px 16px;
+            padding: 14px 18px;
             color: var(--text-dim);
             text-decoration: none;
-            border-radius: 12px;
-            margin-bottom: 4px;
-            cursor: pointer;
-            transition: 0.3s;
+            border-radius: 14px;
+            margin-bottom: 6px;
             font-weight: 500;
+            transition: 0.3s;
+            cursor: pointer;
         }
-        .nav-item:hover, .nav-item.active {
+        .nav-link:hover, .nav-link.active {
             background: rgba(59, 130, 246, 0.1);
-            color: var(--primary);
+            color: var(--primary-light);
         }
+        .nav-link i { font-size: 1.1rem; width: 24px; }
 
-        /* MAIN CONTENT */
-        .main-container {
+        /* MAIN CONTENT STRUCTURE */
+        .main-wrapper {
             flex: 1;
             display: flex;
             flex-direction: column;
-            overflow: hidden;
+            position: relative;
+            height: 100vh;
         }
 
-        .top-bar {
+        .top-nav {
             padding: 20px 40px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 1px solid var(--card-border);
+            background: rgba(2, 6, 23, 0.8);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--glass-border);
+            z-index: 900;
         }
 
-        .content-scroll {
+        .content-area {
             flex: 1;
-            padding: 40px;
+            padding: 30px 40px;
             overflow-y: auto;
+            scroll-behavior: smooth;
+            -webkit-overflow-scrolling: touch;
         }
 
-        .dashboard-layout {
-            display: grid;
-            grid-template-columns: 1fr 320px;
-            gap: 30px;
+        @media (max-width: 992px) {
+            body { 
+                display: block !important; 
+                overflow-y: visible !important; 
+                height: auto !important; 
+                min-height: 100vh;
+            }
+            .sidebar {
+                position: fixed; left: -280px; top: 0; bottom: 0;
+                width: 280px; height: 100vh;
+                box-shadow: 20px 0 50px rgba(0,0,0,0.5);
+                overflow-y: auto;
+                z-index: 2000;
+            }
+            .sidebar.open { left: 0; }
+            .sidebar-overlay {
+                position: fixed; inset: 0;
+                background: rgba(0,0,0,0.6);
+                backdrop-filter: blur(4px);
+                z-index: 1500;
+                display: none;
+                opacity: 0;
+                transition: 0.3s;
+            }
+            .sidebar-overlay.open { display: block; opacity: 1; }
+            
+            .main-wrapper { 
+                display: block !important; 
+                height: auto !important; 
+                min-height: 100vh; 
+            }
+            .top-nav { 
+                padding: 15px 20px; 
+                position: sticky; 
+                top: 0; 
+                z-index: 1000;
+                background: var(--bg-surface);
+            }
+            .content-area { 
+                padding: 15px; 
+                overflow: visible !important; 
+                height: auto !important;
+            }
+            .mobile-toggle { display: block !important; }
+            
+            .stats-row { grid-template-columns: 1fr; }
+            .action-grid { grid-template-columns: 1fr 1fr; }
+            #dash-grid, .portal-grid { grid-template-columns: 1fr !important; }
         }
 
-        /* STATS */
-        .stat-grid {
+        /* UNIVERSAL CARD DESIGN */
+        .glass-card {
+            background: var(--glass);
+            backdrop-filter: blur(15px);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius);
+            padding: 25px;
+            margin-bottom: 30px;
+            transition: 0.3s;
+        }
+        .glass-card:hover { border-color: rgba(255,255,255,0.15); box-shadow: var(--shadow-glow); }
+
+        /* STATS SYSTEM */
+        .stats-row {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
             gap: 20px;
             margin-bottom: 30px;
         }
-        .stat-card {
-            background: var(--glass);
-            border: 1px solid var(--card-border);
-            border-radius: 20px;
+        .stat-box {
             padding: 24px;
-            backdrop-filter: blur(10px);
+            background: linear-gradient(145deg, rgba(30,41,59,0.7), rgba(15,23,42,0.7));
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius);
+            position: relative;
+            overflow: hidden;
+            transition: 0.3s;
         }
-        .stat-label { color: var(--text-dim); font-size: 0.9rem; margin-bottom: 8px; }
-        .stat-value { font-size: 2.2rem; font-weight: 800; }
+        .stat-box:hover { transform: translateY(-5px); border-color: var(--primary); }
+        .stat-box i {
+            position: absolute; right: -10px; bottom: -10px;
+            font-size: 5rem; opacity: 0.05; transform: rotate(-15deg);
+        }
+        .stat-label { color: var(--text-dim); font-size: 0.85rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
+        .stat-val { font-size: 2.5rem; font-weight: 800; margin-top: 5px; color: #fff; }
+
+        /* QUICK ACTIONS GRID */
+        .action-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        .action-card {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid var(--glass-border);
+            padding: 20px;
+            border-radius: 16px;
+            text-align: center;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .action-card:hover { background: rgba(59, 130, 246, 0.1); border-color: var(--primary); transform: scale(1.05); }
+        .action-card i { font-size: 1.5rem; margin-bottom: 10px; color: var(--primary); }
+        .action-card span { display: block; font-size: 0.85rem; font-weight: 600; }
+
+        /* ACTIVITY FEED */
+        .activity-item {
+            padding: 15px;
+            border-radius: 12px;
+            background: rgba(255,255,255,0.02);
+            border-left: 3px solid var(--primary);
+            margin-bottom: 12px;
+            transition: 0.3s;
+        }
+        .activity-item:hover { background: rgba(255,255,255,0.05); }
+
+        /* ANIMATIONS */
+        .section { display: none; animation: fadeIn 0.4s ease-out; }
+        .section.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* MOBILE OVERRIDES */
+        @media (max-width: 992px) {
+            .sidebar {
+                position: fixed; left: -100%; top: 0; bottom: 0;
+                background: var(--bg-surface); width: 280px; z-index: 2000;
+            }
+            .sidebar.open { left: 0; box-shadow: 20px 0 50px rgba(0,0,0,0.8); }
+            .top-nav { padding: 15px 20px; }
+            .content-area { padding: 20px; }
+            .stats-row { grid-template-columns: 1fr; }
+            .mobile-toggle { display: block !important; }
+        }
+
+        .input-group { margin-bottom: 20px; }
+        .input-field {
+            width: 100%; background: rgba(0,0,0,0.3); border: 1px solid var(--glass-border);
+            border-radius: 12px; padding: 14px; color: #fff; outline: none; transition: 0.3s;
+        }
+        .input-field:focus { border-color: var(--primary); box-shadow: 0 0 15px var(--primary-glow); }
+
+        .btn-action {
+            padding: 12px 24px; border-radius: 12px; border: none; font-weight: 700;
+            cursor: pointer; transition: 0.3s; display: flex; align-items: center; gap: 8px;
+        }
+        .btn-primary { background: var(--primary); color: #fff; }
+        .btn-primary:hover { background: var(--primary-dark); transform: translateY(-2px); }
+
+        /* ID CARD 3D FLIP */
+        .id-card-scene {
+            width: 320px; height: 480px;
+            perspective: 1000px;
+            margin: 20px auto;
+        }
+        .id-card-inner {
+            position: relative; width: 100%; height: 100%;
+            text-align: center;
+            transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transform-style: preserve-3d;
+            cursor: pointer;
+        }
+        .id-card-scene:hover .id-card-inner { transform: rotateY(180deg); }
+        
+        .id-card-front, .id-card-back {
+            position: absolute; width: 100%; height: 100%;
+            -webkit-backface-visibility: hidden; backface-visibility: hidden;
+            border-radius: 24px; overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+            background: #fff; color: #1e293b;
+        }
+        .id-card-back { transform: rotateY(180deg); background: #f8fafc; }
+
+        .id-pattern {
+            position: absolute; inset: 0; opacity: 0.05;
+            background-image: radial-gradient(#1e3a8a 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+        .id-chip {
+            width: 40px; height: 30px; background: linear-gradient(135deg, #fbbf24, #d97706);
+            border-radius: 6px; margin: 20px;
+        }
 
         .glass-panel {
             background: var(--glass);
@@ -230,226 +392,418 @@
         .section { display: none; }
         .section.active { display: block; }
         
-        #loader { position: fixed; inset: 0; background: var(--bg-deep); z-index: 10000; display: flex; align-items: center; justify-content: center; }
-        #loader.hidden { display: none; }
+        .hamburger { font-size: 1.5rem; cursor: pointer; color: var(--text-main); }
     </style>
 </head>
 <body>
 
-    <div id="loader"><div class="spinner-grow text-primary"></div></div>
-
-    <aside class="sidebar">
-        <div class="brand-section">
-            <div class="brand-logo"><i class="fas fa-capsules text-white"></i></div>
-            <h2 style="margin:0; font-weight:800; font-size:1.4rem">WOLTER <span style="color:var(--primary)">ADMIN</span></h2>
+    <div id="loader">
+        <div style="text-align:center">
+            <div class="brand-icon" style="width:100px; height:100px; margin:0 auto 25px; box-shadow:0 0 50px var(--primary); border-radius: 20px">
+                <i class="fas fa-capsules text-white" style="font-size:3.5rem"></i>
+            </div>
+            <div style="font-weight:900; letter-spacing:1px; font-size:1.8rem; line-height:1.2; color:#fff">Wolter</div>
+            <div style="font-weight:700; font-size:0.8rem; color:var(--primary); letter-spacing:1px; text-transform:uppercase">Pharmaceutical Pvt. Ltd.</div>
+            <div style="font-size:0.6rem; color:var(--text-dim); margin-top:25px; letter-spacing:4px">SECURE ADMIN GATEWAY</div>
         </div>
+    </div>
 
-        <div class="profile-card">
-            <img src="https://ui-avatars.com/api/?name=Pratik+Verma&background=3b82f6&color=fff" class="profile-img" id="admin-avatar">
-            <h3 style="margin:0; font-size:1.1rem" id="admin-name-sidebar">Pratik Verma</h3>
-            <p style="margin:5px 0 0; font-size:0.8rem; color:var(--text-dim)" id="admin-email">admin@wolter.com</p>
-        </div>
-
-        <div class="nav-menu">
-            <div class="nav-item active" onclick="showSection('dash')"><i class="fas fa-th-large"></i> Dashboard</div>
-            <div class="nav-item" onclick="showSection('docs')"><i class="fas fa-user-md"></i> Doctors List</div>
-            <div class="nav-item" onclick="showSection('id-gen')"><i class="fas fa-id-card"></i> ID Card Generator</div>
-            <div class="nav-item" onclick="showSection('attendance')"><i class="fas fa-calendar-check"></i> Attendance</div>
-            <div class="nav-item" onclick="showSection('tracking')"><i class="fas fa-map-marked-alt"></i> Live Tracking</div>
-            <div class="nav-item" onclick="showSection('announcements')"><i class="fas fa-bullhorn"></i> Announcements</div>
-            <div class="nav-item" onclick="showSection('medicines')"><i class="fas fa-pills"></i> Medicines</div>
-            <div class="nav-item" onclick="showSection('orders')"><i class="fas fa-shopping-cart"></i> Orders History</div>
-            <div class="nav-item" onclick="showSection('team')"><i class="fas fa-users"></i> Team MR</div>
-        </div>
-
-        <div class="nav-item" onclick="doLogout()" style="color:#f43f5e; margin-top:20px"><i class="fas fa-sign-out-alt"></i> Exit System</div>
-    </aside>
-
-    <main class="main-container">
-        <div class="top-bar">
-            <h2 id="section-title">System Suite</h2>
-            <div style="display:flex; gap:15px">
-                <button class="btn-export" style="padding:8px 20px; margin:0; width:auto; background:rgba(255,255,255,0.05)"><i class="fas fa-file-export"></i> Export</button>
+    <!-- NEW SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+        <div class="brand-box">
+            <div class="brand-icon" style="flex-shrink:0"><i class="fas fa-capsules text-white"></i></div>
+            <div>
+                <div style="font-weight:900; font-size:1.1rem; line-height:1; letter-spacing:-0.5px">Wolter</div>
+                <div style="font-size:0.5rem; font-weight:700; color:var(--primary); text-transform:uppercase">Pharmaceutical Pvt Ltd</div>
             </div>
         </div>
 
-        <div class="content-scroll">
+        <div style="text-align:center; margin-bottom:30px; padding:20px; background:rgba(255,255,255,0.03); border-radius:var(--radius)">
+            <img src="" id="admin-avatar" style="width:70px; height:70px; border-radius:50%; border:2px solid var(--primary); margin-bottom:12px; object-fit:cover">
+            <div id="admin-name-sidebar" style="font-weight:700; font-size:1rem">Admin Name</div>
+            <div id="admin-email" style="font-size:0.75rem; color:var(--text-dim)">admin@wolter.com</div>
+        </div>
+
+        <nav style="flex:1">
+            <div class="nav-link active" onclick="showSection('dash')"><i class="fas fa-chart-line"></i> Dashboard</div>
+            <div class="nav-link" onclick="showSection('docs')"><i class="fas fa-user-md"></i> Doctors</div>
+            <div class="nav-link" onclick="showSection('orders')"><i class="fas fa-shopping-cart"></i> Orders</div>
+            <div class="nav-link" onclick="showSection('medicines')"><i class="fas fa-capsules"></i> Medicines</div>
+            <div class="nav-link" onclick="showSection('attendance')"><i class="fas fa-clipboard-check"></i> Attendance</div>
+            <div class="nav-link" onclick="showSection('tracking')"><i class="fas fa-map-marked-alt"></i> Tracking</div>
+            <div class="nav-link" onclick="showSection('announcements')"><i class="fas fa-bullhorn"></i> Broadcasts</div>
+            <div class="nav-link" onclick="showSection('id-gen')"><i class="fas fa-id-card"></i> ID Portal</div>
+            <div class="nav-link" onclick="showSection('team')"><i class="fas fa-users-cog"></i> Team Manager</div>
+        </nav>
+
+        <div class="nav-link" onclick="doLogout()" style="color:var(--danger); margin-top:20px; background:rgba(244,63,94,0.05)">
+            <i class="fas fa-sign-out-alt"></i> Sign Out
+        </div>
+    </aside>
+
+    <div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleSidebar()"></div>
+
+    <!-- MAIN WRAPPER -->
+    <main class="main-wrapper">
+        <header class="top-nav">
+            <div style="display:flex; align-items:center; gap:15px">
+                <i class="fas fa-bars mobile-toggle" style="display:none; font-size:1.4rem; cursor:pointer" onclick="toggleSidebar()"></i>
+                <h2 id="section-title" style="font-weight:800; font-size:1.4rem">Dashboard Overview</h2>
+            </div>
+            <div style="background:var(--glass); padding:8px 15px; border-radius:12px; font-size:0.8rem; font-weight:700; display:flex; align-items:center; gap:8px; border:1px solid var(--glass-border)">
+                <span style="width:8px; height:8px; background:var(--accent); border-radius:50%"></span> ADMIN SECURE
+            </div>
+        </header>
+
+        <div class="content-area">
             
-            <!-- DASHBOARD SECTION -->
+            <!-- DASHBOARD -->
             <div id="dash" class="section active">
-                <div class="dashboard-layout">
-                    <div class="left-col">
-                        <div class="stat-grid">
-                            <div class="stat-card">
-                                <div class="stat-label">Total MRs</div>
-                                <div class="stat-value" id="count-mrs">0</div>
-                            </div>
-                            <div class="stat-card">
-                                <div class="stat-label">Total Doctors</div>
-                                <div class="stat-value" id="count-docs">0</div>
-                            </div>
-                            <div class="stat-card">
-                                <div class="stat-label">Total Sales (₹)</div>
-                                <div class="stat-value" id="count-sales">0</div>
-                            </div>
+                <div class="stats-row">
+                    <div class="stat-box" style="border-left: 4px solid var(--primary)">
+                        <div class="stat-label">Total MR Force</div>
+                        <div class="stat-val" id="count-mrs">0</div>
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="stat-box" style="border-left: 4px solid var(--accent)">
+                        <div class="stat-label">Registered Doctors</div>
+                        <div class="stat-val" id="count-docs">0</div>
+                        <i class="fas fa-user-md"></i>
+                    </div>
+                    <div class="stat-box" style="border-left: 4px solid var(--warning)">
+                        <div class="stat-label">Total Sales Revenue</div>
+                        <div class="stat-val" style="color:var(--primary-light)">₹<span id="count-sales">0</span></div>
+                        <i class="fas fa-wallet"></i>
+                    </div>
+                </div>
+
+                <div class="action-grid">
+                    <div class="action-card" onclick="showSection('team')">
+                        <i class="fas fa-user-plus"></i>
+                        <span>Add Team MR</span>
+                    </div>
+                    <div class="action-card" onclick="showSection('medicines')">
+                        <i class="fas fa-plus-square"></i>
+                        <span>New Medicine</span>
+                    </div>
+                    <div class="action-card" onclick="showSection('tracking')">
+                        <i class="fas fa-street-view"></i>
+                        <span>Live Tracking</span>
+                    </div>
+                    <div class="action-card" onclick="showSection('announcements')">
+                        <i class="fas fa-megaphone"></i>
+                        <span>Broadcast All</span>
+                    </div>
+                </div>
+
+                <div style="display:grid; grid-template-columns: 2fr 1fr; gap:30px" id="dash-grid">
+                    <div class="glass-card">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px">
+                            <h3 style="font-weight:800; display:flex; align-items:center; gap:10px">
+                                <i class="fas fa-paper-plane" style="color:var(--primary)"></i> Quick Broadcast
+                            </h3>
+                            <span style="font-size:0.7rem; color:var(--text-dim)">REAL-TIME DELIVERY</span>
                         </div>
+                        <textarea id="dash-ann-msg" class="input-field" rows="3" placeholder="Message to be sent to all active MR devices..."></textarea>
+                        <button class="btn-action btn-primary" style="width:100%; justify-content:center; margin-top:15px; height:50px" onclick="sendQuickAnn()">
+                            <i class="fas fa-bolt"></i> Instant Broadcast
+                        </button>
                     </div>
 
-                    <div class="activity-feed">
-                        <h3 style="margin-top:0; color:var(--text-dim)">Recent Activity</h3>
-                        <div id="activity-list">
+                    <div class="glass-card">
+                        <h3 style="font-weight:800; margin-bottom:20px; display:flex; align-items:center; gap:10px">
+                            <i class="fas fa-history" style="color:var(--accent)"></i> Recent Sales
+                        </h3>
+                        <div id="activity-list" style="max-height:350px; overflow-y:auto; padding-right:10px">
                             <!-- JS Dynamic -->
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- ID GENERATOR SECTION -->
-            <div id="id-gen" class="section">
-                <div class="portal-grid">
-                    <div class="glass-panel">
-                        <h2 style="margin-top:0">Identity Portal</h2>
-                        <label class="stat-label">FULL NAME</label>
-                        <input type="text" id="id-name" class="form-input" placeholder="e.g. Pratik Verma" oninput="updateIDPreview()">
-                        
-                        <label class="stat-label">EMPLOYEE ID (AUTO)</label>
-                        <input type="text" id="id-emp" class="form-input" placeholder="Leave blank for auto" oninput="updateIDPreview()">
-                        
-                        <label class="stat-label">RESIDENTIAL ADDRESS</label>
-                        <textarea id="id-addr" class="form-input" rows="3" placeholder="Home address..." oninput="updateIDPreview()"></textarea>
-                        
-                        <div style="display:grid; grid-template-columns:1fr 1fr; gap:15px">
+            <!-- DOCTORS -->
+            <div id="docs" class="section">
+                <div class="glass-card">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:25px; flex-wrap:wrap; gap:15px">
+                        <h2>Registered Doctors</h2>
+                        <input type="text" id="doc-search" class="input-field" placeholder="Search..." style="max-width:250px" oninput="filterDoctors()">
+                    </div>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr><th>Name</th><th>Specialty</th><th>Clinic</th><th>Mobile</th><th>MR Name</th><th>Action</th></tr>
+                            </thead>
+                            <tbody id="docs-body"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ORDERS -->
+            <div id="orders" class="section">
+                <div class="glass-card">
+                    <h2>Orders History</h2>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr><th>Date</th><th>Doctor</th><th>MR</th><th>Total</th><th>Paid</th><th>Due</th><th>Action</th></tr>
+                            </thead>
+                            <tbody id="orders-body"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ATTENDANCE -->
+            <div id="attendance" class="section">
+                <div class="glass-card">
+                    <h2>Attendance Logs</h2>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr><th>Date</th><th>MR</th><th>Check In</th><th>Check Out</th><th>Location</th></tr>
+                            </thead>
+                            <tbody id="attendance-body"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TRACKING -->
+            <div id="tracking" class="section">
+                <div style="display:grid; grid-template-columns: 1fr 300px; gap:25px; height:550px">
+                    <div id="map" style="border-radius:var(--radius); border:1px solid var(--glass-border)"></div>
+                    <div class="glass-card" style="margin:0; overflow-y:auto">
+                        <h3 style="margin-bottom:15px">Team Live</h3>
+                        <div id="mr-track-list"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TEAM MANAGER -->
+            <div id="team" class="section">
+                <div style="display:grid; grid-template-columns: 1fr 320px; gap:30px" id="team-grid">
+                    <div class="glass-card">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:25px; flex-wrap:wrap; gap:15px">
                             <div>
-                                <label class="stat-label">DATE OF BIRTH</label>
-                                <input type="date" id="id-dob" class="form-input" oninput="updateIDPreview()">
+                                <h2 style="margin:0">Team Force</h2>
+                                <p style="font-size:0.75rem; color:var(--text-dim)">Total: <span id="team-total-count">0</span> Registered MRs</p>
                             </div>
-                            <div>
-                                <label class="stat-label">MOBILE NUMBER</label>
-                                <input type="text" id="id-mob" class="form-input" placeholder="9876543210" oninput="updateIDPreview()">
+                            <div class="search-wrap" style="flex:1; max-width:300px; margin:0">
+                                <i class="fas fa-search" style="position:absolute; left:12px; top:12px; color:var(--text-dim)"></i>
+                                <input type="text" id="team-search" class="input-field" placeholder="Search by name or email..." oninput="filterTeam()" style="padding-left:40px">
+                            </div>
+                        </div>
+                        <div class="table-container">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>MR Name</th>
+                                        <th>Contact Email</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="team-body"></tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="glass-card" style="height:fit-content">
+                        <h3 style="margin-bottom:20px; color:var(--primary-light)"><i class="fas fa-user-plus"></i> Add New MR</h3>
+                        <p style="font-size:0.7rem; color:var(--text-dim); margin-bottom:15px">Manual addition bypasses the approval queue.</p>
+                        
+                        <div class="input-group">
+                            <label class="stat-label">Full Name</label>
+                            <input type="text" id="add-mr-name" class="input-field" placeholder="Enter MR Name">
+                        </div>
+                        <div class="input-group">
+                            <label class="stat-label">Email ID</label>
+                            <input type="email" id="add-mr-email" class="input-field" placeholder="Enter Official Email">
+                        </div>
+                        <button class="btn-action btn-primary" style="width:100%; justify-content:center; height:50px; margin-top:10px" onclick="addMRManually()">
+                            <i class="fas fa-check-double"></i> Create & Activate
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ANNOUNCEMENTS -->
+            <div id="announcements" class="section">
+                <div style="display:grid; grid-template-columns: 1fr 1.2fr; gap:30px">
+                    <div class="glass-card">
+                        <h2 style="font-weight:800; margin-bottom:20px"><i class="fas fa-edit" style="color:var(--primary)"></i> Create Broadcast</h2>
+                        <div class="input-group">
+                            <label class="stat-label">Message Title</label>
+                            <input type="text" id="ann-title" class="input-field" placeholder="e.g. URGENT MEETING">
+                        </div>
+                        <div class="input-group">
+                            <label class="stat-label">Broadcast Content</label>
+                            <textarea id="ann-msg" class="input-field" rows="6" placeholder="Type your message here... All MRs will receive this instantly."></textarea>
+                        </div>
+                        <button class="btn-action btn-primary" style="width:100%; justify-content:center; height:55px" onclick="sendAnnouncement()">
+                            <i class="fas fa-paper-plane"></i> Broadcast to All Devices
+                        </button>
+                    </div>
+                    <div class="glass-card">
+                        <h2 style="font-weight:800; margin-bottom:20px"><i class="fas fa-history" style="color:var(--accent)"></i> Broadcast History</h2>
+                        <div id="ann-history" style="max-height:500px; overflow-y:auto"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MEDICINES INVENTORY -->
+            <div id="medicines" class="section">
+                <div style="display:grid; grid-template-columns: 2fr 1fr; gap:30px">
+                    <div class="glass-card">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px">
+                            <h2 style="font-weight:800">Medicines Inventory</h2>
+                            <div style="position:relative; width:200px">
+                                <i class="fas fa-search" style="position:absolute; left:12px; top:50%; transform:translateY(-50%); color:var(--text-dim)"></i>
+                                <input type="text" id="med-search" class="input-field" placeholder="Search..." style="padding-left:35px; padding-top:8px; padding-bottom:8px" oninput="filterMedicines()">
+                            </div>
+                        </div>
+                        <div class="table-container">
+                            <table>
+                                <thead>
+                                    <tr><th>Medicine Name</th><th>Category</th><th>Price (₹)</th><th>Actions</th></tr>
+                                </thead>
+                                <tbody id="med-body"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <div class="glass-card">
+                        <h3 style="font-weight:800; margin-bottom:20px">Register Medicine</h3>
+                        <div class="input-group">
+                            <label class="stat-label">Medicine Name</label>
+                            <input type="text" id="new-med-name" class="input-field" placeholder="e.g. Wolvita Plus">
+                        </div>
+                        <div class="input-group">
+                            <label class="stat-label">Category / Type</label>
+                            <input type="text" id="new-med-cat" class="input-field" placeholder="e.g. Tablets / Syrup">
+                        </div>
+                        <div class="input-group">
+                            <label class="stat-label">Default Price (₹)</label>
+                            <input type="number" id="new-med-price" class="input-field" placeholder="0.00">
+                        </div>
+                        <button class="btn-action btn-primary" style="width:100%; justify-content:center" onclick="addMedicine()">
+                            <i class="fas fa-plus-circle"></i> Add to Inventory
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ID GENERATOR -->
+            <div id="id-gen" class="section">
+                <div style="display:grid; grid-template-columns: 1.2fr 1fr; gap:40px; align-items:start">
+                    <div class="glass-card">
+                        <h2 style="font-weight:800; margin-bottom:25px">Identity Portal</h2>
+                        
+                        <div class="input-group">
+                            <label class="stat-label">Full Name</label>
+                            <input type="text" id="id-name" class="input-field" placeholder="Pratik Verma" oninput="updateIDPreview()">
+                        </div>
+
+                        <div class="input-group">
+                            <label class="stat-label">Residential Address</label>
+                            <textarea id="id-addr" class="input-field" rows="2" placeholder="Full address for card back..." oninput="updateIDPreview()"></textarea>
+                        </div>
+
+                        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:15px">
+                            <div class="input-group">
+                                <label class="stat-label">Mobile</label>
+                                <input type="text" id="id-mob" class="input-field" placeholder="9876543210" oninput="updateIDPreview()">
+                            </div>
+                            <div class="input-group">
+                                <label class="stat-label">Employee ID</label>
+                                <input type="text" id="id-emp" class="input-field" placeholder="WOL-001" oninput="updateIDPreview()">
                             </div>
                         </div>
 
-                        <label class="stat-label">PROFILE IMAGE</label>
-                        <input type="file" id="id-file" class="form-input">
+                        <div class="input-group">
+                            <label class="stat-label">Photo Scale (Adjustment)</label>
+                            <input type="range" id="id-photo-scale" min="1" max="3" step="0.1" value="1" style="width:100%" oninput="updateIDPreview()">
+                        </div>
 
-                        <button class="btn-export" onclick="alert('HD ID Exporting...')"><i class="fas fa-shield-alt"></i> Export Professional HD ID</button>
+                        <div class="input-group">
+                            <label class="stat-label">Profile Image</label>
+                            <input type="file" id="id-file" class="input-field" onchange="handleIDPhoto(this)">
+                        </div>
+
+                        <button class="btn-action btn-primary" style="width:100%; justify-content:center; height:55px" onclick="alert('Preparing Print-Ready Identity...')">
+                            <i class="fas fa-print"></i> Export Identity Suite
+                        </button>
                     </div>
 
                     <div style="text-align:center">
-                        <p style="font-size:0.7rem; color:var(--text-dim); margin-bottom:15px">TAP TO VIEW REVERSE SIDE</p>
-                        <div class="id-preview-card" id="id-card-render">
-                            <div class="id-header">
-                                <p style="font-size:0.6rem; margin:0; opacity:0.8">MARKETED BY:</p>
-                                <h2 style="margin:0; font-weight:800">Wolter</h2>
-                                <p style="font-size:0.5rem; margin:0">Pharmaceutical Pvt. Ltd.</p>
-                            </div>
-                            <div class="id-photo-area">
-                                <span style="font-size:2rem; font-weight:800; color:#cbd5e1">MR</span>
-                            </div>
-                            <div style="text-align:center; padding:0 20px">
-                                <h2 id="prev-name" style="margin:0; font-weight:800; text-transform:uppercase">MR. NAME</h2>
-                                <p style="color:#10b981; font-weight:700; font-size:0.7rem; margin:5px 0">MEDICAL REPRESENTATIVE</p>
-                                
-                                <div style="text-align:left; margin-top:30px; font-size:0.6rem; line-height:1.8">
-                                    <div style="color:#64748b">EMPLOYEE IDENTITY</div>
-                                    <div id="prev-id" style="font-weight:800">PV-AUTO-XXXX</div>
-                                    <div style="color:#64748b; margin-top:8px">CONTACT HOTLINE</div>
-                                    <div id="prev-mob" style="font-weight:800">+91 0000000000</div>
-                                    <div style="color:#64748b; margin-top:8px">VALIDATION</div>
-                                    <div style="font-weight:800">DECEMBER 2026</div>
+                        <p style="font-size:0.8rem; color:var(--text-dim); margin-bottom:15px"><i class="fas fa-sync-alt"></i> HOVER TO FLIP CARD</p>
+                        <div class="id-card-scene">
+                            <div class="id-card-inner">
+                                <!-- FRONT -->
+                                <div class="id-card-front">
+                                    <div class="id-pattern"></div>
+                                    <div style="background:linear-gradient(135deg, #1e3a8a, #1e40af); padding:30px 20px; text-align:left; color:#fff; position:relative">
+                                        <div style="font-size:0.5rem; font-weight:900; opacity:0.8">MARKETED BY:</div>
+                                        <div style="font-size:1.6rem; font-weight:900">Wolter</div>
+                                        <div style="font-size:0.7rem; font-weight:600">Pharmaceutical Pvt. Ltd.</div>
+                                        <i class="fas fa-capsules" style="position:absolute; right:20px; top:35px; font-size:2.5rem; opacity:0.2"></i>
+                                    </div>
+                                    
+                                    <div style="width:150px; height:150px; margin:25px auto 15px; border-radius:20px; overflow:hidden; border:5px solid #fff; box-shadow:0 10px 25px rgba(0,0,0,0.1); background:#f1f5f9">
+                                        <img id="prev-img-disp" src="https://ui-avatars.com/api/?name=MR&background=f1f5f9&color=cbd5e1" style="width:100%; height:100%; object-fit:cover; transition:0.2s">
+                                    </div>
+
+                                    <div style="padding:0 20px">
+                                        <h2 id="prev-name" style="margin:0; font-weight:900; font-size:1.5rem; color:#0f172a">MR. NAME</h2>
+                                        <div style="font-size:0.75rem; font-weight:800; color:#10b981; text-transform:uppercase; letter-spacing:3px; margin:5px 0 20px">Medical Representative</div>
+                                        
+                                        <div style="text-align:left; background:#f8fafc; padding:15px; border-radius:12px; border:1px solid #e2e8f0">
+                                            <div style="display:flex; justify-content:space-between; margin-bottom:5px">
+                                                <span style="font-size:0.6rem; color:#94a3b8; font-weight:800">IDENTITY NO</span>
+                                                <span id="prev-id" style="font-size:0.65rem; font-weight:800; color:#1e3a8a">WOL-XXXX</span>
+                                            </div>
+                                            <div style="display:flex; justify-content:space-between">
+                                                <span style="font-size:0.6rem; color:#94a3b8; font-weight:800">EMERGENCY</span>
+                                                <span id="prev-mob" style="font-size:0.65rem; font-weight:800; color:#1e3a8a">+91 0000000000</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div style="position:absolute; bottom:0; width:100%; height:8px; background:linear-gradient(90deg, #1e3a8a, #10b981, #1e3a8a)"></div>
+                                </div>
+
+                                <!-- BACK -->
+                                <div class="id-card-back">
+                                    <div class="id-pattern"></div>
+                                    <div style="padding:30px 20px; text-align:left">
+                                        <div style="font-weight:900; font-size:1rem; color:#1e3a8a; border-bottom:2px solid #e2e8f0; padding-bottom:10px; margin-bottom:20px">Instructions & Address</div>
+                                        
+                                        <div style="margin-bottom:25px">
+                                            <div style="font-size:0.6rem; font-weight:900; color:#94a3b8; margin-bottom:5px">RESIDENTIAL ADDRESS</div>
+                                            <div id="prev-addr" style="font-size:0.8rem; font-weight:600; color:#1e293b; line-height:1.5">No address provided.</div>
+                                        </div>
+
+                                        <div style="background:#fff; padding:15px; border-radius:12px; border:1px solid #e2e8f0; margin-bottom:20px">
+                                            <div style="font-size:0.7rem; color:#64748b; line-height:1.6">
+                                                This card is the property of <strong>Wolter Pharmaceutical</strong>. If found, please return to the nearest company office. Use of this card by unauthorized persons is a punishable offense.
+                                            </div>
+                                        </div>
+
+                                        <div style="display:flex; justify-content:center; margin-top:40px">
+                                            <div style="width:80px; height:80px; background:#fff; border:1px solid #e2e8f0; padding:5px; border-radius:10px">
+                                                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=WOLTER-SECURE" style="width:100%">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div style="position:absolute; bottom:20px; width:100%; text-align:center; font-size:0.6rem; color:#94a3b8; font-weight:800">
+                                        AUTHORIZED SIGNATURE | ISSUED DEC 2026
+                                    </div>
                                 </div>
                             </div>
-                            <div style="position:absolute; bottom:15px; right:15px; width:40px; height:40px; background:linear-gradient(45deg, #3b82f6, #93c5fd); border-radius:50%; opacity:0.3"></div>
                         </div>
                     </div>
                 </div>
             </div>
-
-            <!-- ATTENDANCE SECTION -->
-            <div id="attendance" class="section">
-                <div class="glass-panel">
-                    <h3>MR Attendance Logs</h3>
-                    <table>
-                        <thead>
-                            <tr><th>Date</th><th>MR Name</th><th>Check In</th><th>Check Out</th><th>Location</th></tr>
-                        </thead>
-                        <tbody id="attendance-body"></tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- TRACKING SECTION -->
-            <div id="tracking" class="section">
-                <div id="map" style="height:500px; border-radius:24px; border:1px solid var(--card-border)"></div>
-            </div>
-
-            <!-- TEAM SECTION -->
-            <div id="team" class="section">
-                <div class="glass-panel">
-                    <h3>Team Management</h3>
-                    <table>
-                        <thead>
-                            <tr><th>Name</th><th>Email</th><th>Status</th><th>Action</th></tr>
-                        </thead>
-                        <tbody id="team-body"></tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- ORDERS SECTION -->
-            <div id="orders" class="section">
-                <div class="glass-panel">
-                    <h3>Sales & Orders History</h3>
-                    <table>
-                        <thead>
-                            <tr><th>Date</th><th>Doctor</th><th>MR Name</th><th>Total</th><th>Paid</th><th>Due</th></tr>
-                        </thead>
-                        <tbody id="orders-body"></tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- DOCTORS SECTION -->
-            <div id="docs" class="section">
-                <div class="glass-panel">
-                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px">
-                        <h3 style="margin:0">Registered Doctors Directory</h3>
-                        <div class="search-box">
-                            <i class="fas fa-search"></i>
-                            <input type="text" id="doc-search" placeholder="Search by name, clinic or MR..." oninput="filterDoctors()">
-                        </div>
-                    </div>
-                    <table>
-                        <thead>
-                            <tr><th>Doctor Name</th><th>Specialty</th><th>Clinic</th><th>Mobile</th><th>Added By (MR)</th><th>Action</th></tr>
-                        </thead>
-                        <tbody id="docs-body"></tbody>
-                    </table>
-                </div>
-            </div>
-            <!-- ANNOUNCEMENTS SECTION -->
-            <div id="announcements" class="section">
-                <div class="portal-grid">
-                    <div class="glass-panel">
-                        <h3 style="margin-top:0"><i class="fas fa-bullhorn"></i> New Broadcast</h3>
-                        <label class="stat-label">MESSAGE TITLE</label>
-                        <input type="text" id="ann-title" class="form-input" placeholder="e.g. Urgent Meeting">
-                        
-                        <label class="stat-label">ANNOUNCEMENT CONTENT</label>
-                        <textarea id="ann-msg" class="form-input" rows="4" placeholder="Type your message here..."></textarea>
-                        
-                        <button class="btn-export" onclick="sendAnnouncement()"><i class="fas fa-paper-plane"></i> Broadcast to All MRs</button>
-                    </div>
-
-                    <div class="glass-panel">
-                        <h3 style="margin-top:0">Announcement History</h3>
-                        <div id="ann-history" style="max-height:400px; overflow-y:auto">
-                            <!-- JS Dynamic -->
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div id="medicines" class="section"><h2>Medicines Inventory...</h2></div>
 
         </div>
     </main>
@@ -464,12 +818,25 @@
         function showSection(id) {
             document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
             document.getElementById(id).classList.add('active');
-            document.querySelectorAll('.nav-item').forEach(l => l.classList.remove('active'));
-            event.currentTarget.classList.add('active');
-            document.getElementById('section-title').textContent = event.currentTarget.innerText;
+            
+            document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+            
+            // Find the link and set active
+            const links = document.querySelectorAll('.nav-link');
+            links.forEach(link => {
+                if(link.getAttribute('onclick').includes(`'${id}'`)) {
+                    link.classList.add('active');
+                    document.getElementById('section-title').textContent = link.innerText.trim();
+                }
+            });
+
+            if(window.innerWidth <= 992) {
+                document.getElementById('sidebar').classList.remove('open');
+                document.getElementById('sidebar-overlay').classList.remove('open');
+            }
         }
 
-        async function init() {
+        async function checkAuth() {
             try {
                 const user = await account.get();
                 
@@ -492,17 +859,21 @@
         let markers = {};
 
         let allDoctors = [];
+        let allMedicines = [];
         let employeeMap = {};
 
         async function loadDashboardData() {
             try {
-                const [mrs, docs, orders, attendance, announcements] = await Promise.all([
+                const [mrs, docs, orders, attendance, announcements, meds] = await Promise.all([
                     databases.listDocuments(DB_ID, 'employees'),
                     databases.listDocuments(DB_ID, 'doctors', [Query.limit(500)]),
                     databases.listDocuments(DB_ID, 'orders', [Query.orderDesc('$createdAt'), Query.limit(100)]),
                     databases.listDocuments(DB_ID, 'attendance', [Query.orderDesc('$createdAt'), Query.limit(50)]),
-                    databases.listDocuments(DB_ID, 'announcements', [Query.orderDesc('$createdAt'), Query.limit(10)])
+                    databases.listDocuments(DB_ID, 'announcements', [Query.orderDesc('$createdAt'), Query.limit(10)]),
+                    databases.listDocuments(DB_ID, 'medicines', [Query.limit(200)])
                 ]);
+
+                allMedicines = meds.documents;
 
                 allDoctors = docs.documents;
                 // Create a map of MR names for easy lookup
@@ -513,13 +884,16 @@
 
                 document.getElementById('count-mrs').textContent = mrs.total;
                 document.getElementById('count-docs').textContent = docs.total;
-                const totalSales = orders.documents.reduce((acc, curr) => acc + (parseInt(curr.amount) || 0), 0);
-                document.getElementById('count-sales').textContent = totalSales;
+                const totalSales = orders.documents.reduce((acc, curr) => acc + (parseFloat(curr.amount) || 0), 0);
+                document.getElementById('count-sales').textContent = totalSales.toLocaleString('en-IN');
 
                 const pending = mrs.documents.filter(m => !m.isApproved).length;
                 if(pending > 0) {
-                    document.getElementById('notif-badge').textContent = pending;
-                    document.getElementById('notif-badge').style.display = 'flex';
+                    const badge = document.getElementById('notif-badge');
+                    if(badge) {
+                        badge.textContent = pending;
+                        badge.style.display = 'flex';
+                    }
                 }
 
                 renderActivity(orders.documents);
@@ -528,6 +902,7 @@
                 renderOrders(orders.documents);
                 renderAnnouncements(announcements.documents);
                 renderDoctors(allDoctors);
+                renderMedicines(allMedicines);
                 initMap();
                 updateMap(mrs.documents);
 
@@ -555,6 +930,58 @@
                 </tr>
             `).join('');
             document.getElementById('docs-body').innerHTML = html || '<tr><td colspan="6">No doctors found</td></tr>';
+        }
+
+        function renderMedicines(meds) {
+            const html = meds.map(m => `
+                <tr>
+                    <td style="font-weight:600">${m.name}</td>
+                    <td><span class="badge" style="background:rgba(59,130,246,0.1); color:var(--primary-light)">${m.category || 'Product'}</span></td>
+                    <td style="font-weight:800; color:var(--accent)">₹${m.price || '0'}</td>
+                    <td>
+                        <i class="fas fa-trash-alt" onclick="deleteMedicine('${m.$id}')" style="cursor:pointer; color:#f43f5e"></i>
+                    </td>
+                </tr>
+            `).join('');
+            document.getElementById('med-body').innerHTML = html || '<tr><td colspan="4" style="text-align:center; padding:20px; color:var(--text-dim)">No medicines in inventory</td></tr>';
+        }
+
+        async function addMedicine() {
+            const name = document.getElementById('new-med-name').value.trim();
+            const cat = document.getElementById('new-med-cat').value.trim();
+            const price = parseFloat(document.getElementById('new-med-price').value) || 0;
+
+            if(!name) return alert("Medicine name is required");
+
+            try {
+                await databases.createDocument(DB_ID, 'medicines', Appwrite.ID.unique(), {
+                    name: name,
+                    category: cat,
+                    price: price
+                });
+                alert("Medicine Added!");
+                document.getElementById('new-med-name').value = '';
+                document.getElementById('new-med-cat').value = '';
+                document.getElementById('new-med-price').value = '';
+                loadDashboardData();
+            } catch(e) { alert("Error adding medicine: " + e.message); }
+        }
+
+        async function deleteMedicine(id) {
+            if(!confirm("Delete this medicine from inventory?")) return;
+            try {
+                await databases.deleteDocument(DB_ID, 'medicines', id);
+                loadDashboardData();
+            } catch(e) { alert("Error deleting medicine"); }
+        }
+
+        function filterMedicines() {
+            const q = document.getElementById('med-search').value.toLowerCase();
+            const filtered = allMedicines.filter(m => 
+                m.name.toLowerCase().includes(q) || 
+                (m.category && m.category.toLowerCase().includes(q))
+            );
+            renderMedicines(filtered);
         }
 
         function filterDoctors() {
@@ -610,6 +1037,20 @@
             }
         }
 
+        async function sendQuickAnn() {
+            const msg = document.getElementById('dash-ann-msg').value;
+            if(!msg) return alert("Please type a message");
+            try {
+                await databases.createDocument(DB_ID, 'announcements', Appwrite.ID.unique(), {
+                    message: msg,
+                    date: new Date().toISOString()
+                });
+                alert("Announcement Broadcasted!");
+                document.getElementById('dash-ann-msg').value = '';
+                loadDashboardData();
+            } catch(e) { alert("Error: " + e.message); }
+        }
+
         function renderAnnouncements(anns) {
             const html = anns.map(a => {
                 const safeMsg = (a.message || "").replace(/`/g, "\\`").replace(/\${/g, "\\${");
@@ -650,30 +1091,122 @@
         }
 
         function updateMap(mrs) {
+            const listEl = document.getElementById('mr-track-list');
+            let listHtml = '';
+            
             mrs.forEach(m => {
                 if(m.lat && m.lng) {
                     if(markers[m.$id]) {
                         markers[m.$id].setLatLng([m.lat, m.lng]);
                     } else {
                         markers[m.$id] = L.marker([m.lat, m.lng]).addTo(map)
-                            .bindPopup(`<b>${m.name}</b><br>Status: Online`);
+                            .bindPopup(`<b>${m.name}</b><br>Last seen: ${m.lat.toFixed(4)}, ${m.lng.toFixed(4)}`);
                     }
+                    
+                    listHtml += `
+                        <div onclick="focusOnMR(${m.lat}, ${m.lng})" style="padding:12px; background:rgba(255,255,255,0.05); border-radius:12px; margin-bottom:10px; cursor:pointer; border:1px solid transparent; transition:0.3s" onmouseover="this.style.borderColor='var(--primary)'" onmouseout="this.style.borderColor='transparent'">
+                            <div style="font-weight:600; font-size:0.9rem">${m.name}</div>
+                            <div style="font-size:0.7rem; color:var(--text-dim)"><i class="fas fa-map-marker-alt"></i> ${m.lat.toFixed(4)}, ${m.lng.toFixed(4)}</div>
+                        </div>
+                    `;
                 }
             });
+            
+            if(listEl) listEl.innerHTML = listHtml || '<p style="font-size:0.8rem; color:var(--text-dim)">No MRs online</p>';
         }
 
+        function focusOnMR(lat, lng) {
+            showSection('tracking');
+            if(map) {
+                map.setView([lat, lng], 15);
+                // Find and open marker popup if possible
+                Object.values(markers).forEach(marker => {
+                    if(marker.getLatLng().lat === lat && marker.getLatLng().lng === lng) {
+                        marker.openPopup();
+                    }
+                });
+            }
+        }
+
+        let allMRs = [];
         function renderTeam(mrs) {
+            allMRs = mrs;
+            const pendingCount = mrs.filter(m => !m.isApproved).length;
+            document.getElementById('team-total-count').textContent = mrs.length;
+            
             const html = mrs.map(m => `
-                <tr>
-                    <td>${m.name}</td>
-                    <td>${m.email}</td>
-                    <td><span class="badge ${m.isApproved ? 'badge-success' : 'badge-pending'}">${m.isApproved ? 'Active' : 'Pending'}</span></td>
+                <tr style="${!m.isApproved ? 'background:rgba(245,158,11,0.03)' : ''}">
                     <td>
-                        ${!m.isApproved ? `<button onclick="approveMR('${m.$id}')" style="background:var(--primary); color:#fff; border:none; padding:5px 10px; border-radius:6px; cursor:pointer">Approve</button>` : `<i class="fas fa-check-circle" style="color:#10b981"></i>`}
+                        <div style="font-weight:700">${m.name}</div>
+                    </td>
+                    <td style="font-size:0.8rem; color:var(--text-dim)">${m.email}</td>
+                    <td>
+                        <span class="badge ${m.isApproved ? 'badge-success' : 'badge-pending'}">
+                            ${m.isApproved ? 'Active' : 'Pending Approval'}
+                        </span>
+                    </td>
+                    <td>
+                        <div style="display:flex; gap:8px">
+                            ${!m.isApproved ? `
+                                <button onclick="approveMR('${m.$id}')" class="btn-action btn-primary" style="padding:6px 12px; font-size:0.7rem">
+                                    <i class="fas fa-check"></i> Approve
+                                </button>
+                            ` : `
+                                <div style="width:32px; height:32px; display:flex; align-items:center; justify-content:center; background:rgba(16,185,129,0.1); border-radius:8px; color:var(--accent)">
+                                    <i class="fas fa-user-check"></i>
+                                </div>
+                            `}
+                            <button onclick="deleteMR('${m.$id}')" style="width:32px; height:32px; background:rgba(244,63,94,0.1); color:#f43f5e; border:none; border-radius:8px; cursor:pointer; transition:0.3s">
+                                <i class="fas fa-trash-alt"></i>
+                            </button>
+                        </div>
                     </td>
                 </tr>
             `).join('');
-            document.getElementById('team-body').innerHTML = html || '<tr><td colspan="4">No MRs found</td></tr>';
+            document.getElementById('team-body').innerHTML = html || '<tr><td colspan="4" style="text-align:center; padding:40px; color:var(--text-dim)">No MRs found in database</td></tr>';
+        }
+
+        function filterTeam() {
+            const q = document.getElementById('team-search').value.toLowerCase();
+            const filtered = allMRs.filter(m => 
+                m.name.toLowerCase().includes(q) || 
+                m.email.toLowerCase().includes(q)
+            );
+            renderTeam(filtered);
+        }
+
+        async function addMRManually() {
+            const name = document.getElementById('add-mr-name').value.trim();
+            const email = document.getElementById('add-mr-email').value.trim();
+            
+            if(!name || !email) return alert("Please fill name and email");
+            
+            try {
+                const id = email.replace(/[@.]/g, '-');
+                await databases.createDocument(DB_ID, 'employees', id, {
+                    name: name,
+                    email: email,
+                    isApproved: true,
+                    userId: id,
+                    lastLogin: new Date().toISOString()
+                });
+                alert("MR Added & Approved Successfully!");
+                document.getElementById('add-mr-name').value = '';
+                document.getElementById('add-mr-email').value = '';
+                loadDashboardData();
+            } catch(e) { 
+                if(e.code === 409) alert("This email is already in the team.");
+                else alert("Error: " + e.message); 
+            }
+        }
+
+        async function deleteMR(id) {
+            if(!confirm("Are you sure you want to remove this MR from the team?")) return;
+            try {
+                await databases.deleteDocument(DB_ID, 'employees', id);
+                alert("MR Removed.");
+                loadDashboardData();
+            } catch(e) { alert("Error deleting MR"); }
         }
 
         async function approveMR(id) {
@@ -690,10 +1223,10 @@
                 const mapLink = l.lat && l.lng ? `<button onclick="focusOnMR(${l.lat}, ${l.lng})" style="background:rgba(59,130,246,0.1); color:var(--primary); border:none; padding:4px 8px; border-radius:6px; cursor:pointer; font-size:0.7rem"><i class="fas fa-map-marker-alt"></i></button>` : '';
                 return `
                     <tr>
-                        <td>${new Date(l.$createdAt).toLocaleDateString()}</td>
-                        <td style="font-weight:600">${l.employeeName || 'MR User'}</td>
-                        <td>${l.checkIn || '--'}</td>
-                        <td>${l.checkOut || '--'}</td>
+                        <td>${new Date(l.date || l.$createdAt).toLocaleDateString()}</td>
+                        <td style="font-weight:600">${l.mrName || 'MR User'}</td>
+                        <td>${l.checkInTime || '--'}</td>
+                        <td>${l.checkOutTime || '--'}</td>
                         <td>${loc} ${mapLink}</td>
                     </tr>
                 `;
@@ -709,28 +1242,62 @@
 
         function renderOrders(orders) {
             const html = orders.map(o => {
-                const total = parseInt(o.amount) || 0;
-                const paid = parseInt(o.paidAmount) || 0;
+                const total = parseFloat(o.amount) || 0;
+                const paid = parseFloat(o.paid_amount) || 0;
                 const due = total - paid;
                 return `
                     <tr>
-                        <td>${new Date(o.$createdAt).toLocaleDateString()}</td>
+                        <td>${new Date(o.date || o.$createdAt).toLocaleDateString()}</td>
                         <td>${o.doctorName || 'General'}</td>
-                        <td>${o.employeeName || 'MR'}</td>
+                        <td>${employeeMap[o.userId] || 'MR'}</td>
                         <td>₹${total}</td>
                         <td style="color:#10b981">₹${paid}</td>
                         <td style="color:#f43f5e">₹${due}</td>
+                        <td><button onclick='viewOrderDetails(${JSON.stringify(o)})' style="background:rgba(59,130,246,0.1); color:var(--primary); border:none; padding:4px 8px; border-radius:6px; cursor:pointer; font-size:0.7rem">View</button></td>
                     </tr>
                 `;
             }).join('');
             document.getElementById('orders-body').innerHTML = html || '<tr><td colspan="6">No orders found</td></tr>';
         }
 
+        function viewOrderDetails(o) {
+            let meds = [];
+            try { meds = JSON.parse(o.medicines || '[]'); } catch(e) {}
+            const medRows = meds.map(m => `
+                <div style="display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid rgba(255,255,255,0.05)">
+                    <span>${m.name} (x${m.qty})</span>
+                    <span>₹${m.total}</span>
+                </div>
+            `).join('');
+            
+            Swal.fire({
+                title: 'Order Details',
+                html: `
+                    <div style="text-align:left; font-size:0.9rem">
+                        <p><strong>Doctor:</strong> ${o.doctorName}</p>
+                        <p><strong>Date:</strong> ${new Date(o.date || o.$createdAt).toLocaleDateString()}</p>
+                        <div style="margin:15px 0">
+                            <strong>Medicines:</strong>
+                            <div style="background:rgba(0,0,0,0.2); padding:10px; border-radius:8px; margin-top:5px">
+                                ${medRows || 'No medicines listed'}
+                            </div>
+                        </div>
+                        <p><strong>Total:</strong> ₹${o.amount}</p>
+                        <p><strong>Paid:</strong> ₹${o.paid_amount || 0}</p>
+                        <p><strong>Due:</strong> ₹${(parseFloat(o.amount) || 0) - (parseFloat(o.paid_amount) || 0)}</p>
+                    </div>
+                `,
+                background: '#1e293b',
+                color: '#fff',
+                confirmButtonColor: '#3b82f6'
+            });
+        }
+
         function renderActivity(orders) {
             const list = document.getElementById('activity-list');
             list.innerHTML = orders.slice(0, 5).map(o => `
                 <div class="activity-item">
-                    <div style="font-weight:700">₹${o.amount || '0'} by a MR for Dr. ${o.doctorName || 'Unknown'}</div>
+                    <div style="font-weight:700">₹${o.amount || '0'} by ${employeeMap[o.userId] || 'MR'} for Dr. ${o.doctorName || 'Unknown'}</div>
                     <div style="font-size:0.7rem; color:var(--text-dim)">Just now • Transaction ID: ${o.$id.slice(-6).toUpperCase()}</div>
                 </div>
             `).join('');
@@ -738,8 +1305,22 @@
 
         function updateIDPreview() {
             document.getElementById('prev-name').textContent = document.getElementById('id-name').value || "MR. NAME";
-            document.getElementById('prev-id').textContent = document.getElementById('id-emp').value || "PV-AUTO-XXXX";
+            document.getElementById('prev-id').textContent = document.getElementById('id-emp').value || "WOL-XXXX";
             document.getElementById('prev-mob').textContent = "+91 " + (document.getElementById('id-mob').value || "0000000000");
+            document.getElementById('prev-addr').textContent = document.getElementById('id-addr').value || "No address provided.";
+            
+            const scale = document.getElementById('id-photo-scale').value;
+            document.getElementById('prev-img-disp').style.transform = `scale(${scale})`;
+        }
+
+        function handleIDPhoto(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('prev-img-disp').src = e.target.result;
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
         }
 
         async function doLogout() {
@@ -747,7 +1328,16 @@
             location.href = 'login.html';
         }
 
-        init();
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('open');
+            document.getElementById('sidebar-overlay').classList.toggle('open');
+        }
+
+        // Initialize
+        checkAuth();
+        
+        // Auto-refresh stats every 60s
+        setInterval(loadDashboardData, 60000);
     </script>
 </body>
 </html>
