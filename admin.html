@@ -401,6 +401,24 @@
         .section.active { display: block; }
         
         .hamburger { font-size: 1.5rem; cursor: pointer; color: var(--text-main); }
+
+        /* TRACKING RESPONSIVE */
+        .tracking-container {
+            display: grid; 
+            grid-template-columns: 1fr 300px; 
+            gap: 25px; 
+            height: 600px;
+        }
+        @media (max-width: 992px) {
+            .tracking-container {
+                grid-template-columns: 1fr;
+                height: auto;
+                gap: 15px;
+            }
+            #map {
+                height: 350px !important;
+            }
+        }
     </style>
 </head>
 <body>
@@ -647,9 +665,9 @@
 
             <!-- TRACKING -->
             <div id="tracking" class="section">
-                <div style="display:grid; grid-template-columns: 1fr 300px; gap:25px; height:550px">
+                <div class="tracking-container">
                     <div id="map" style="border-radius:var(--radius); border:1px solid var(--glass-border)"></div>
-                    <div class="glass-card" style="margin:0; overflow-y:auto">
+                    <div class="glass-card" style="margin:0; overflow-y:auto; height:100%">
                         <h3 style="margin-bottom:15px">Team Live</h3>
                         <div id="mr-track-list"></div>
                     </div>
