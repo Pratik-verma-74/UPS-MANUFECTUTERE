@@ -120,14 +120,19 @@ async function checkCurrentSession() {
 
 function handleGoogleLogin() {
     try {
-        console.log('Google login initiated');
+        console.log('Google login initiated at:', new Date().toLocaleTimeString());
         toggleLoading(true);
         // Ensure the redirect URL is exactly the current page URL
         const redirectUrl = window.location.href.split('?')[0].split('#')[0];
-        console.log('Redirecting to:', redirectUrl);
+        console.log('Detected Redirect URL:', redirectUrl);
+        console.log('Attempting OAuth with Appwrite...');
+        
         account.createOAuth2Session('google', redirectUrl, redirectUrl);
+        
+        // This line might not execute if the redirect happens instantly
+        console.log('OAuth session request sent to Appwrite.');
     } catch (error) {
-        console.error('Google Login Error:', error);
+        console.error('CRITICAL: Google Login Error:', error);
         showError('Google login failed: ' + error.message);
         toggleLoading(false);
     }
