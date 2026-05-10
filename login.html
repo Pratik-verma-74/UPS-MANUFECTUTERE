@@ -129,10 +129,12 @@
 
         function redirect(user) {
             console.log("[Login] Redirecting user: " + user.email);
-            if(user.email === 'pratikverma025@gmail.com' || user.email === 'wolterpharma@gmail.com' || user.email === 'pratikverma153@gmail.com') {
+            // ONLY THESE TWO ARE ADMINS
+            if(user.email === 'pratikverma025@gmail.com' || user.email === 'wolterpharma@gmail.com') {
                 const path = window.location.pathname.includes('samir-app') ? '/samir-app/admin.html' : '/admin.html';
                 location.href = path;
             } else {
+                // EVERYONE ELSE GOES TO MR DASHBOARD
                 const path = window.location.pathname.includes('samir-app') ? '/samir-app/dashboard.html' : '/dashboard.html';
                 location.href = path;
             }
