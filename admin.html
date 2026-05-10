@@ -929,9 +929,21 @@
         async function checkAuth() {
             try {
                 const user = await account.get();
+                const uid = user.email.replace(/[@.]/g, '-');
                 
-                // FINAL SECURITY CHECK: ONLY THESE TWO ARE ALLOWED IN ADMIN
-                if(user.email !== 'pratikverma025@gmail.com' && user.email !== 'wolterpharma@gmail.com' && user.email !== 'admin.wolter@gmail.com') {
+                // Super Admins (Hardcoded)
+                const superAdmins = ['pratikverma025@gmail.com', 'wolterpharma@gmail.com', 'admin.wolter@gmail.com'];
+                
+                let isAdmin = superAdmins.includes(user.email);
+                
+                if(!isAdmin) {
+                    try {
+                        const emp = await databases.getDocument(DB_ID, 'employees', uid);
+                        if(emp.role === 'Admin') isAdmin = true;
+                    } catch(e) {}
+                }
+
+                if(!isAdmin) {
                     console.error("[Security] Unauthorized Access Attempt!");
                     location.href = 'login.html';
                     return;
@@ -1307,6 +1319,9 @@
                                     <i class="fas fa-user-check"></i>
                                 </div>
                             `}
+                            <button onclick="toggleAdminRole('${m.$id}', '${m.role || 'MR'}')" style="width:32px; height:32px; background:rgba(59,130,246,0.1); color:var(--primary); border:none; border-radius:8px; cursor:pointer; transition:0.3s" title="Toggle Admin Role">
+                                <i class="fas fa-shield-alt"></i>
+                            </button>
                             <button onclick="deleteMR('${m.$id}')" style="width:32px; height:32px; background:rgba(244,63,94,0.1); color:#f43f5e; border:none; border-radius:8px; cursor:pointer; transition:0.3s">
                                 <i class="fas fa-trash-alt"></i>
                             </button>
@@ -1370,6 +1385,16 @@
                 await databases.updateDocument(DB_ID, 'employees', id, { isApproved: true });
                 loadDashboardData();
             } catch(e) { alert("Error approving MR"); }
+        }
+
+        async function toggleAdminRole(id, currentRole) {
+            const newRole = currentRole === 'Admin' ? 'MR' : 'Admin';
+            if(!confirm(`Change role to ${newRole}?`)) return;
+            try {
+                await databases.updateDocument(DB_ID, 'employees', id, { role: newRole });
+                alert(`Role updated to ${newRole}`);
+                loadDashboardData();
+            } catch(e) { alert("Error updating role: " + e.message); }
         }
 
         function renderAttendance(logs) {

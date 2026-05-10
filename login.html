@@ -127,14 +127,24 @@
             account.createOAuth2Session('google', url, url);
         }
 
-        function redirect(user) {
+        async function redirect(user) {
             console.log("[Login] Redirecting user: " + user.email);
-            // ONLY THESE TWO ARE ADMINS
-            if(user.email === 'pratikverma025@gmail.com' || user.email === 'wolterpharma@gmail.com' || user.email === 'admin.wolter@gmail.com') {
+            const uid = user.email.replace(/[@.]/g, '-');
+            const superAdmins = ['pratikverma025@gmail.com', 'wolterpharma@gmail.com', 'admin.wolter@gmail.com'];
+            
+            let isAdmin = superAdmins.includes(user.email);
+            
+            if(!isAdmin) {
+                try {
+                    const emp = await databases.getDocument('69ff3a310008961aa77d', 'employees', uid);
+                    if(emp.role === 'Admin') isAdmin = true;
+                } catch(e) {}
+            }
+
+            if(isAdmin) {
                 const path = window.location.pathname.includes('samir-app') ? '/samir-app/admin.html' : '/admin.html';
                 location.href = path;
             } else {
-                // EVERYONE ELSE GOES TO MR DASHBOARD
                 const path = window.location.pathname.includes('samir-app') ? '/samir-app/dashboard.html' : '/dashboard.html';
                 location.href = path;
             }
