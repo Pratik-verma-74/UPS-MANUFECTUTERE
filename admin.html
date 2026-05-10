@@ -536,7 +536,24 @@
                 <div class="glass-card">
                     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:25px; flex-wrap:wrap; gap:15px">
                         <h2>Registered Doctors</h2>
-                        <input type="text" id="doc-search" class="input-field" placeholder="Search..." style="max-width:250px" oninput="filterDoctors()">
+                        <div style="display:flex; gap:10px; flex:1; max-width:600px">
+                            <input type="text" id="doc-search" class="input-field" placeholder="Search by name, clinic or MR..." oninput="filterDoctors()">
+                            <button class="btn-action btn-primary" onclick="toggleAddDocForm()"><i class="fas fa-plus"></i> Add Doctor</button>
+                        </div>
+                    </div>
+
+                    <div id="add-doc-form" class="glass" style="display:none; padding:25px; margin-bottom:30px; border:1px solid var(--primary); border-radius:var(--radius)">
+                        <h3 style="margin-bottom:20px">Register New Doctor</h3>
+                        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:15px">
+                            <div class="input-group"><label class="stat-label">Doctor Name</label><input type="text" id="new-doc-name" class="input-field" placeholder="e.g. Dr. Samir"></div>
+                            <div class="input-group"><label class="stat-label">Specialization</label><input type="text" id="new-doc-spec" class="input-field" placeholder="e.g. Cardiologist"></div>
+                            <div class="input-group"><label class="stat-label">Clinic/Hospital</label><input type="text" id="new-doc-clinic" class="input-field" placeholder="Full address/name"></div>
+                            <div class="input-group"><label class="stat-label">Mobile Number</label><input type="text" id="new-doc-mobile" class="input-field" placeholder="Contact number"></div>
+                        </div>
+                        <div style="margin-top:20px; display:flex; gap:10px">
+                            <button class="btn-action btn-primary" onclick="saveNewDoctor()"><i class="fas fa-save"></i> Save Doctor</button>
+                            <button class="btn-action" onclick="toggleAddDocForm()" style="background:rgba(255,255,255,0.05)">Cancel</button>
+                        </div>
                     </div>
                     <div class="table-container">
                         <table>
@@ -1007,6 +1024,29 @@
                 (employeeMap[d.userId] && employeeMap[d.userId].toLowerCase().includes(q))
             );
             renderDoctors(filtered);
+        }
+
+        function toggleAddDocForm() {
+            const f = document.getElementById('add-doc-form');
+            f.style.display = f.style.display === 'none' ? 'block' : 'none';
+        }
+
+        async function saveNewDoctor() {
+            const name = document.getElementById('new-doc-name').value.trim();
+            const spec = document.getElementById('new-doc-spec').value.trim();
+            const clinic = document.getElementById('new-doc-clinic').value.trim();
+            const mobile = document.getElementById('new-doc-mobile').value.trim();
+
+            if(!name) return alert("Name is required");
+
+            try {
+                await databases.createDocument(DB_ID, 'doctors', Appwrite.ID.unique(), {
+                    name, specialization: spec, clinic, mobile, userId: 'admin'
+                });
+                alert("Doctor Registered!");
+                toggleAddDocForm();
+                loadDashboardData();
+            } catch(e) { alert("Error: " + e.message); }
         }
 
         async function deleteDoctor(id) {
