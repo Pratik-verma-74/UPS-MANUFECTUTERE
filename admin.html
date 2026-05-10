@@ -516,15 +516,21 @@
 
         let editingAnnId = null;
 
+        let editingAnnId = null;
+
         async function sendAnnouncement() {
             const title = document.getElementById('ann-title').value;
             const msg = document.getElementById('ann-msg').value;
-            if(!title || !msg) return alert("Please fill all fields");
+            if(!msg) return alert("Please type a message");
 
-            const payload = { message: msg };
-            // Optional fields - only add if they exist in your schema
-            if(title) payload.title = title;
-            payload.date = new Date().toLocaleDateString();
+            // Since your database doesn't have a 'title' column, 
+            // we'll put the title inside the message for visibility.
+            const fullMessage = title ? `[${title.toUpperCase()}]\n${msg}` : msg;
+            
+            const payload = { 
+                message: fullMessage,
+                date: new Date().toISOString() // Appwrite 'datetime' requires ISO format
+            };
 
             try {
                 if(editingAnnId) {
@@ -532,7 +538,8 @@
                     alert("Announcement Updated!");
                     editingAnnId = null;
                 } else {
-                    await databases.createDocument(DB_ID, 'announcements', ID.unique(), payload);
+                    // Use Appwrite.ID to avoid "ID is not defined" error
+                    await databases.createDocument(DB_ID, 'announcements', Appwrite.ID.unique(), payload);
                     alert("Announcement Broadcasted!");
                 }
                 document.getElementById('ann-title').value = '';
@@ -540,21 +547,21 @@
                 loadDashboardData();
             } catch(e) { 
                 console.error(e);
-                alert("Appwrite Error: " + e.message + "\n\nTip: Check if 'title' and 'date' attributes exist in your 'announcements' collection."); 
+                alert("Appwrite Error: " + e.message); 
             }
         }
 
         function renderAnnouncements(anns) {
             const html = anns.map(a => {
                 const safeMsg = (a.message || "").replace(/`/g, "\\`").replace(/\${/g, "\\${");
-                const safeTitle = (a.title || "").replace(/'/g, "\\'");
                 return `
                 <div style="padding:15px; border-bottom:1px solid var(--card-border); position:relative">
-                    <div style="font-weight:800; color:var(--primary)">${a.title || 'Broadcast'}</div>
-                    <div style="font-size:0.9rem; margin-top:5px">${a.message}</div>
-                    <div style="font-size:0.7rem; color:var(--text-dim); margin-top:5px">${a.date || new Date(a.$createdAt).toLocaleDateString()}</div>
+                    <div style="font-size:0.9rem; margin-top:5px; white-space:pre-wrap">${a.message}</div>
+                    <div style="font-size:0.7rem; color:var(--text-dim); margin-top:8px">
+                        <i class="far fa-calendar-alt"></i> ${new Date(a.date || a.$createdAt).toLocaleString()}
+                    </div>
                     <div style="position:absolute; top:15px; right:15px; display:flex; gap:10px">
-                        <i class="fas fa-edit" onclick="editAnnouncement('${a.$id}', '${safeTitle}', \`${safeMsg}\`)" style="cursor:pointer; color:var(--primary); font-size:0.9rem"></i>
+                        <i class="fas fa-edit" onclick="editAnnouncement('${a.$id}', '', \`${safeMsg}\`)" style="cursor:pointer; color:var(--primary); font-size:0.9rem"></i>
                         <i class="fas fa-trash-alt" onclick="deleteAnnouncement('${a.$id}')" style="cursor:pointer; color:#f43f5e; font-size:0.9rem"></i>
                     </div>
                 </div>
