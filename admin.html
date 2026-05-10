@@ -175,19 +175,27 @@
         }
 
         async function init() {
+            console.log("[Admin] Starting Init...");
             try {
                 const user = await account.get();
+                console.log("[Admin] Account Verified: " + user.email);
+                document.getElementById('admin-name').textContent = user.name || "Admin";
                 loadData();
-            } catch(e) { location.href = 'login.html'; }
+            } catch(e) { 
+                console.log("[Admin] Auth Failed, Redirecting...");
+                location.href = 'login.html'; 
+            }
         }
 
         async function loadData() {
+            console.log("[Admin] Data Loading Started...");
             try {
                 const [mrs, docs, orders] = await Promise.all([
                     databases.listDocuments(DB_ID, 'employees'),
                     databases.listDocuments(DB_ID, 'doctors'),
                     databases.listDocuments(DB_ID, 'orders')
                 ]);
+                console.log("[Admin] Data Fetch Success!");
 
                 document.getElementById('count-mrs').textContent = mrs.total;
                 document.getElementById('count-docs').textContent = docs.total;
@@ -197,8 +205,9 @@
                 renderChart(orders.documents);
                 
                 document.getElementById('loader').classList.add('hidden');
+                console.log("[Admin] Dashboard Ready!");
             } catch(e) { 
-                console.error(e);
+                console.error("[Admin] Load Error:", e);
                 document.getElementById('loader').classList.add('hidden');
             }
         }
