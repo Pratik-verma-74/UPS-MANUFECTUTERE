@@ -392,6 +392,14 @@
         async function init() {
             try {
                 const user = await account.get();
+                
+                // FINAL SECURITY CHECK: ONLY THESE TWO ARE ALLOWED IN ADMIN
+                if(user.email !== 'pratikverma025@gmail.com' && user.email !== 'wolterpharma@gmail.com') {
+                    console.error("[Security] Unauthorized Access Attempt!");
+                    location.href = 'login.html';
+                    return;
+                }
+
                 document.getElementById('admin-name-sidebar').textContent = user.name;
                 document.getElementById('admin-email').textContent = user.email;
                 document.getElementById('admin-avatar').src = `https://ui-avatars.com/api/?name=${user.name.replace(' ','+')}&background=3b82f6&color=fff`;
