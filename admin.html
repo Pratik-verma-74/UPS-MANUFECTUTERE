@@ -514,33 +514,63 @@
             } catch(e) { console.error(e); }
         }
 
+        let editingAnnId = null;
+
         async function sendAnnouncement() {
             const title = document.getElementById('ann-title').value;
             const msg = document.getElementById('ann-msg').value;
             if(!title || !msg) return alert("Please fill all fields");
 
             try {
-                await databases.createDocument(DB_ID, 'announcements', ID.unique(), {
-                    title: title,
-                    message: msg,
-                    date: new Date().toLocaleDateString()
-                });
-                alert("Announcement Broadcasted!");
+                if(editingAnnId) {
+                    await databases.updateDocument(DB_ID, 'announcements', editingAnnId, {
+                        title: title,
+                        message: msg
+                    });
+                    alert("Announcement Updated!");
+                    editingAnnId = null;
+                } else {
+                    await databases.createDocument(DB_ID, 'announcements', ID.unique(), {
+                        title: title,
+                        message: msg,
+                        date: new Date().toLocaleDateString()
+                    });
+                    alert("Announcement Broadcasted!");
+                }
                 document.getElementById('ann-title').value = '';
                 document.getElementById('ann-msg').value = '';
                 loadDashboardData();
-            } catch(e) { alert("Error broadcasting message"); }
+            } catch(e) { alert("Error processing announcement"); }
         }
 
         function renderAnnouncements(anns) {
             const html = anns.map(a => `
-                <div style="padding:15px; border-bottom:1px solid var(--card-border)">
-                    <div style="font-weight:800; color:var(--primary)">${a.title}</div>
+                <div style="padding:15px; border-bottom:1px solid var(--card-border); position:relative">
+                    <div style="font-weight:800; color:var(--primary)">${a.title || 'Broadcast'}</div>
                     <div style="font-size:0.9rem; margin-top:5px">${a.message}</div>
-                    <div style="font-size:0.7rem; color:var(--text-dim); margin-top:5px">${a.date}</div>
+                    <div style="font-size:0.7rem; color:var(--text-dim); margin-top:5px">${a.date || 'Today'}</div>
+                    <div style="position:absolute; top:15px; right:15px; display:flex; gap:10px">
+                        <i class="fas fa-edit" onclick="editAnnouncement('${a.$id}', '${a.title}', \`${a.message}\`)" style="cursor:pointer; color:var(--primary); font-size:0.9rem"></i>
+                        <i class="fas fa-trash-alt" onclick="deleteAnnouncement('${a.$id}')" style="cursor:pointer; color:#f43f5e; font-size:0.9rem"></i>
+                    </div>
                 </div>
             `).join('');
             document.getElementById('ann-history').innerHTML = html || 'No history found.';
+        }
+
+        async function deleteAnnouncement(id) {
+            if(!confirm("Are you sure you want to delete this announcement?")) return;
+            try {
+                await databases.deleteDocument(DB_ID, 'announcements', id);
+                loadDashboardData();
+            } catch(e) { alert("Error deleting"); }
+        }
+
+        function editAnnouncement(id, title, msg) {
+            document.getElementById('ann-title').value = title;
+            document.getElementById('ann-msg').value = msg;
+            editingAnnId = id;
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         function initMap() {
