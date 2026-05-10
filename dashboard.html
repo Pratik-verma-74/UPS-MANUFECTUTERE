@@ -2729,7 +2729,7 @@
         if (currentUser) {
           currentUserId = currentUser.email.replace(/[@.]/g, '-');
           const prefs = currentUser.prefs || {};
-          const admins = ['pratikverma025@gmail.com', 'wolterpharma@gmail.com'];
+          const admins = ['pratikverma025@gmail.com', 'wolterpharma@gmail.com', 'admin.wolter@gmail.com'];
           userRole = admins.includes(currentUser.email) ? 'Admin' : (prefs.role || 'MR');
 
           setLoadingText('Loading your data...');

@@ -890,7 +890,7 @@
                 const user = await account.get();
                 
                 // FINAL SECURITY CHECK: ONLY THESE TWO ARE ALLOWED IN ADMIN
-                if(user.email !== 'pratikverma025@gmail.com' && user.email !== 'wolterpharma@gmail.com') {
+                if(user.email !== 'pratikverma025@gmail.com' && user.email !== 'wolterpharma@gmail.com' && user.email !== 'admin.wolter@gmail.com') {
                     console.error("[Security] Unauthorized Access Attempt!");
                     location.href = 'login.html';
                     return;

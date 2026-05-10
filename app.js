@@ -3,7 +3,7 @@ import { account, databases, ID } from './appwrite.js';
 console.log('App.js initialized');
 
 // Configuration
-const ADMINS = ['pratikverma025@gmail.com', 'wolterpharma@gmail.com'];
+const ADMINS = ['pratikverma025@gmail.com', 'wolterpharma@gmail.com', 'admin.wolter@gmail.com'];
 const DATABASE_ID = '69ff3a310008961aa77d';
 const COLLECTION_ID = 'employees';
 

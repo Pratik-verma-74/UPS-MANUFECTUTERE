@@ -203,7 +203,7 @@
           const emp = await databases.getDocument(DB_ID, COL_EMP, uid);
           userRole = emp.role || 'MR';
         } catch(e) {
-          if(user.email === 'pratikverma025@gmail.com') userRole = 'Admin';
+          if(user.email === 'pratikverma025@gmail.com' || user.email === 'admin.wolter@gmail.com') userRole = 'Admin';
         }
 
         updateClock();
@@ -212,7 +212,7 @@
         await fetchToday();
         await fetchHistory();
 
-        if(userRole === 'Admin' || user.email === 'pratikverma025@gmail.com') {
+        if(userRole === 'Admin' || user.email === 'pratikverma025@gmail.com' || user.email === 'admin.wolter@gmail.com') {
           document.getElementById('admin-view').classList.remove('hidden');
           await fetchMRs();
           await fetchAllAttendance();

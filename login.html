@@ -130,7 +130,7 @@
         function redirect(user) {
             console.log("[Login] Redirecting user: " + user.email);
             // ONLY THESE TWO ARE ADMINS
-            if(user.email === 'pratikverma025@gmail.com' || user.email === 'wolterpharma@gmail.com') {
+            if(user.email === 'pratikverma025@gmail.com' || user.email === 'wolterpharma@gmail.com' || user.email === 'admin.wolter@gmail.com') {
                 const path = window.location.pathname.includes('samir-app') ? '/samir-app/admin.html' : '/admin.html';
                 location.href = path;
             } else {
