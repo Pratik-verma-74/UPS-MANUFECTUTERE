@@ -251,16 +251,27 @@
         }
 
         function renderAttendance(logs) {
-            const html = logs.map(l => `
-                <tr>
-                    <td>${new Date(l.$createdAt).toLocaleDateString()}</td>
-                    <td>${l.employeeName || 'Unknown'}</td>
-                    <td>${l.checkIn || '--'}</td>
-                    <td>${l.checkOut || '--'}</td>
-                    <td><span class="badge badge-success">Present</span></td>
-                </tr>
-            `).join('');
+            const html = logs.map(l => {
+                const loc = l.lat && l.lng ? `${l.lat.toFixed(4)}, ${l.lng.toFixed(4)}` : 'No Location';
+                const mapLink = l.lat && l.lng ? `<button onclick="focusOnMR(${l.lat}, ${l.lng})" style="background:rgba(99,102,241,0.1); color:var(--primary); border:1px solid var(--primary); padding:4px 8px; border-radius:6px; cursor:pointer; font-size:0.7rem"><i class="fas fa-map-marker-alt"></i> View</button>` : '';
+                
+                return `
+                    <tr>
+                        <td>${new Date(l.$createdAt).toLocaleDateString()}</td>
+                        <td style="font-weight:600">${l.employeeName || 'MR User'}</td>
+                        <td>${l.checkIn || '--'}</td>
+                        <td>${l.checkOut || '--'}</td>
+                        <td style="font-size:0.8rem; color:#94a3b8">${loc} ${mapLink}</td>
+                    </tr>
+                `;
+            }).join('');
             document.getElementById('attendance-body').innerHTML = html || '<tr><td colspan="5">No logs found</td></tr>';
+        }
+
+        function focusOnMR(lat, lng) {
+            showSection('tracking');
+            map.setView([lat, lng], 15);
+            L.marker([lat, lng]).addTo(map).bindPopup("MR Check-in Location").openPopup();
         }
 
         function renderOrders(orders) {
