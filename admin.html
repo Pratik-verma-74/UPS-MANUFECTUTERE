@@ -521,40 +521,44 @@
             const msg = document.getElementById('ann-msg').value;
             if(!title || !msg) return alert("Please fill all fields");
 
+            const payload = { message: msg };
+            // Optional fields - only add if they exist in your schema
+            if(title) payload.title = title;
+            payload.date = new Date().toLocaleDateString();
+
             try {
                 if(editingAnnId) {
-                    await databases.updateDocument(DB_ID, 'announcements', editingAnnId, {
-                        title: title,
-                        message: msg
-                    });
+                    await databases.updateDocument(DB_ID, 'announcements', editingAnnId, payload);
                     alert("Announcement Updated!");
                     editingAnnId = null;
                 } else {
-                    await databases.createDocument(DB_ID, 'announcements', ID.unique(), {
-                        title: title,
-                        message: msg,
-                        date: new Date().toLocaleDateString()
-                    });
+                    await databases.createDocument(DB_ID, 'announcements', ID.unique(), payload);
                     alert("Announcement Broadcasted!");
                 }
                 document.getElementById('ann-title').value = '';
                 document.getElementById('ann-msg').value = '';
                 loadDashboardData();
-            } catch(e) { alert("Error processing announcement"); }
+            } catch(e) { 
+                console.error(e);
+                alert("Appwrite Error: " + e.message + "\n\nTip: Check if 'title' and 'date' attributes exist in your 'announcements' collection."); 
+            }
         }
 
         function renderAnnouncements(anns) {
-            const html = anns.map(a => `
+            const html = anns.map(a => {
+                const safeMsg = (a.message || "").replace(/`/g, "\\`").replace(/\${/g, "\\${");
+                const safeTitle = (a.title || "").replace(/'/g, "\\'");
+                return `
                 <div style="padding:15px; border-bottom:1px solid var(--card-border); position:relative">
                     <div style="font-weight:800; color:var(--primary)">${a.title || 'Broadcast'}</div>
                     <div style="font-size:0.9rem; margin-top:5px">${a.message}</div>
-                    <div style="font-size:0.7rem; color:var(--text-dim); margin-top:5px">${a.date || 'Today'}</div>
+                    <div style="font-size:0.7rem; color:var(--text-dim); margin-top:5px">${a.date || new Date(a.$createdAt).toLocaleDateString()}</div>
                     <div style="position:absolute; top:15px; right:15px; display:flex; gap:10px">
-                        <i class="fas fa-edit" onclick="editAnnouncement('${a.$id}', '${a.title}', \`${a.message}\`)" style="cursor:pointer; color:var(--primary); font-size:0.9rem"></i>
+                        <i class="fas fa-edit" onclick="editAnnouncement('${a.$id}', '${safeTitle}', \`${safeMsg}\`)" style="cursor:pointer; color:var(--primary); font-size:0.9rem"></i>
                         <i class="fas fa-trash-alt" onclick="deleteAnnouncement('${a.$id}')" style="cursor:pointer; color:#f43f5e; font-size:0.9rem"></i>
                     </div>
                 </div>
-            `).join('');
+            `}).join('');
             document.getElementById('ann-history').innerHTML = html || 'No history found.';
         }
 
