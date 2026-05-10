@@ -17,49 +17,61 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <style>
     :root {
-      --glass-bg: rgba(15, 23, 42, 0.85);
-      --glass-card: rgba(255, 255, 255, 0.06);
-      --glass-border: rgba(255, 255, 255, 0.10);
       --primary: #3B82F6;
       --accent: #8B5CF6;
       --success: #10B981;
       --danger: #EF4444;
       --warning: #F59E0B;
-      --text-primary: #F1F5F9;
+      --bg-deep: #020617;
+      --bg-card: rgba(15, 23, 42, 0.6);
+      --glass: rgba(255, 255, 255, 0.03);
+      --glass-border: rgba(255, 255, 255, 0.08);
+      --text-main: #F8FAFC;
       --text-secondary: #94A3B8;
-      --bg-deep: #060D1A;
-      --bg-mid: #0F172A;
-      --bg-card: #1E293B;
-      --radius-card: 20px;
-      --radius-modal: 28px;
-      --sidebar-w: 280px;
+      --radius-card: 28px;
+      --radius-btn: 18px;
+      --shadow-lg: 0 20px 40px -12px rgba(0, 0, 0, 0.5);
     }
 
     * {
       box-sizing: border-box;
       margin: 0;
-      padding: 0
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
     }
 
-    html {
-      font-size: 16px;
-    }
-
-    html,
-    body {
+    html, body {
+      width: 100%;
       height: 100%;
-      font-family: 'DM Sans', sans-serif;
-      background: var(--bg-deep);
-      color: var(--text-primary);
       overflow-x: hidden;
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
+      font-size: 19px; /* INCREASED SCALE FOR MOBILE APP FEEL */
     }
 
     body {
-      background: radial-gradient(ellipse at 20% 10%, rgba(59, 130, 246, 0.12) 0%, transparent 50%), radial-gradient(ellipse at 80% 80%, rgba(139, 92, 246, 0.10) 0%, transparent 50%), var(--bg-deep);
-      min-height: 100vh;
-      font-size: 1rem;
+      font-family: 'DM Sans', sans-serif;
+      background-color: var(--bg-deep);
+      background-image: 
+        radial-gradient(at 0% 0%, rgba(59, 130, 246, 0.1) 0px, transparent 50%),
+        radial-gradient(at 100% 0%, rgba(139, 92, 246, 0.08) 0px, transparent 50%);
+      color: var(--text-main);
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Brute-force hide MedBot card on Home page */
+    #page-home .glass:has(.fa-robot), 
+    #page-home .glass-card:has(.fa-robot),
+    #page-home .doc-card:has(.fa-robot) {
+        display: none !important;
+    }
+
+    .page {
+        padding: 0 12px 120px !important;
+    }
+    
+    .glass {
+        border-radius: var(--radius-card) !important;
+        margin-bottom: 20px !important;
     }
 
     ::-webkit-scrollbar {
@@ -1834,13 +1846,13 @@
 
   <!-- LOADING SCREEN -->
   <div id="loading-screen">
-    <div class="logo-container" style="align-items:center; transform:scale(1.2); margin-bottom:40px">
-      <div style="font-size:4rem; margin-bottom:20px; filter:drop-shadow(0 0 20px var(--primary))">💊</div>
-      <div style="font-family:'Syne', sans-serif; font-weight:900; font-size:2.5rem; color:#fff; line-height:1">Wolter</div>
-      <div style="font-size:0.8rem; font-weight:700; color:var(--primary); text-transform:uppercase; letter-spacing:2px; margin-top:5px">Pharmaceutical Pvt. Ltd.</div>
+    <div class="logo-container" style="align-items:center; transform:scale(1.1); margin-bottom:40px">
+      <div style="font-size:5rem; margin-bottom:25px; filter:drop-shadow(0 0 30px var(--primary))">💊</div>
+      <div style="font-family:'Syne', sans-serif; font-weight:900; font-size:2.8rem; color:#fff; line-height:1; letter-spacing:-1px">Wolter</div>
+      <div style="font-size:0.85rem; font-weight:700; color:var(--primary); text-transform:uppercase; letter-spacing:2.5px; margin-top:8px">Pharmaceutical Pvt. Ltd.</div>
     </div>
-    <div class="loading-spinner"></div>
-    <div class="loading-text" id="loading-text" style="margin-top:20px; font-weight:600; letter-spacing:1px">WOLTER CLOUD CONNECTED</div>
+    <div class="loading-spinner" style="width:50px; height:50px; border-width:4px"></div>
+    <div class="loading-text" id="loading-text" style="margin-top:30px; font-weight:700; letter-spacing:2px; color:var(--primary); font-size:0.7rem">WOLTER CLOUD SECURE</div>
   </div>
 
   <!-- SIDEBAR OVERLAY -->
