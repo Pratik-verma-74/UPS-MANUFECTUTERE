@@ -3640,18 +3640,40 @@
     //  BILL GENERATOR
     // ============================================================
     function renderBillPage() {
-      const orders = getOrders();
-      const docs = getDoctors();
+      const orders = _orders || [];
+      const docs = _doctors || [];
       const sel = document.getElementById('bill-order-select');
       if (!sel) return;
+
+      console.log("Rendering Bill Page with", orders.length, "orders");
+
+      if (orders.length === 0) {
+        sel.innerHTML = '<option value="">-- Loading Orders... --</option>';
+        // Retry in 1 second if still empty and we are on the bill page
+        if (currentPage === 'bill') {
+          setTimeout(renderBillPage, 1000);
+        }
+        return;
+      }
+
       const prev = sel.value;
-      sel.innerHTML = '<option value="">-- Select Order --</option>' +
-        [...orders].sort((a, b) => new Date(b.$createdAt || 0) - new Date(a.$createdAt || 0))
-          .map(o => {
-            const dName = o.doctorName || (docs.find(d => d.$id === o.doctor_id)?.name) || 'Unknown Doctor';
-            return `<option value="${o.$id}">#${(o.$id || '').slice(-6).toUpperCase()} – ${esc(dName)} (${fmtDate((o.date || '').slice(0, 10))})</option>`;
-          }).join('');
-      if (prev) { sel.value = prev; renderBillPreview(); }
+      let html = '<option value="">-- Select Order --</option>';
+      
+      // Sort orders by creation date (newest first)
+      const sorted = [...orders].sort((a, b) => {
+        const da = new Date(a.$createdAt || 0);
+        const db = new Date(b.$createdAt || 0);
+        return db - da;
+      });
+
+      sorted.forEach(o => {
+        const dName = o.doctorName || (docs.find(d => d.$id === o.doctor_id)?.name) || 'Unknown Doctor';
+        const dateStr = (o.date || '').slice(0, 10);
+        html += `<option value="${o.$id}">#${(o.$id || '').slice(-6).toUpperCase()} – ${esc(dName)} (${fmtDate(dateStr)})</option>`;
+      });
+
+      sel.innerHTML = html;
+      if (prev) sel.value = prev;
     }
 
     function openBillForOrder(orderId) {
