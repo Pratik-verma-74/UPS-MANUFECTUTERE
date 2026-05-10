@@ -2126,10 +2126,16 @@
       <div class="section-title"><span>Bill Generator</span></div>
       <div class="glass" style="padding:16px;border-radius:var(--radius-card);margin-bottom:14px">
         <div class="form-group">
-          <label class="form-label">Select Order</label>
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:5px">
+            <label class="form-label">Select Order</label>
+            <button class="btn btn-outline btn-sm" onclick="renderBillPage()" style="padding:2px 8px; font-size:0.65rem">
+              <i class="fas fa-sync-alt"></i> Refresh Orders
+            </button>
+          </div>
           <select class="form-control" id="bill-order-select" onchange="renderBillPreview()">
             <option value="">-- Select Order --</option>
           </select>
+          <div style="font-size:0.6rem; color:var(--text-secondary); margin-top:4px">App Version: v2.2 (Selector Fix)</div>
         </div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
           <div class="form-group" style="margin-bottom:0">
