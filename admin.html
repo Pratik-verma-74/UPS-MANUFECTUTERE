@@ -3,7 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Wolter Admin Pro - Enterprise Suite</title>
+    <title>Wolter Admin Pro (v3.2 - Diagnostic)</title>
+    <script>
+        // EMERGENCY DEBUGGER
+        window.onerror = function(msg, url, line) {
+            alert("Diagnostic Error: " + msg + "\nAt line: " + line);
+            if(document.getElementById('loader')) document.getElementById('loader').classList.add('hidden');
+        };
+        setTimeout(() => { if(document.getElementById('loader')) document.getElementById('loader').classList.add('hidden'); }, 3000);
+    </script>
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#6366f1">
     <!-- SECURITY HEADERS -->
