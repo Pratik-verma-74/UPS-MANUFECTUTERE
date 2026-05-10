@@ -914,11 +914,11 @@
                 renderDoctors(allDoctors);
                 renderMedicines(allMedicines);
                 initMap();
-                updateMap(mrs.documents);
+                updateMap(attendance.documents);
 
                 if(!trackingInterval) {
                     trackingInterval = setInterval(() => {
-                        databases.listDocuments(DB_ID, 'employees').then(res => updateMap(res.documents));
+                        databases.listDocuments(DB_ID, 'attendance', [Query.orderDesc('$createdAt'), Query.limit(100)]).then(res => updateMap(res.documents));
                     }, 30000);
                 }
 
@@ -1100,29 +1100,54 @@
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
         }
 
-        function updateMap(mrs) {
+        function updateMap(attendanceRecords) {
             const listEl = document.getElementById('mr-track-list');
             let listHtml = '';
             
-            mrs.forEach(m => {
-                if(m.lat && m.lng) {
-                    if(markers[m.$id]) {
-                        markers[m.$id].setLatLng([m.lat, m.lng]);
-                    } else {
-                        markers[m.$id] = L.marker([m.lat, m.lng]).addTo(map)
-                            .bindPopup(`<b>${m.name}</b><br>Last seen: ${m.lat.toFixed(4)}, ${m.lng.toFixed(4)}`);
-                    }
+            // Map to store latest location per MR
+            const latestLocations = {};
+
+            // Processing records from most recent to oldest
+            attendanceRecords.forEach(att => {
+                if (att.location && att.location.includes(',')) {
+                    const parts = att.location.split(',');
+                    const lat = parseFloat(parts[0].trim());
+                    const lng = parseFloat(parts[1].trim());
                     
-                    listHtml += `
-                        <div onclick="focusOnMR(${m.lat}, ${m.lng})" style="padding:12px; background:rgba(255,255,255,0.05); border-radius:12px; margin-bottom:10px; cursor:pointer; border:1px solid transparent; transition:0.3s" onmouseover="this.style.borderColor='var(--primary)'" onmouseout="this.style.borderColor='transparent'">
-                            <div style="font-weight:600; font-size:0.9rem">${m.name}</div>
-                            <div style="font-size:0.7rem; color:var(--text-dim)"><i class="fas fa-map-marker-alt"></i> ${m.lat.toFixed(4)}, ${m.lng.toFixed(4)}</div>
-                        </div>
-                    `;
+                    if (!isNaN(lat) && !isNaN(lng) && !latestLocations[att.userId]) {
+                        latestLocations[att.userId] = {
+                            lat, lng, 
+                            name: att.mrName || employeeMap[att.userId] || 'MR',
+                            time: att.checkInTime || 'Active'
+                        };
+                    }
                 }
             });
+
+            Object.keys(latestLocations).forEach(uid => {
+                const loc = latestLocations[uid];
+                if(markers[uid]) {
+                    markers[uid].setLatLng([loc.lat, loc.lng]);
+                } else {
+                    markers[uid] = L.marker([loc.lat, loc.lng]).addTo(map)
+                        .bindPopup(`<b>${loc.name}</b><br>Last Seen: ${loc.time}`);
+                }
+                
+                listHtml += `
+                    <div onclick="focusOnMR(${loc.lat}, ${loc.lng})" style="padding:15px; background:rgba(255,255,255,0.05); border:1px solid var(--glass-border); border-radius:16px; margin-bottom:12px; cursor:pointer; transition:0.3s">
+                        <div style="display:flex; justify-content:space-between; align-items:center">
+                            <div style="font-weight:700; font-size:0.95rem">${loc.name}</div>
+                            <span style="font-size:0.6rem; background:rgba(16,185,129,0.1); color:var(--success); padding:2px 8px; border-radius:10px">Online</span>
+                        </div>
+                        <div style="font-size:0.75rem; color:var(--text-dim); margin-top:5px">
+                            <i class="fas fa-map-marker-alt" style="color:var(--primary)"></i> ${loc.lat.toFixed(4)}, ${loc.lng.toFixed(4)}
+                        </div>
+                        <div style="font-size:0.65rem; color:var(--primary); margin-top:4px; font-weight:600">Last Active: ${loc.time}</div>
+                    </div>
+                `;
+            });
             
-            if(listEl) listEl.innerHTML = listHtml || '<p style="font-size:0.8rem; color:var(--text-dim)">No MRs online</p>';
+            if(listEl) listEl.innerHTML = listHtml || '<div style="text-align:center; padding:40px; color:var(--text-dim)"><i class="fas fa-satellite-dish fa-2x" style="margin-bottom:10px; display:block"></i>No MRs currently in field</div>';
         }
 
         function focusOnMR(lat, lng) {
