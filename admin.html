@@ -282,20 +282,16 @@
                         <div class="stat-grid">
                             <div class="stat-card">
                                 <div class="stat-label">Total MRs</div>
-                                <div class="stat-value" id="count-mrs">2</div>
+                                <div class="stat-value" id="count-mrs">0</div>
                             </div>
                             <div class="stat-card">
                                 <div class="stat-label">Total Doctors</div>
-                                <div class="stat-value" id="count-docs">10</div>
+                                <div class="stat-value" id="count-docs">0</div>
                             </div>
                             <div class="stat-card">
                                 <div class="stat-label">Total Sales (₹)</div>
-                                <div class="stat-value" id="count-sales">716</div>
+                                <div class="stat-value" id="count-sales">0</div>
                             </div>
-                        </div>
-                        <div class="glass-panel">
-                            <h3 style="margin-top:0">Sales Performance</h3>
-                            <canvas id="salesChart" style="height:350px"></canvas>
                         </div>
                     </div>
 
@@ -418,7 +414,6 @@
                 document.getElementById('count-sales').textContent = totalSales;
 
                 renderActivity(orders.documents);
-                renderSalesChart(orders.documents);
                 document.getElementById('loader').classList.add('hidden');
             } catch(e) { console.error(e); }
         }
@@ -437,63 +432,6 @@
             document.getElementById('prev-name').textContent = document.getElementById('id-name').value || "MR. NAME";
             document.getElementById('prev-id').textContent = document.getElementById('id-emp').value || "PV-AUTO-XXXX";
             document.getElementById('prev-mob').textContent = "+91 " + (document.getElementById('id-mob').value || "0000000000");
-        }
-
-        let salesChartInstance = null;
-        function renderSalesChart(orders) {
-            const ctx = document.getElementById('salesChart').getContext('2d');
-            
-            const salesData = {};
-            orders.forEach(o => {
-                const date = new Date(o.$createdAt).toLocaleDateString('en-GB');
-                salesData[date] = (salesData[date] || 0) + (parseInt(o.amount) || 0);
-            });
-
-            const sortedDates = Object.keys(salesData).sort((a, b) => {
-                const [da, ma, ya] = a.split('/');
-                const [db, mb, yb] = b.split('/');
-                return new Date(ya, ma-1, da) - new Date(yb, mb-1, db);
-            });
-            const sortedValues = sortedDates.map(d => salesData[d]);
-
-            if(salesChartInstance) salesChartInstance.destroy();
-
-            salesChartInstance = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: sortedDates,
-                    datasets: [{
-                        label: 'Revenue (₹)',
-                        data: sortedValues,
-                        borderColor: '#3b82f6',
-                        backgroundColor: 'rgba(59, 130, 246, 0.2)',
-                        borderWidth: 4,
-                        pointRadius: 5,
-                        pointBackgroundColor: '#3b82f6',
-                        fill: true,
-                        tension: 0.4
-                    }]
-                },
-                options: { 
-                    responsive: true, 
-                    maintainAspectRatio: false,
-                    plugins: { 
-                        legend: { display: false },
-                        tooltip: { backgroundColor: '#1e293b' }
-                    },
-                    scales: {
-                        y: { 
-                            beginAtZero: true,
-                            grid: { color: 'rgba(255,255,255,0.05)' },
-                            ticks: { color: '#94a3b8' }
-                        },
-                        x: { 
-                            grid: { display: false },
-                            ticks: { color: '#94a3b8' }
-                        }
-                    }
-                }
-            });
         }
 
         async function doLogout() {
