@@ -841,6 +841,7 @@
     </main>
 
     <script>
+        let mapHasAutoCentered = false;
         const { Client, Account, Databases, Query } = Appwrite;
         const client = new Client().setEndpoint('https://nyc.cloud.appwrite.io/v1').setProject('69fec2ae0012dadf853f');
         const account = new Account(client);
@@ -865,6 +866,17 @@
             if(window.innerWidth <= 992) {
                 document.getElementById('sidebar').classList.remove('open');
                 document.getElementById('sidebar-overlay').classList.remove('open');
+            }
+
+            if(id === 'tracking' && map) {
+                setTimeout(() => {
+                    map.invalidateSize();
+                    const markerArray = Object.values(markers);
+                    if (markerArray.length > 0) {
+                        const group = new L.featureGroup(markerArray);
+                        map.fitBounds(group.getBounds().pad(0.1));
+                    }
+                }, 300);
             }
         }
 
@@ -1193,6 +1205,14 @@
             });
             
             if(listEl) listEl.innerHTML = listHtml || '<div style="text-align:center; padding:40px; color:var(--text-dim)"><i class="fas fa-satellite-dish fa-2x" style="margin-bottom:10px; display:block"></i>No MRs currently in field</div>';
+
+            // Auto-center once at start if markers exist
+            const markerArray = Object.values(markers);
+            if (markerArray.length > 0 && !mapHasAutoCentered && map) {
+                const group = new L.featureGroup(markerArray);
+                map.fitBounds(group.getBounds().pad(0.1));
+                mapHasAutoCentered = true;
+            }
         }
 
         function focusOnMR(lat, lng) {
