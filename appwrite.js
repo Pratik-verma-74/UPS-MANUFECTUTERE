@@ -8,7 +8,4 @@ const account = new Account(client);
 const databases = new Databases(client);
 const storage = new Storage(client);
 
-// Ping the Appwrite backend server to verify the setup
-client.ping();
-
 export { client, account, databases, storage, ID, Query };
