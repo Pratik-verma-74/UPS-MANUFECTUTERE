@@ -408,7 +408,7 @@
                 const [mrs, docs, orders] = await Promise.all([
                     databases.listDocuments(DB_ID, 'employees'),
                     databases.listDocuments(DB_ID, 'doctors'),
-                    databases.listDocuments(DB_ID, 'orders', [Query.orderDesc('$createdAt'), Query.limit(10)])
+                    databases.listDocuments(DB_ID, 'orders', [Query.orderDesc('$createdAt'), Query.limit(100)])
                 ]);
 
                 document.getElementById('count-mrs').textContent = mrs.total;
@@ -439,29 +439,36 @@
             document.getElementById('prev-mob').textContent = "+91 " + (document.getElementById('id-mob').value || "0000000000");
         }
 
+        let salesChartInstance = null;
         function renderSalesChart(orders) {
             const ctx = document.getElementById('salesChart').getContext('2d');
             
-            // Group by Date and Sort Chronologically
             const salesData = {};
             orders.forEach(o => {
-                const date = new Date(o.$createdAt).toLocaleDateString();
+                const date = new Date(o.$createdAt).toLocaleDateString('en-GB');
                 salesData[date] = (salesData[date] || 0) + (parseInt(o.amount) || 0);
             });
 
-            const sortedDates = Object.keys(salesData).sort((a, b) => new Date(a) - new Date(b));
+            const sortedDates = Object.keys(salesData).sort((a, b) => {
+                const [da, ma, ya] = a.split('/');
+                const [db, mb, yb] = b.split('/');
+                return new Date(ya, ma-1, da) - new Date(yb, mb-1, db);
+            });
             const sortedValues = sortedDates.map(d => salesData[d]);
 
-            new Chart(ctx, {
+            if(salesChartInstance) salesChartInstance.destroy();
+
+            salesChartInstance = new Chart(ctx, {
                 type: 'line',
                 data: {
-                    labels: sortedDates.map(d => d.split('/')[1] + '/' + d.split('/')[0]), // MM/DD format
+                    labels: sortedDates,
                     datasets: [{
-                        label: 'Total Sales (₹)',
+                        label: 'Revenue (₹)',
                         data: sortedValues,
                         borderColor: '#3b82f6',
-                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
-                        borderWidth: 3,
+                        backgroundColor: 'rgba(59, 130, 246, 0.2)',
+                        borderWidth: 4,
+                        pointRadius: 5,
                         pointBackgroundColor: '#3b82f6',
                         fill: true,
                         tension: 0.4
@@ -472,7 +479,7 @@
                     maintainAspectRatio: false,
                     plugins: { 
                         legend: { display: false },
-                        tooltip: { backgroundColor: '#1e293b', titleColor: '#fff', bodyColor: '#fff' }
+                        tooltip: { backgroundColor: '#1e293b' }
                     },
                     scales: {
                         y: { 
