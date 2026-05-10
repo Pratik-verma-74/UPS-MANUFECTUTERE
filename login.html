@@ -113,6 +113,7 @@
         }
 
         function handleGoogle() {
+            alert("Google Login Initiated! Redirecting...");
             toggleLoad(true);
             const url = "https://medicalmrreport.netlify.app/login.html";
             account.createOAuth2Session('google', url, url);
