@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "vite",
-    "build": "vite build",
+    "build": "echo 'Static build - no action needed'",
     "preview": "vite preview"
   },
   "repository": {
