@@ -2398,6 +2398,21 @@
     </div>
   </div>
 
+  <!-- ANNOUNCEMENT MODAL -->
+  <div class="modal-overlay" id="modal-announcement">
+    <div class="modal" style="max-width:400px; border-top:5px solid var(--primary)">
+      <div class="modal-header">
+        <div class="modal-title">📢 New Announcement</div>
+        <button class="modal-close" onclick="closeModal('modal-announcement')"><i class="fas fa-times"></i></button>
+      </div>
+      <div id="ann-content" style="padding:15px 0; font-size:0.95rem; line-height:1.6; color:var(--text-primary)"></div>
+      <div id="ann-date" style="font-size:0.75rem; color:var(--text-secondary); margin-bottom:15px"></div>
+      <div class="modal-footer">
+        <button class="btn btn-primary" style="width:100%; justify-content:center" onclick="closeModal('modal-announcement')">Got it!</button>
+      </div>
+    </div>
+  </div>
+
   <!-- NOTIFICATION MODAL -->
   <div class="modal-overlay" id="modal-notif">
     <div class="modal notif-modal">
@@ -2446,6 +2461,7 @@
     const COL_DOCTORS = 'doctors';
     const COL_ORDERS = 'orders';
     const COL_SCHEDULES = 'schedules';
+    const COL_ANN = 'announcements';
 
     // VISIT REMINDER SYSTEM
     setInterval(() => {
@@ -2608,6 +2624,7 @@
           renderHome();
           hideLoading();
           setTimeout(() => showMorningNotif(false), 800);
+          setTimeout(() => checkAnnouncements(), 1500);
         } else {
           throw new Error('No user session');
         }
@@ -2740,6 +2757,29 @@
     // Convenience getters (return cached arrays)
     function getDoctors() { return _doctors; }
     function getOrders() { return _orders; }
+
+    async function checkAnnouncements() {
+      try {
+        const res = await databases.listDocuments(DATABASE_ID, COL_ANN, [
+          Query.orderDesc('$createdAt'),
+          Query.limit(1)
+        ]);
+        
+        if (res.documents.length > 0) {
+          const ann = res.documents[0];
+          const lastSeen = localStorage.getItem('last_ann_id');
+          
+          if (ann.$id !== lastSeen) {
+            document.getElementById('ann-content').innerHTML = ann.message.replace(/\n/g, '<br>');
+            document.getElementById('ann-date').textContent = 'Posted on: ' + fmtDate(ann.date || ann.$createdAt);
+            openModal('modal-announcement');
+            localStorage.setItem('last_ann_id', ann.$id);
+          }
+        }
+      } catch (e) {
+        console.error('Announcement Error:', e);
+      }
+    }
 
     // Parse medicines JSON string → array
     function parseMedicines(medicinesStr) {
