@@ -2722,7 +2722,7 @@
       if (page === 'doctors') renderDoctors();
       if (page === 'orders') renderOrders();
       if (page === 'reports') renderReports();
-      if (page === 'bill') populateBillOrders();
+      if (page === 'bill') renderBillPage();
       if (page === 'planner') {
         const sel = document.getElementById('plan-doc-select');
         sel.innerHTML = _doctors.map(d => `<option value="${d.name}">${d.name}</option>`).join('');
@@ -3641,12 +3641,16 @@
     // ============================================================
     function renderBillPage() {
       const orders = getOrders();
+      const docs = getDoctors();
       const sel = document.getElementById('bill-order-select');
       if (!sel) return;
       const prev = sel.value;
       sel.innerHTML = '<option value="">-- Select Order --</option>' +
         [...orders].sort((a, b) => new Date(b.$createdAt || 0) - new Date(a.$createdAt || 0))
-          .map(o => `<option value="${o.$id}">#${(o.$id || '').slice(-6).toUpperCase()} – ${esc(o.doctorName)} (${fmtDate((o.date || '').slice(0, 10))})</option>`).join('');
+          .map(o => {
+            const dName = o.doctorName || (docs.find(d => d.$id === o.doctor_id)?.name) || 'Unknown Doctor';
+            return `<option value="${o.$id}">#${(o.$id || '').slice(-6).toUpperCase()} – ${esc(dName)} (${fmtDate((o.date || '').slice(0, 10))})</option>`;
+          }).join('');
       if (prev) { sel.value = prev; renderBillPreview(); }
     }
 
@@ -3728,7 +3732,7 @@
           <td style="width:55%;vertical-align:top;padding:10px 12px;border:1px solid #999">
             <div style="font-size:10px;font-weight:bold;text-transform:uppercase;letter-spacing:0.5px;color:#555;margin-bottom:5px">Bill To:</div>
             <div style="font-size:15px;font-weight:bold;min-height:20px">${customerName || '&nbsp;'}</div>
-            <div style="font-size:12px;margin-top:6px;color:#333">Doctor: <strong>${esc(o.doctorName)}</strong></div>
+            <div style="font-size:12px;margin-top:6px;color:#333">Doctor: <strong>${esc(o.doctorName || (_doctors.find(d => d.$id === o.doctor_id)?.name) || 'Unknown Doctor')}</strong></div>
           </td>
           <td style="vertical-align:top;padding:10px 12px;border:1px solid #999">
             <table style="width:100%;border-collapse:collapse;font-size:12px">
@@ -3809,7 +3813,8 @@
       const sgstAmt = subtotal * sgstPct / 100;
       const grandTotal = subtotal + cgstAmt + sgstAmt;
 
-      let msg = `*WOLTER PHARMACEUTICAL PVT LTD*\n*GST Tax Invoice*\n━━━━━━━━━━━━━━━\n*Invoice No:* ${invoiceNo}\n*Doctor:* ${o.doctorName || ''}\n*Date:* ${fmtDate((o.date || '').slice(0, 10))}\n\n*Items:*\n`;
+      const dName = o.doctorName || (_doctors.find(d => d.$id === o.doctor_id)?.name) || 'Unknown Doctor';
+      let msg = `*WOLTER PHARMACEUTICAL PVT LTD*\n*GST Tax Invoice*\n━━━━━━━━━━━━━━━\n*Invoice No:* ${invoiceNo}\n*Doctor:* ${dName}\n*Date:* ${fmtDate((o.date || '').slice(0, 10))}\n\n*Items:*\n`;
       items.forEach((i, idx) => {
         const base = (Number(i.quantity) || 0) * (Number(i.price) || 0);
         msg += `${idx + 1}. ${i.medicine_name} × ${i.quantity} @ ₹${i.price} = ₹${base.toFixed(2)}\n`;
@@ -3836,7 +3841,8 @@
       const subject = encodeURIComponent(`Invoice from WOLTER PHARMACEUTICAL | ${invoiceNo}`);
       let body = `WOLTER PHARMACEUTICAL PVT LTD\nGST Tax Invoice\n${'─'.repeat(40)}\nInvoice No: ${invoiceNo}\n`;
       if (customerName) body += `Customer / Firm: ${customerName}\n`;
-      body += `Doctor: ${o.doctorName || ''}\nDate: ${fmtDate((o.date || '').slice(0, 10))}\n\nITEMS:\n`;
+      const dName = o.doctorName || (_doctors.find(d => d.$id === o.doctor_id)?.name) || 'Unknown Doctor';
+      body += `Doctor: ${dName}\nDate: ${fmtDate((o.date || '').slice(0, 10))}\n\nITEMS:\n`;
       items.forEach((i, idx) => { body += `${idx + 1}. ${i.medicine_name}\n   Qty: ${i.quantity} x Rs.${i.price} = Rs.${((Number(i.quantity) || 0) * (Number(i.price) || 0)).toFixed(2)}\n`; });
       body += `\n${'─'.repeat(40)}\nSubtotal: Rs.${subtotal.toFixed(2)}\nCGST @${cgstPct}%: Rs.${cgstAmt.toFixed(2)}\nSGST @${sgstPct}%: Rs.${sgstAmt.toFixed(2)}\nGrand Total: Rs.${grandTotal.toFixed(2)}\n\nPayment Status: ${o.payment_status || 'Unpaid'}\nDelivery Status: ${o.delivery_status || 'Pending'}\n\nThank you!\nWOLTER PHARMACEUTICAL PVT LTD`;
       window.open(`mailto:?subject=${subject}&body=${encodeURIComponent(body)}`, '_blank');
