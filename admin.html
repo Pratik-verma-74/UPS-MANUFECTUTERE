@@ -221,11 +221,36 @@
                 renderChart(orders.documents);
                 updateMap(mrs.documents);
 
+                // START LIVE POLLING
+                if(!trackingInterval) {
+                    trackingInterval = setInterval(() => {
+                        console.log("[Live] Polling MR Locations...");
+                        databases.listDocuments(DB_ID, 'employees').then(res => updateMap(res.documents));
+                    }, 30000); // Every 30s
+                }
+
                 document.getElementById('loader').classList.add('hidden');
             } catch(e) { 
                 console.error(e);
                 document.getElementById('loader').classList.add('hidden');
             }
+        }
+
+        let markers = {};
+        function updateMap(mrs) {
+            mrs.forEach(m => {
+                if(m.lat && m.lng) {
+                    if(markers[m.$id]) {
+                        markers[m.$id].setLatLng([m.lat, m.lng]);
+                    } else {
+                        markers[m.$id] = L.marker([m.lat, m.lng]).addTo(map)
+                            .bindPopup(`<b>${m.name}</b><br>Role: Medical Representative<br>Status: Online`);
+                    }
+                }
+            });
+            // Auto-center on first MR if map just loaded
+            const first = mrs.find(m => m.lat && m.lng);
+            if(first && map.getZoom() < 6) map.setView([first.lat, first.lng], 10);
         }
 
         function renderTeam(mrs) {
