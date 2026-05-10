@@ -365,11 +365,53 @@
                 </div>
             </div>
 
-            <!-- OTHER SECTIONS (Placeholders) -->
-            <div id="attendance" class="section"><h2>Attendance Management Content...</h2></div>
-            <div id="tracking" class="section"><div id="map" style="height:500px; border-radius:20px"></div></div>
-            <div id="team" class="section"><h2>Team Management Content...</h2></div>
-            <div id="orders" class="section"><h2>Order History Table...</h2></div>
+            <!-- ATTENDANCE SECTION -->
+            <div id="attendance" class="section">
+                <div class="glass-panel">
+                    <h3>MR Attendance Logs</h3>
+                    <table>
+                        <thead>
+                            <tr><th>Date</th><th>MR Name</th><th>Check In</th><th>Check Out</th><th>Location</th></tr>
+                        </thead>
+                        <tbody id="attendance-body"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- TRACKING SECTION -->
+            <div id="tracking" class="section">
+                <div id="map" style="height:500px; border-radius:24px; border:1px solid var(--card-border)"></div>
+            </div>
+
+            <!-- TEAM SECTION -->
+            <div id="team" class="section">
+                <div class="glass-panel">
+                    <h3>Team Management</h3>
+                    <table>
+                        <thead>
+                            <tr><th>Name</th><th>Email</th><th>Status</th><th>Action</th></tr>
+                        </thead>
+                        <tbody id="team-body"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- ORDERS SECTION -->
+            <div id="orders" class="section">
+                <div class="glass-panel">
+                    <h3>Sales & Orders History</h3>
+                    <table>
+                        <thead>
+                            <tr><th>Date</th><th>Doctor</th><th>MR Name</th><th>Total</th><th>Paid</th><th>Due</th></tr>
+                        </thead>
+                        <tbody id="orders-body"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="docs" class="section"><h2>Doctors List Content...</h2></div>
+            <div id="announcements" class="section"><h2>Announcements...</h2></div>
+            <div id="medicines" class="section"><h2>Medicines Inventory...</h2></div>
 
         </div>
     </main>
@@ -407,12 +449,17 @@
             } catch(e) { location.href = 'login.html'; }
         }
 
+        let trackingInterval;
+        let map;
+        let markers = {};
+
         async function loadDashboardData() {
             try {
-                const [mrs, docs, orders] = await Promise.all([
+                const [mrs, docs, orders, attendance] = await Promise.all([
                     databases.listDocuments(DB_ID, 'employees'),
                     databases.listDocuments(DB_ID, 'doctors'),
-                    databases.listDocuments(DB_ID, 'orders', [Query.orderDesc('$createdAt'), Query.limit(100)])
+                    databases.listDocuments(DB_ID, 'orders', [Query.orderDesc('$createdAt'), Query.limit(100)]),
+                    databases.listDocuments(DB_ID, 'attendance', [Query.orderDesc('$createdAt'), Query.limit(50)])
                 ]);
 
                 document.getElementById('count-mrs').textContent = mrs.total;
@@ -421,9 +468,110 @@
                 const totalSales = orders.documents.reduce((acc, curr) => acc + (parseInt(curr.amount) || 0), 0);
                 document.getElementById('count-sales').textContent = totalSales;
 
+                const pending = mrs.documents.filter(m => !m.isApproved).length;
+                if(pending > 0) {
+                    document.getElementById('notif-badge').textContent = pending;
+                    document.getElementById('notif-badge').style.display = 'flex';
+                }
+
                 renderActivity(orders.documents);
+                renderTeam(mrs.documents);
+                renderAttendance(attendance.documents);
+                renderOrders(orders.documents);
+                initMap();
+                updateMap(mrs.documents);
+
+                if(!trackingInterval) {
+                    trackingInterval = setInterval(() => {
+                        databases.listDocuments(DB_ID, 'employees').then(res => updateMap(res.documents));
+                    }, 30000);
+                }
+
                 document.getElementById('loader').classList.add('hidden');
             } catch(e) { console.error(e); }
+        }
+
+        function initMap() {
+            if(map) return;
+            map = L.map('map').setView([20.5937, 78.9629], 5);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+        }
+
+        function updateMap(mrs) {
+            mrs.forEach(m => {
+                if(m.lat && m.lng) {
+                    if(markers[m.$id]) {
+                        markers[m.$id].setLatLng([m.lat, m.lng]);
+                    } else {
+                        markers[m.$id] = L.marker([m.lat, m.lng]).addTo(map)
+                            .bindPopup(`<b>${m.name}</b><br>Status: Online`);
+                    }
+                }
+            });
+        }
+
+        function renderTeam(mrs) {
+            const html = mrs.map(m => `
+                <tr>
+                    <td>${m.name}</td>
+                    <td>${m.email}</td>
+                    <td><span class="badge ${m.isApproved ? 'badge-success' : 'badge-pending'}">${m.isApproved ? 'Active' : 'Pending'}</span></td>
+                    <td>
+                        ${!m.isApproved ? `<button onclick="approveMR('${m.$id}')" style="background:var(--primary); color:#fff; border:none; padding:5px 10px; border-radius:6px; cursor:pointer">Approve</button>` : `<i class="fas fa-check-circle" style="color:#10b981"></i>`}
+                    </td>
+                </tr>
+            `).join('');
+            document.getElementById('team-body').innerHTML = html || '<tr><td colspan="4">No MRs found</td></tr>';
+        }
+
+        async function approveMR(id) {
+            if(!confirm("Approve this MR?")) return;
+            try {
+                await databases.updateDocument(DB_ID, 'employees', id, { isApproved: true });
+                loadDashboardData();
+            } catch(e) { alert("Error approving MR"); }
+        }
+
+        function renderAttendance(logs) {
+            const html = logs.map(l => {
+                const loc = l.lat && l.lng ? `${l.lat.toFixed(4)}, ${l.lng.toFixed(4)}` : 'No Location';
+                const mapLink = l.lat && l.lng ? `<button onclick="focusOnMR(${l.lat}, ${l.lng})" style="background:rgba(59,130,246,0.1); color:var(--primary); border:none; padding:4px 8px; border-radius:6px; cursor:pointer; font-size:0.7rem"><i class="fas fa-map-marker-alt"></i></button>` : '';
+                return `
+                    <tr>
+                        <td>${new Date(l.$createdAt).toLocaleDateString()}</td>
+                        <td style="font-weight:600">${l.employeeName || 'MR User'}</td>
+                        <td>${l.checkIn || '--'}</td>
+                        <td>${l.checkOut || '--'}</td>
+                        <td>${loc} ${mapLink}</td>
+                    </tr>
+                `;
+            }).join('');
+            document.getElementById('attendance-body').innerHTML = html || '<tr><td colspan="5">No logs found</td></tr>';
+        }
+
+        function focusOnMR(lat, lng) {
+            showSection('tracking');
+            map.setView([lat, lng], 15);
+            L.marker([lat, lng]).addTo(map).bindPopup("MR Location").openPopup();
+        }
+
+        function renderOrders(orders) {
+            const html = orders.map(o => {
+                const total = parseInt(o.amount) || 0;
+                const paid = parseInt(o.paidAmount) || 0;
+                const due = total - paid;
+                return `
+                    <tr>
+                        <td>${new Date(o.$createdAt).toLocaleDateString()}</td>
+                        <td>${o.doctorName || 'General'}</td>
+                        <td>${o.employeeName || 'MR'}</td>
+                        <td>₹${total}</td>
+                        <td style="color:#10b981">₹${paid}</td>
+                        <td style="color:#f43f5e">₹${due}</td>
+                    </tr>
+                `;
+            }).join('');
+            document.getElementById('orders-body').innerHTML = html || '<tr><td colspan="6">No orders found</td></tr>';
         }
 
         function renderActivity(orders) {
