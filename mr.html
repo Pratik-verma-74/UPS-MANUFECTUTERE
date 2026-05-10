@@ -2563,6 +2563,7 @@
           setLoadingText('Loading your data...');
           await Promise.all([fetchDoctors(), fetchOrders()]);
 
+          populateDoctorSelectors(); // Populate dropdowns
           updateSidebarUser();
           renderHome();
           hideLoading();
@@ -2748,6 +2749,25 @@
         setSyncing(false, true);
         console.error('refreshPage error:', e);
       }
+    }
+
+    function populateDoctorSelectors() {
+      const docs = getDoctors();
+      // 1. Visit Planner Selector
+      const planSel = document.getElementById('plan-doc-select');
+      if (planSel) {
+        planSel.innerHTML = '<option value="">-- Select Doctor --</option>' +
+          docs.map(d => `<option value="${d.name}">${esc(d.name)}</option>`).join('');
+      }
+      // 2. Order Modal Selector
+      const orderSel = document.getElementById('order-doctor-select');
+      if (orderSel) {
+        const current = orderSel.value;
+        orderSel.innerHTML = '<option value="">Select Doctor...</option>' +
+          docs.map(d => `<option value="${d.$id}" ${d.$id === current ? 'selected' : ''}>${esc(d.name)}</option>`).join('');
+      }
+      // 3. Bill Page Orders (which contains doctor names)
+      renderBillPage();
     }
 
     // ============================================================
