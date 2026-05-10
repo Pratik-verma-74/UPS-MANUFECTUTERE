@@ -409,7 +409,24 @@
                 </div>
             </div>
 
-            <div id="docs" class="section"><h2>Doctors List Content...</h2></div>
+            <!-- DOCTORS SECTION -->
+            <div id="docs" class="section">
+                <div class="glass-panel">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px">
+                        <h3 style="margin:0">Registered Doctors Directory</h3>
+                        <div class="search-box">
+                            <i class="fas fa-search"></i>
+                            <input type="text" id="doc-search" placeholder="Search by name, clinic or MR..." oninput="filterDoctors()">
+                        </div>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr><th>Doctor Name</th><th>Specialty</th><th>Clinic</th><th>Mobile</th><th>Added By (MR)</th><th>Action</th></tr>
+                        </thead>
+                        <tbody id="docs-body"></tbody>
+                    </table>
+                </div>
+            </div>
             <!-- ANNOUNCEMENTS SECTION -->
             <div id="announcements" class="section">
                 <div class="portal-grid">
@@ -474,17 +491,26 @@
         let map;
         let markers = {};
 
+        let allDoctors = [];
+        let employeeMap = {};
+
         async function loadDashboardData() {
             try {
                 const [mrs, docs, orders, attendance, announcements] = await Promise.all([
                     databases.listDocuments(DB_ID, 'employees'),
-                    databases.listDocuments(DB_ID, 'doctors'),
+                    databases.listDocuments(DB_ID, 'doctors', [Query.limit(500)]),
                     databases.listDocuments(DB_ID, 'orders', [Query.orderDesc('$createdAt'), Query.limit(100)]),
                     databases.listDocuments(DB_ID, 'attendance', [Query.orderDesc('$createdAt'), Query.limit(50)]),
                     databases.listDocuments(DB_ID, 'announcements', [Query.orderDesc('$createdAt'), Query.limit(10)])
                 ]);
 
-                // ... (existing stats)
+                allDoctors = docs.documents;
+                // Create a map of MR names for easy lookup
+                mrs.documents.forEach(m => {
+                    const id = m.userId || m.email.replace(/[@.]/g, '-');
+                    employeeMap[id] = m.name;
+                });
+
                 document.getElementById('count-mrs').textContent = mrs.total;
                 document.getElementById('count-docs').textContent = docs.total;
                 const totalSales = orders.documents.reduce((acc, curr) => acc + (parseInt(curr.amount) || 0), 0);
@@ -501,6 +527,7 @@
                 renderAttendance(attendance.documents);
                 renderOrders(orders.documents);
                 renderAnnouncements(announcements.documents);
+                renderDoctors(allDoctors);
                 initMap();
                 updateMap(mrs.documents);
 
@@ -512,6 +539,40 @@
 
                 document.getElementById('loader').classList.add('hidden');
             } catch(e) { console.error(e); }
+        }
+
+        function renderDoctors(docs) {
+            const html = docs.map(d => `
+                <tr>
+                    <td style="font-weight:600">${d.name}</td>
+                    <td><span class="badge" style="background:rgba(139,92,246,0.1); color:var(--accent)">${d.specialization || 'General'}</span></td>
+                    <td>${d.clinic || '--'}</td>
+                    <td>${d.mobile || '--'}</td>
+                    <td><span style="font-size:0.8rem; color:var(--text-dim)">${employeeMap[d.userId] || 'System Added'}</span></td>
+                    <td>
+                        <i class="fas fa-trash-alt" onclick="deleteDoctor('${d.$id}')" style="cursor:pointer; color:#f43f5e"></i>
+                    </td>
+                </tr>
+            `).join('');
+            document.getElementById('docs-body').innerHTML = html || '<tr><td colspan="6">No doctors found</td></tr>';
+        }
+
+        function filterDoctors() {
+            const q = document.getElementById('doc-search').value.toLowerCase();
+            const filtered = allDoctors.filter(d => 
+                d.name.toLowerCase().includes(q) || 
+                (d.clinic && d.clinic.toLowerCase().includes(q)) ||
+                (employeeMap[d.userId] && employeeMap[d.userId].toLowerCase().includes(q))
+            );
+            renderDoctors(filtered);
+        }
+
+        async function deleteDoctor(id) {
+            if(!confirm("Are you sure you want to delete this doctor?")) return;
+            try {
+                await databases.deleteDocument(DB_ID, 'doctors', id);
+                loadDashboardData();
+            } catch(e) { alert("Error deleting doctor"); }
         }
 
         let editingAnnId = null;
