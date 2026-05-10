@@ -102,7 +102,7 @@ async function redirectByRole(user) {
     if (user.email === ADMIN_EMAIL) {
         window.location.href = 'admin.html';
     } else {
-        window.location.href = 'mr.html';
+        window.location.href = 'dashboard.html';
     }
 }
 
