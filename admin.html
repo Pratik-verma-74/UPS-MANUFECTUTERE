@@ -410,7 +410,28 @@
             </div>
 
             <div id="docs" class="section"><h2>Doctors List Content...</h2></div>
-            <div id="announcements" class="section"><h2>Announcements...</h2></div>
+            <!-- ANNOUNCEMENTS SECTION -->
+            <div id="announcements" class="section">
+                <div class="portal-grid">
+                    <div class="glass-panel">
+                        <h3 style="margin-top:0"><i class="fas fa-bullhorn"></i> New Broadcast</h3>
+                        <label class="stat-label">MESSAGE TITLE</label>
+                        <input type="text" id="ann-title" class="form-input" placeholder="e.g. Urgent Meeting">
+                        
+                        <label class="stat-label">ANNOUNCEMENT CONTENT</label>
+                        <textarea id="ann-msg" class="form-input" rows="4" placeholder="Type your message here..."></textarea>
+                        
+                        <button class="btn-export" onclick="sendAnnouncement()"><i class="fas fa-paper-plane"></i> Broadcast to All MRs</button>
+                    </div>
+
+                    <div class="glass-panel">
+                        <h3 style="margin-top:0">Announcement History</h3>
+                        <div id="ann-history" style="max-height:400px; overflow-y:auto">
+                            <!-- JS Dynamic -->
+                        </div>
+                    </div>
+                </div>
+            </div>
             <div id="medicines" class="section"><h2>Medicines Inventory...</h2></div>
 
         </div>
@@ -455,16 +476,17 @@
 
         async function loadDashboardData() {
             try {
-                const [mrs, docs, orders, attendance] = await Promise.all([
+                const [mrs, docs, orders, attendance, announcements] = await Promise.all([
                     databases.listDocuments(DB_ID, 'employees'),
                     databases.listDocuments(DB_ID, 'doctors'),
                     databases.listDocuments(DB_ID, 'orders', [Query.orderDesc('$createdAt'), Query.limit(100)]),
-                    databases.listDocuments(DB_ID, 'attendance', [Query.orderDesc('$createdAt'), Query.limit(50)])
+                    databases.listDocuments(DB_ID, 'attendance', [Query.orderDesc('$createdAt'), Query.limit(50)]),
+                    databases.listDocuments(DB_ID, 'announcements', [Query.orderDesc('$createdAt'), Query.limit(10)])
                 ]);
 
+                // ... (existing stats)
                 document.getElementById('count-mrs').textContent = mrs.total;
                 document.getElementById('count-docs').textContent = docs.total;
-                
                 const totalSales = orders.documents.reduce((acc, curr) => acc + (parseInt(curr.amount) || 0), 0);
                 document.getElementById('count-sales').textContent = totalSales;
 
@@ -478,6 +500,7 @@
                 renderTeam(mrs.documents);
                 renderAttendance(attendance.documents);
                 renderOrders(orders.documents);
+                renderAnnouncements(announcements.documents);
                 initMap();
                 updateMap(mrs.documents);
 
@@ -489,6 +512,35 @@
 
                 document.getElementById('loader').classList.add('hidden');
             } catch(e) { console.error(e); }
+        }
+
+        async function sendAnnouncement() {
+            const title = document.getElementById('ann-title').value;
+            const msg = document.getElementById('ann-msg').value;
+            if(!title || !msg) return alert("Please fill all fields");
+
+            try {
+                await databases.createDocument(DB_ID, 'announcements', ID.unique(), {
+                    title: title,
+                    message: msg,
+                    date: new Date().toLocaleDateString()
+                });
+                alert("Announcement Broadcasted!");
+                document.getElementById('ann-title').value = '';
+                document.getElementById('ann-msg').value = '';
+                loadDashboardData();
+            } catch(e) { alert("Error broadcasting message"); }
+        }
+
+        function renderAnnouncements(anns) {
+            const html = anns.map(a => `
+                <div style="padding:15px; border-bottom:1px solid var(--card-border)">
+                    <div style="font-weight:800; color:var(--primary)">${a.title}</div>
+                    <div style="font-size:0.9rem; margin-top:5px">${a.message}</div>
+                    <div style="font-size:0.7rem; color:var(--text-dim); margin-top:5px">${a.date}</div>
+                </div>
+            `).join('');
+            document.getElementById('ann-history').innerHTML = html || 'No history found.';
         }
 
         function initMap() {

@@ -1898,7 +1898,17 @@
     <header class="app-header">
       <div style="display:flex;align-items:center;gap:10px">
         <button class="menu-btn" onclick="openSidebar()" title="Menu"><i class="fas fa-bars"></i></button>
-        <div class="logo-container">
+        <div id="announcement-banner" style="display:none; background:linear-gradient(90deg, #3B82F6, #8B5CF6); color:#fff; padding:12px 20px; font-size:0.85rem; position:sticky; top:65px; z-index:90; border-bottom:1px solid rgba(255,255,255,0.1)">
+      <div style="display:flex; align-items:center; gap:10px">
+        <i class="fas fa-bullhorn"></i>
+        <div style="flex:1">
+          <strong id="ann-title-disp">Notice:</strong> 
+          <span id="ann-msg-disp">Loading announcement...</span>
+        </div>
+        <button onclick="document.getElementById('announcement-banner').style.display='none'" style="background:transparent; border:none; color:#fff; opacity:0.7; cursor:pointer"><i class="fas fa-times"></i></button>
+      </div>
+    </div>
+     <div class="logo-container">
           <div class="logo-main">💊 Wolter</div>
           <div class="logo-sub">Pharmaceutical Pvt. Ltd.</div>
         </div>
@@ -2815,13 +2825,23 @@
         
         if (res.documents.length > 0) {
           const ann = res.documents[0];
-          const lastSeen = localStorage.getItem('last_ann_id');
           
+          // 1. ALWAYS POPULATE THE PERSISTENT BANNER
+          const banner = document.getElementById('announcement-banner');
+          if(banner) {
+            document.getElementById('ann-title-disp').textContent = ann.title + ':';
+            document.getElementById('ann-msg-disp').textContent = ann.message;
+            banner.style.display = 'block';
+          }
+
+          // 2. ONLY SHOW MODAL IF IT'S A NEW MESSAGE
+          const lastSeen = localStorage.getItem('last_ann_id');
           if (ann.$id !== lastSeen) {
-            document.getElementById('ann-content').innerHTML = ann.message.replace(/\n/g, '<br>');
-            document.getElementById('ann-date').textContent = 'Posted on: ' + fmtDate(ann.date || ann.$createdAt);
+            const annContent = document.getElementById('ann-content');
+            const annDate = document.getElementById('ann-date');
+            if(annContent) annContent.innerHTML = ann.message.replace(/\n/g, '<br>');
+            if(annDate) annDate.textContent = 'Posted on: ' + fmtDate(ann.date || ann.$createdAt);
             
-            // Show both Popup and Push Notification
             openModal('modal-announcement');
             showPushNotification("New Announcement!", ann.message.slice(0, 50) + (ann.message.length > 50 ? '...' : ''));
             
