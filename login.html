@@ -3,8 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Wolter Pharma (v4.2 - LIVE)</title>
-    <script>console.log("Wolter Auth v4.2 - Active");</script>
+    <title>Login - Wolter Pharma (v4.3 - CACHE KILLER)</title>
+    <script>
+        // NUCLEAR CACHE KILLER
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.getRegistrations().then(function(registrations) {
+                for(let registration of registrations) { registration.unregister(); }
+            });
+        }
+        console.log("Wolter Auth v4.3 - Service Workers Cleared");
+    </script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/appwrite@14.0.1"></script>
