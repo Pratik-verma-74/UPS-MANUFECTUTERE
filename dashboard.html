@@ -3151,11 +3151,11 @@
       const recent = [...orders]
         .filter(o => {
           // FEATURE 2: Automatically REMOVE entries after 24 hours (from display)
-          const orderTime = new Date(o.timestamp || o.$createdAt);
+          const orderTime = new Date(o.$createdAt);
           const diffHours = (now - orderTime) / (1000 * 60 * 60);
           return diffHours <= 24;
         })
-        .sort((a, b) => new Date(b.timestamp || b.$createdAt) - new Date(a.timestamp || a.$createdAt))
+        .sort((a, b) => new Date(b.$createdAt) - new Date(a.$createdAt))
         .slice(0, 5);
 
       const recentEl = document.getElementById('home-recent-orders');
@@ -3345,7 +3345,7 @@
       <div>
         <div class="order-id">#${(o.$id || '').slice(-6).toUpperCase()}</div>
         <div class="order-doc">${esc(o.doctorName || '')}</div>
-        <div class="order-date">${fmtDate(dateStr)} ${o.timestamp ? '· ' + timeAgo(o.timestamp) : ''}</div>
+        <div class="order-date">${fmtDate(dateStr)} · ${timeAgo(o.$createdAt)}</div>
       </div>
       <div style="display:flex;flex-direction:column;gap:4px;align-items:flex-end">
         <span class="badge badge-${psBadge}">${o.payment_status || 'Unpaid'}</span>
@@ -3558,8 +3558,7 @@
         payment_status: payStatus,
         delivery_status: document.getElementById('order-delivery').value,
         notes: document.getElementById('order-notes').value.trim(),
-        date: document.getElementById('order-date').value || todayStr(),
-        timestamp: new Date().toISOString() // FEATURE 2: Store precise timestamp
+        date: document.getElementById('order-date').value || todayStr()
       };
 
       setBtn('save-order-btn', true, 'Saving...');
