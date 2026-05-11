@@ -156,27 +156,19 @@
             try {
                 // Try updating first (for returning users)
                 await databases.updateDocument('69ff3a310008961aa77d', 'employees', uid, {
-                    lastLogin: userData.loginTime,
                     name: userData.name
                 });
             } catch(e) {
-                // If document doesn't exist or update fails, attempt to create
+                // If document doesn't exist, create it with essential fields only
                 try {
                     await databases.createDocument('69ff3a310008961aa77d', 'employees', uid, {
                         name: userData.name,
                         email: userData.email,
-                        lastLogin: userData.loginTime,
-                        isApproved: false, // Default to pending approval
                         role: 'MR',
-                        designation: 'Medical Representative',
-                        userId: uid
+                        isApproved: false
                     });
-                    console.log("New employee record created for: " + user.email);
                 } catch(createErr) {
-                    // If it's a 409, it means it already exists, so we ignore
-                    if(createErr.code !== 409) {
-                        console.error("Error creating/updating employee record:", createErr);
-                    }
+                    if(createErr.code !== 409) console.error("Create Error:", createErr);
                 }
             }
             // ----------------------------------------------
