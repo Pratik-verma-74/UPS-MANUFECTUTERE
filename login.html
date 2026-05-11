@@ -154,30 +154,29 @@
             // Track in database (Update or Create employee record)
             const uid = user.email.replace(/[@.]/g, '-');
             try {
+                // Try updating first (for returning users)
                 await databases.updateDocument('69ff3a310008961aa77d', 'employees', uid, {
                     lastLogin: userData.loginTime,
-                    name: userData.name, 
-                    photo: userData.photo 
+                    name: userData.name
                 });
             } catch(e) {
-                // If document doesn't exist (404), create it
-                if (e.code === 404) {
-                    try {
-                        await databases.createDocument('69ff3a310008961aa77d', 'employees', uid, {
-                            name: userData.name,
-                            email: userData.email,
-                            photo: userData.photo,
-                            lastLogin: userData.loginTime,
-                            isApproved: false, // Default to pending approval for new users
-                            role: 'MR',
-                            userId: uid
-                        });
-                        console.log("New employee record created for: " + user.email);
-                    } catch(createErr) {
-                        console.error("Error creating employee record:", createErr);
+                // If document doesn't exist or update fails, attempt to create
+                try {
+                    await databases.createDocument('69ff3a310008961aa77d', 'employees', uid, {
+                        name: userData.name,
+                        email: userData.email,
+                        lastLogin: userData.loginTime,
+                        isApproved: false, // Default to pending approval
+                        role: 'MR',
+                        designation: 'Medical Representative',
+                        userId: uid
+                    });
+                    console.log("New employee record created for: " + user.email);
+                } catch(createErr) {
+                    // If it's a 409, it means it already exists, so we ignore
+                    if(createErr.code !== 409) {
+                        console.error("Error creating/updating employee record:", createErr);
                     }
-                } else {
-                    console.error("Error updating employee record:", e);
                 }
             }
             // ----------------------------------------------
