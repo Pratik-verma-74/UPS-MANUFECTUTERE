@@ -2812,6 +2812,19 @@
         if (el) { el.className = badgeCls; el.innerHTML = badgeHTML; }
       });
 
+      // FEATURE 1: Load and display captured user photo
+      const savedData = JSON.parse(localStorage.getItem('wolter_user_data') || '{}');
+      if (savedData.photo) {
+        const sbAvatar = document.getElementById('sb-avatar');
+        const setAvatar = document.getElementById('settings-avatar');
+        if (sbAvatar) {
+            sbAvatar.innerHTML = `<img src="${savedData.photo}" style="width:100%; height:100%; border-radius:inherit; object-fit:cover">`;
+        }
+        if (setAvatar) {
+            setAvatar.innerHTML = `<img src="${savedData.photo}" style="width:100%; height:100%; border-radius:inherit; object-fit:cover">`;
+        }
+      }
+
       if (isAdmin) document.getElementById('admin-panel').style.display = 'block';
 
       document.getElementById('sb-stat-docs').textContent = _doctors.length;
@@ -3004,6 +3017,24 @@
     function todayStr() { return new Date().toISOString().slice(0, 10); }
     function esc(s) { if (!s) return ''; return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;'); }
 
+    // --- FEATURE 2: Time Ago Helper ---
+    function timeAgo(date) {
+      if (!date) return '';
+      const seconds = Math.floor((new Date() - new Date(date)) / 1000);
+      let interval = seconds / 31536000;
+      if (interval > 1) return Math.floor(interval) + " years ago";
+      interval = seconds / 2592000;
+      if (interval > 1) return Math.floor(interval) + " months ago";
+      interval = seconds / 86400;
+      if (interval > 1) return Math.floor(interval) + " days ago";
+      interval = seconds / 3600;
+      if (interval > 1) return Math.floor(interval) + " hours ago";
+      interval = seconds / 60;
+      if (interval > 1) return Math.floor(interval) + " mins ago";
+      return "just now";
+    }
+    // ----------------------------------
+
     function toast(msg, type = 'info') {
       const container = document.getElementById('toast-container');
       if (!container) return;
@@ -3115,11 +3146,21 @@
       </div>`).join('');
       }
 
-      // Recent orders
-      const recent = [...orders].sort((a, b) => new Date(b.$createdAt || 0) - new Date(a.$createdAt || 0)).slice(0, 3);
+      // Recent orders (Feature 2: Sorted by latest, filtered to 24h)
+      const now = new Date();
+      const recent = [...orders]
+        .filter(o => {
+          // FEATURE 2: Automatically REMOVE entries after 24 hours (from display)
+          const orderTime = new Date(o.timestamp || o.$createdAt);
+          const diffHours = (now - orderTime) / (1000 * 60 * 60);
+          return diffHours <= 24;
+        })
+        .sort((a, b) => new Date(b.timestamp || b.$createdAt) - new Date(a.timestamp || a.$createdAt))
+        .slice(0, 5);
+
       const recentEl = document.getElementById('home-recent-orders');
       if (recent.length === 0) {
-        recentEl.innerHTML = '<div class="empty-state"><i class="fas fa-shopping-bag"></i><p>No orders yet</p></div>';
+        recentEl.innerHTML = '<div class="empty-state"><i class="fas fa-shopping-bag"></i><p>No sales in last 24 hours</p></div>';
       } else {
         recentEl.innerHTML = recent.map(o => renderOrderCard(o, false)).join('');
       }
@@ -3304,7 +3345,7 @@
       <div>
         <div class="order-id">#${(o.$id || '').slice(-6).toUpperCase()}</div>
         <div class="order-doc">${esc(o.doctorName || '')}</div>
-        <div class="order-date">${fmtDate(dateStr)}</div>
+        <div class="order-date">${fmtDate(dateStr)} ${o.timestamp ? '· ' + timeAgo(o.timestamp) : ''}</div>
       </div>
       <div style="display:flex;flex-direction:column;gap:4px;align-items:flex-end">
         <span class="badge badge-${psBadge}">${o.payment_status || 'Unpaid'}</span>
@@ -3517,7 +3558,8 @@
         payment_status: payStatus,
         delivery_status: document.getElementById('order-delivery').value,
         notes: document.getElementById('order-notes').value.trim(),
-        date: document.getElementById('order-date').value || todayStr()
+        date: document.getElementById('order-date').value || todayStr(),
+        timestamp: new Date().toISOString() // FEATURE 2: Store precise timestamp
       };
 
       setBtn('save-order-btn', true, 'Saving...');
