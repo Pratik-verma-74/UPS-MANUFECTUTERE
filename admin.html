@@ -1000,7 +1000,7 @@
         async function loadDashboardData() {
             try {
                 const [mrs, docs, orders, attendance, announcements, meds] = await Promise.all([
-                    databases.listDocuments(DB_ID, 'employees'),
+                    databases.listDocuments(DB_ID, 'employees', [Query.limit(100)]),
                     databases.listDocuments(DB_ID, 'doctors', [Query.limit(500)]),
                     databases.listDocuments(DB_ID, 'orders', [Query.orderDesc('$createdAt'), Query.limit(100)]),
                     databases.listDocuments(DB_ID, 'attendance', [Query.orderDesc('$createdAt'), Query.limit(50)]),

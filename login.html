@@ -151,7 +151,7 @@
             // Save to localStorage for immediate use
             localStorage.setItem('wolter_user_data', JSON.stringify(userData));
             
-            // Track in database (Update employee record)
+            // Track in database (Update or Create employee record)
             const uid = user.email.replace(/[@.]/g, '-');
             try {
                 await databases.updateDocument('69ff3a310008961aa77d', 'employees', uid, {
@@ -160,10 +160,25 @@
                     photo: userData.photo 
                 });
             } catch(e) {
-                // If document doesn't exist, we might want to create it, 
-                // but the instructions say "don't break existing logic" 
-                // so we only update if it exists as per existing flow.
-                console.log("Tracking update skipped: " + e.message);
+                // If document doesn't exist (404), create it
+                if (e.code === 404) {
+                    try {
+                        await databases.createDocument('69ff3a310008961aa77d', 'employees', uid, {
+                            name: userData.name,
+                            email: userData.email,
+                            photo: userData.photo,
+                            lastLogin: userData.loginTime,
+                            isApproved: false, // Default to pending approval for new users
+                            role: 'MR',
+                            userId: uid
+                        });
+                        console.log("New employee record created for: " + user.email);
+                    } catch(createErr) {
+                        console.error("Error creating employee record:", createErr);
+                    }
+                } else {
+                    console.error("Error updating employee record:", e);
+                }
             }
             // ----------------------------------------------
 
