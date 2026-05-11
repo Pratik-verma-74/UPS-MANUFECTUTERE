@@ -1582,7 +1582,7 @@
             list.innerHTML = orders.slice(0, 5).map(o => `
                 <div class="activity-item">
                     <div style="font-weight:700">₹${o.amount || '0'} by ${employeeMap[o.userId] || 'MR'} for Dr. ${o.doctorName || 'Unknown'}</div>
-                    <div style="font-size:0.7rem; color:var(--text-dim)">Just now • Transaction ID: ${o.$id.slice(-6).toUpperCase()}</div>
+                    <div style="font-size:0.7rem; color:var(--text-dim)">${timeAgoAdmin(o.timestamp || o.$createdAt)} • Transaction ID: ${o.$id.slice(-6).toUpperCase()}</div>
                 </div>
             `).join('');
         }
