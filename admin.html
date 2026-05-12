@@ -25,6 +25,8 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
 
@@ -470,6 +472,7 @@
             <div class="nav-link" onclick="showSection('announcements')"><i class="fas fa-bullhorn"></i> Broadcasts</div>
             <div class="nav-link" onclick="showSection('id-gen')"><i class="fas fa-id-card"></i> ID Portal</div>
             <div class="nav-link" onclick="showSection('team')"><i class="fas fa-users-cog"></i> Team Manager</div>
+            <div class="nav-link" onclick="showSection('maintenance')" style="color:var(--warning)"><i class="fas fa-tools"></i> Maintenance</div>
         </nav>
 
         <div class="nav-link" onclick="doLogout()" style="color:var(--danger); margin-top:20px; background:rgba(244,63,94,0.05)">
@@ -510,6 +513,20 @@
                         <div class="stat-label">Total Sales Revenue</div>
                         <div class="stat-val" style="color:var(--primary-light)">₹<span id="count-sales">0</span></div>
                         <i class="fas fa-wallet"></i>
+                    </div>
+                </div>
+
+                <!-- DATABASE STATUS WARNING -->
+                <div id="db-status-warning" class="glass-card" style="display:none; border:1px solid var(--danger); background:rgba(244,63,94,0.05)">
+                    <div style="display:flex; align-items:center; gap:20px">
+                        <div style="width:50px; height:50px; background:var(--danger); border-radius:50%; display:flex; align-items:center; justify-content:center; color:#fff">
+                            <i class="fas fa-exclamation-triangle fa-lg"></i>
+                        </div>
+                        <div style="flex:1">
+                            <h3 style="color:var(--danger); margin-bottom:5px">Database Almost Full!</h3>
+                            <p style="font-size:0.85rem; color:var(--text-dim)">Your database has reached its record limit. Please export your data to Excel and clear the database to continue receiving new entries.</p>
+                        </div>
+                        <button class="btn-action btn-primary" onclick="showSection('maintenance')" style="background:var(--danger)">Fix Now</button>
                     </div>
                 </div>
 
@@ -909,6 +926,47 @@
                 </div>
             </div>
 
+            <!-- MAINTENANCE SECTION -->
+            <div id="maintenance" class="section">
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:30px">
+                    <div class="glass-card">
+                        <div style="width:60px; height:60px; background:rgba(59,130,246,0.1); border-radius:15px; display:flex; align-items:center; justify-content:center; color:var(--primary); margin-bottom:20px">
+                            <i class="fas fa-file-excel fa-2x"></i>
+                        </div>
+                        <h2 style="margin-bottom:15px">Export Data to Excel</h2>
+                        <p style="color:var(--text-dim); margin-bottom:25px; font-size:0.9rem">Download a complete backup of all your data including MRs, Doctors, Orders, and Attendance. This file can be opened in Microsoft Excel or Google Sheets.</p>
+                        <button class="btn-action btn-primary" style="width:100%; justify-content:center; height:55px" onclick="exportToExcel()">
+                            <i class="fas fa-download"></i> Download All Data (.xlsx)
+                        </button>
+                    </div>
+
+                    <div class="glass-card" style="border-color:rgba(244,63,94,0.3)">
+                        <div style="width:60px; height:60px; background:rgba(244,63,94,0.1); border-radius:15px; display:flex; align-items:center; justify-content:center; color:var(--danger); margin-bottom:20px">
+                            <i class="fas fa-trash-sweep fa-2x"></i>
+                        </div>
+                        <h2 style="margin-bottom:15px">Factory Reset / Clear All</h2>
+                        <p style="color:var(--text-dim); margin-bottom:25px; font-size:0.9rem">Warning: This action will permanently delete all records (Orders, Attendance, Doctors) from the database. This is usually done after downloading an Excel backup.</p>
+                        <button class="btn-action" style="width:100%; justify-content:center; height:55px; background:var(--danger); color:#fff" onclick="clearAllData()">
+                            <i class="fas fa-radiation"></i> Clear Database (Delete All)
+                        </button>
+                    </div>
+                </div>
+
+                <div class="glass-card" style="margin-top:30px">
+                    <h3>Database Statistics</h3>
+                    <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:20px; margin-top:20px">
+                        <div style="background:rgba(255,255,255,0.02); padding:15px; border-radius:12px">
+                            <span class="stat-label">Total Records</span>
+                            <div id="db-stat-total" style="font-size:1.5rem; font-weight:800">0</div>
+                        </div>
+                        <div style="background:rgba(255,255,255,0.02); padding:15px; border-radius:12px">
+                            <span class="stat-label">Limit Status</span>
+                            <div id="db-stat-status" style="font-size:1.1rem; font-weight:800; color:var(--accent)">Healthy</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </div>
     </main>
 
@@ -958,7 +1016,7 @@
                 const uid = user.email.replace(/[@.]/g, '-');
                 
                 // Super Admins (Hardcoded)
-                const superAdmins = ['pratikverma025@gmail.com', 'wolterpharma@gmail.com', 'admin.wolter@gmail.com'];
+                const superAdmins = ['pratikverma025@gmail.com', 'wolterpharma@gmail.com'];
                 
                 let isAdmin = superAdmins.includes(user.email);
                 
@@ -1045,8 +1103,149 @@
                     }, 30000);
                 }
 
+                // Check Database Load
+                checkDatabaseLoad(mrs.total + docs.total + orders.total + attendance.total + meds.total);
+
                 document.getElementById('loader').classList.add('hidden');
             } catch(e) { console.error(e); }
+        }
+
+        const DB_LIMIT = 5000; // Warning threshold
+
+        function checkDatabaseLoad(total) {
+            document.getElementById('db-stat-total').textContent = total;
+            const warningEl = document.getElementById('db-status-warning');
+            const statusEl = document.getElementById('db-stat-status');
+            
+            if (total >= DB_LIMIT) {
+                warningEl.style.display = 'block';
+                statusEl.textContent = "Full (Export Required)";
+                statusEl.style.color = "var(--danger)";
+            } else if (total >= DB_LIMIT * 0.8) {
+                warningEl.style.display = 'block';
+                statusEl.textContent = "Almost Full";
+                statusEl.style.color = "var(--warning)";
+            } else {
+                warningEl.style.display = 'none';
+                statusEl.textContent = "Healthy";
+                statusEl.style.color = "var(--accent)";
+            }
+        }
+
+        async function exportToExcel() {
+            Swal.fire({
+                title: 'Preparing Excel Data...',
+                text: 'Fetching all records from database...',
+                allowOutsideClick: false,
+                didOpen: () => { Swal.showLoading(); }
+            });
+
+            try {
+                // Fetch All Data (Note: for very large datasets, pagination would be needed)
+                const [mrs, docs, orders, att, meds, anns] = await Promise.all([
+                    databases.listDocuments(DB_ID, 'employees', [Query.limit(5000)]),
+                    databases.listDocuments(DB_ID, 'doctors', [Query.limit(5000)]),
+                    databases.listDocuments(DB_ID, 'orders', [Query.limit(5000)]),
+                    databases.listDocuments(DB_ID, 'attendance', [Query.limit(5000)]),
+                    databases.listDocuments(DB_ID, 'medicines', [Query.limit(5000)]),
+                    databases.listDocuments(DB_ID, 'announcements', [Query.limit(5000)])
+                ]);
+
+                const wb = XLSX.utils.book_new();
+
+                // Orders Sheet
+                const ordersData = orders.documents.map(o => ({
+                    ID: o.$id,
+                    Date: new Date(o.date || o.$createdAt).toLocaleDateString(),
+                    Doctor: o.doctorName,
+                    MR_Name: employeeMap[o.userId] || o.userId,
+                    Amount: o.amount,
+                    Paid: o.paid_amount,
+                    Due: (parseFloat(o.amount) || 0) - (parseFloat(o.paid_amount) || 0),
+                    Medicines: o.medicines
+                }));
+                XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(ordersData), "Orders");
+
+                // Attendance Sheet
+                const attData = att.documents.map(a => ({
+                    Date: a.date,
+                    MR_Name: a.mrName,
+                    CheckIn: a.checkInTime,
+                    CheckOut: a.checkOutTime,
+                    Status: a.status,
+                    Location: a.location
+                }));
+                XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(attData), "Attendance");
+
+                // Doctors Sheet
+                const docsData = docs.documents.map(d => ({
+                    Name: d.name,
+                    Specialty: d.specialization,
+                    Clinic: d.clinic,
+                    Mobile: d.mobile,
+                    AddedBy: employeeMap[d.userId] || d.userId
+                }));
+                XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(docsData), "Doctors");
+
+                // Team Sheet
+                const teamData = mrs.documents.map(m => ({
+                    Name: m.name,
+                    Email: m.email,
+                    Role: m.role,
+                    Approved: m.isApproved
+                }));
+                XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(teamData), "Team");
+
+                // Medicines Sheet
+                const medsData = meds.documents.map(m => ({
+                    Name: m.name,
+                    Category: m.category,
+                    Price: m.price
+                }));
+                XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(medsData), "Medicines");
+
+                XLSX.writeFile(wb, `Wolter_Pharma_Export_${new Date().toISOString().split('T')[0]}.xlsx`);
+                
+                Swal.fire('Success', 'Data exported successfully!', 'success');
+            } catch(e) {
+                console.error(e);
+                Swal.fire('Error', 'Failed to export data: ' + e.message, 'error');
+            }
+        }
+
+        async function clearAllData() {
+            const { value: confirmWord } = await Swal.fire({
+                title: 'CRITICAL ACTION!',
+                text: 'This will delete all orders, attendance, and doctor records. Type "DELETE" to confirm.',
+                input: 'text',
+                inputPlaceholder: 'DELETE',
+                showCancelButton: true,
+                confirmButtonColor: '#f43f5e',
+                confirmButtonText: 'Clear Everything'
+            });
+
+            if (confirmWord !== 'DELETE') return;
+
+            Swal.fire({
+                title: 'Wiping Database...',
+                text: 'Deleting records one by one...',
+                allowOutsideClick: false,
+                didOpen: () => { Swal.showLoading(); }
+            });
+
+            try {
+                const collections = ['orders', 'attendance', 'doctors', 'announcements'];
+                for (const coll of collections) {
+                    const docs = await databases.listDocuments(DB_ID, coll, [Query.limit(1000)]);
+                    for (const doc of docs.documents) {
+                        await databases.deleteDocument(DB_ID, coll, doc.$id);
+                    }
+                }
+                Swal.fire('Success', 'Database cleared successfully! Refreshing dashboard...', 'success');
+                setTimeout(() => location.reload(), 2000);
+            } catch(e) {
+                Swal.fire('Error', 'Failed to clear database completely: ' + e.message, 'error');
+            }
         }
 
         function renderDoctors(docs) {
