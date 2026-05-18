@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="normal">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AURA | Customer Portal Authentication</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Space+Grotesk:wght@300..700&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Main Style Sheet -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body style="background: var(--bg-color); min-height: 100vh; display: flex; flex-direction: column; transition: background-color 0.3s ease;">
+
+    <!-- Professional Sleek Header -->
+    <header class="header">
+        <div class="header-left-group" style="display: flex; align-items: center; gap: 16px;">
+            <button id="left-settings-trigger" class="theme-btn" title="Settings & Admin Control" style="margin-right: 4px;">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+            <div class="logo" onclick="window.location.href='index.html'">
+                <i class="fa-solid fa-bolt logo-icon"></i>
+                <span>AURA</span>
+            </div>
+        </div>
+        <nav class="nav">
+            <a href="index.html" class="nav-link">Systems</a>
+            <a href="calculator.html" class="nav-link">Calculator</a>
+            <a href="customize.html" class="nav-link">Customize</a>
+            <a href="repair.html" class="nav-link">Repair Service</a>
+            <a href="orders.html" class="nav-link">My Orders</a>
+        </nav>
+        <div class="header-actions">
+            <button id="theme-toggle" class="theme-btn" title="Toggle Light/Dark Theme">
+                <i class="fa-solid fa-moon"></i>
+            </button>
+            <button id="admin-trigger-btn" class="theme-btn admin-btn" title="Open Admin Control Panel">
+                <i class="fa-solid fa-user-gear"></i>
+            </button>
+            <a href="contact.html" class="btn btn-primary btn-quote">
+                <span>Get B2B Pricing</span>
+                <i class="fa-brands fa-whatsapp"></i>
+            </a>
+        </div>
+    </header>
+
+    <!-- Login Card Container -->
+    <div style="flex: 1; display: flex; align-items: center; justify-content: center; padding: 40px 20px;">
+        <div class="contact-card" style="width: 100%; max-width: 440px; border-radius: 6px; padding: 40px; background: var(--card-bg); border: 1px solid var(--card-border); box-shadow: 0 10px 30px rgba(0,0,0,0.05); transition: background-color 0.3s, border-color 0.3s;">
+            <div style="text-align: center; margin-bottom: 30px;">
+                <div style="width: 50px; height: 50px; border-radius: 50px; background: rgba(40,116,240,0.06); color: var(--primary); display: flex; align-items: center; justify-content: center; margin: 0 auto 16px auto; font-size: 20px;">
+                    <i class="fa-solid fa-user-lock"></i>
+                </div>
+                <h2 style="font-size: 22px; color: var(--text-color); font-weight: 700; margin-bottom: 8px;">Customer Portal</h2>
+                <p style="font-size: 12px; color: var(--text-muted);">Access live order manufacturing timelines, specs blueprints, and technician SLA repair dispatches.</p>
+            </div>
+
+            <form id="customer-login-form" class="lead-form">
+                <div class="form-group">
+                    <label for="user-email">Corporate Email Address</label>
+                    <input type="email" id="user-email" required placeholder="user@company.com">
+                </div>
+                
+                <div class="form-group">
+                    <label for="user-pass">Password</label>
+                    <input type="password" id="user-pass" required placeholder="••••••••">
+                </div>
+
+                <div style="background: rgba(40,116,240,0.04); border-left: 3px solid var(--primary); padding: 12px 16px; border-radius: 4px; margin-bottom: 24px;">
+                    <span style="font-size: 10px; text-transform: uppercase; letter-spacing: 0.05em; font-weight: bold; color: var(--primary); display: block; margin-bottom: 2px;">Demo Access Keys</span>
+                    <span style="font-size: 11px; color: var(--text-color); display: block;">Email: <strong>user@aura.com</strong></span>
+                    <span style="font-size: 11px; color: var(--text-color); display: block;">Password: <strong>user123</strong></span>
+                </div>
+
+                <button type="submit" class="btn btn-primary w-full">
+                    <span>Sign In to Account</span>
+                    <i class="fa-solid fa-arrow-right-to-bracket"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container footer-container">
+            <div class="footer-logo">
+                <i class="fa-solid fa-bolt"></i>
+                <span>AURA</span>
+            </div>
+            <p class="footer-copy">© <span id="year"></span> Aura Power Solutions. Engineered for Excellence.</p>
+        </div>
+    </footer>
+
+    <!-- Sliding Settings Sidebar -->
+    <div id="settings-sidebar" class="sidebar-panel">
+        <div class="sidebar-header">
+            <h3><i class="fa-solid fa-gears"></i> Settings Panel</h3>
+            <button id="sidebar-close-btn" class="close-btn">&times;</button>
+        </div>
+        <div class="sidebar-body">
+            <!-- Theme Preference -->
+            <div class="settings-group">
+                <label><i class="fa-solid fa-circle-half-stroke"></i> Select Theme</label>
+                <div class="theme-select-grid">
+                    <button id="theme-normal-select" class="theme-select-btn active">Flipkart Light</button>
+                    <button id="theme-neon-select" class="theme-select-btn">Cyber Neon</button>
+                </div>
+            </div>
+
+            <!-- Admin Access Gate -->
+            <div class="settings-group admin-gate-group">
+                <label><i class="fa-solid fa-user-shield"></i> Administration</label>
+                <p class="settings-desc">Access factory scaling multipliers, WhatsApp leads trackers, and catalog upload desks.</p>
+                <button id="sidebar-admin-btn" class="btn btn-secondary w-full">
+                    <span>Admin Portal Access</span>
+                    <i class="fa-solid fa-right-to-bracket"></i>
+                </button>
+            </div>
+            
+            <!-- Quick Portal links -->
+            <div class="settings-group">
+                <label><i class="fa-solid fa-link"></i> Quick Navigation</label>
+                <ul class="settings-nav-links">
+                    <li><a href="index.html"><i class="fa-solid fa-house"></i> Home Systems</a></li>
+                    <li><a href="calculator.html"><i class="fa-solid fa-calculator"></i> Capacity Sizer</a></li>
+                    <li><a href="customize.html"><i class="fa-solid fa-sliders"></i> Custom Plant Designer</a></li>
+                    <li><a href="repair.html"><i class="fa-solid fa-wrench"></i> Repair Dispatch</a></li>
+                    <li><a href="orders.html"><i class="fa-solid fa-cart-flatbed"></i> My Orders Registry</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div id="sidebar-overlay" class="sidebar-overlay"></div>
+
+    <!-- Auth Script Handler -->
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            document.getElementById("year").textContent = new Date().getFullYear();
+
+            // Customer Login Handler
+            document.getElementById("customer-login-form").addEventListener("submit", (e) => {
+                e.preventDefault();
+                const email = document.getElementById("user-email").value.trim().toLowerCase();
+                const pass = document.getElementById("user-pass").value.trim();
+
+                if (email === "user@aura.com" && pass === "user123") {
+                    localStorage.setItem("aura-user-logged-in", "true");
+                    localStorage.setItem("aura-user-email", email);
+                    
+                    alert("Customer session authenticated successfully!");
+                    
+                    // Redirect back to either orders or storefront index
+                    const redirectUrl = localStorage.getItem("aura-auth-redirect") || "index.html";
+                    localStorage.removeItem("aura-auth-redirect");
+                    window.location.href = redirectUrl;
+                } else if (email === "admin" && pass === "admin123") {
+                    // Support Admin login directly on customer page to prevent confusion
+                    localStorage.setItem("aura-admin-logged-in", "true");
+                    alert("Secure Admin session authenticated successfully!");
+                    window.location.href = "admin.html";
+                } else {
+                    alert("Invalid corporate email or password. Please verify credentials.");
+                }
+            });
+
+            // Theme Switcher Sync
+            const htmlElement = document.documentElement;
+            const themeToggle = document.getElementById("theme-toggle");
+            
+            const savedTheme = localStorage.getItem("aura-theme") || "normal";
+            htmlElement.setAttribute("data-theme", savedTheme);
+            updateThemeIcon(savedTheme);
+
+            themeToggle.addEventListener("click", () => {
+                const currentTheme = htmlElement.getAttribute("data-theme");
+                const newTheme = currentTheme === "normal" ? "neon" : "normal";
+                
+                htmlElement.setAttribute("data-theme", newTheme);
+                localStorage.setItem("aura-theme", newTheme);
+                updateThemeIcon(newTheme);
+            });
+
+            function updateThemeIcon(theme) {
+                const icon = themeToggle.querySelector("i");
+                if (theme === "neon") {
+                    icon.className = "fa-solid fa-sun";
+                } else {
+                    icon.className = "fa-solid fa-moon";
+                }
+            }
+
+            // Admin Routing Check
+            const adminTriggerBtn = document.getElementById("admin-trigger-btn");
+            const isAdminLoggedIn = localStorage.getItem("aura-admin-logged-in") === "true";
+            
+            if (isAdminLoggedIn) {
+                adminTriggerBtn.classList.add("logged-in");
+                
+                // Add logout
+                const logoutBtn = document.createElement("button");
+                logoutBtn.className = "theme-btn logout-trigger";
+                logoutBtn.setAttribute("title", "Logout Securely");
+                logoutBtn.innerHTML = '<i class="fa-solid fa-power-off"></i>';
+                adminTriggerBtn.parentNode.insertBefore(logoutBtn, adminTriggerBtn.nextSibling);
+                
+                logoutBtn.addEventListener("click", () => {
+                    if (confirm("Are you sure you want to sign out from the Admin Portal?")) {
+                        localStorage.removeItem("aura-admin-logged-in");
+                        window.location.reload();
+                    }
+                });
+            }
+
+            adminTriggerBtn.addEventListener("click", () => {
+                if (localStorage.getItem("aura-admin-logged-in") === "true") {
+                    window.location.href = "admin.html";
+                } else {
+                    window.location.href = "login.html";
+                }
+            });
+
+            // ==========================================
+            // SLIDING SETTINGS SIDEBAR EVENT HANDLERS
+            // ==========================================
+            const leftTrigger = document.getElementById("left-settings-trigger");
+            const settingsSidebar = document.getElementById("settings-sidebar");
+            const sidebarCloseBtn = document.getElementById("sidebar-close-btn");
+            const sidebarOverlay = document.getElementById("sidebar-overlay");
+            const sidebarAdminBtn = document.getElementById("sidebar-admin-btn");
+
+            if (leftTrigger && settingsSidebar && sidebarCloseBtn && sidebarOverlay) {
+                leftTrigger.addEventListener("click", () => {
+                    settingsSidebar.classList.add("open");
+                    sidebarOverlay.classList.add("open");
+                });
+
+                const closeSidebar = () => {
+                    settingsSidebar.classList.remove("open");
+                    sidebarOverlay.classList.remove("open");
+                };
+
+                sidebarCloseBtn.addEventListener("click", closeSidebar);
+                sidebarOverlay.addEventListener("click", closeSidebar);
+
+                const normalThemeSelect = document.getElementById("theme-normal-select");
+                const neonThemeSelect = document.getElementById("theme-neon-select");
+
+                if (normalThemeSelect && neonThemeSelect) {
+                    const currentTheme = document.documentElement.getAttribute("data-theme") || "normal";
+                    if (currentTheme === "neon") {
+                        normalThemeSelect.classList.remove("active");
+                        neonThemeSelect.classList.add("active");
+                    } else {
+                        normalThemeSelect.classList.add("active");
+                        neonThemeSelect.classList.remove("active");
+                    }
+
+                    normalThemeSelect.addEventListener("click", () => {
+                        document.documentElement.setAttribute("data-theme", "normal");
+                        localStorage.setItem("aura-theme", "normal");
+                        normalThemeSelect.classList.add("active");
+                        neonThemeSelect.classList.remove("active");
+                        const mainToggle = document.getElementById("theme-toggle");
+                        if (mainToggle) {
+                            const icon = mainToggle.querySelector("i");
+                            if (icon) icon.className = "fa-solid fa-moon";
+                        }
+                    });
+
+                    neonThemeSelect.addEventListener("click", () => {
+                        document.documentElement.setAttribute("data-theme", "neon");
+                        localStorage.setItem("aura-theme", "neon");
+                        neonThemeSelect.classList.add("active");
+                        normalThemeSelect.classList.remove("active");
+                        const mainToggle = document.getElementById("theme-toggle");
+                        if (mainToggle) {
+                            const icon = mainToggle.querySelector("i");
+                            if (icon) icon.className = "fa-solid fa-sun";
+                        }
+                    });
+                }
+
+                if (sidebarAdminBtn) {
+                    sidebarAdminBtn.addEventListener("click", () => {
+                        closeSidebar();
+                        if (localStorage.getItem("aura-admin-logged-in") === "true") {
+                            window.location.href = "admin.html";
+                        } else {
+                            window.location.href = "login.html";
+                        }
+                    });
+                }
+            }
+        });
+    </script>
+</body>
+</html>

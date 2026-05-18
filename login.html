@@ -1,204 +1,126 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="normal">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Wolter Pharma (v4.3 - CACHE KILLER)</title>
-    <script>
-        // NUCLEAR CACHE KILLER
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.getRegistrations().then(function(registrations) {
-                for(let registration of registrations) { registration.unregister(); }
-            });
-        }
-        console.log("Wolter Auth v4.3 - Service Workers Cleared");
-    </script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/appwrite@14.0.1"></script>
-    <script>
-        // WOLTER CYBER-SHIELD v5.0
-        document.addEventListener('contextmenu', e => e.preventDefault());
-        document.onkeydown = function(e) {
-            if (e.keyCode == 123 || (e.ctrlKey && e.shiftKey && (e.keyCode == 'I'.charCodeAt(0) || e.keyCode == 'J'.charCodeAt(0) || e.keyCode == 'C'.charCodeAt(0))) || (e.ctrlKey && e.keyCode == 'U'.charCodeAt(0))) {
-                return false;
-            }
-        };
-        setInterval(function() { debugger; }, 100);
-    </script>
-    <style>
-        :root {
-            --primary: #3B82F6;
-            --bg-deep: #060D1A;
-            --glass-card: rgba(255,255,255,0.06);
-        }
-        body {
-            font-family: 'DM Sans', sans-serif;
-            background: var(--bg-deep);
-            color: #fff;
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0;
-        }
-        .login-card {
-            background: var(--glass-card);
-            backdrop-filter: blur(20px);
-            padding: 40px;
-            border-radius: 28px;
-            width: 100%;
-            max-width: 380px;
-            text-align: center;
-            border: 1px solid rgba(255,255,255,0.1);
-        }
-        .form-group { margin-bottom: 20px; text-align: left; }
-        .form-label { display: block; font-size: 0.8rem; color: #94A3B8; margin-bottom: 8px; }
-        .form-control {
-            width: 100%; padding: 12px; background: rgba(255,255,255,0.05);
-            border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; color: #fff;
-            box-sizing: border-box;
-        }
-        .btn {
-            width: 100%; padding: 12px; border-radius: 12px; border: none;
-            font-weight: 600; cursor: pointer; transition: 0.3s;
-            display: flex; align-items: center; justify-content: center; gap: 10px;
-        }
-        .btn-primary { background: var(--primary); color: #fff; margin-bottom: 12px; }
-        .btn-outline { background: transparent; border: 1px solid rgba(255,255,255,0.1); color: #fff; }
-        .hidden { display: none; }
-        #error-alert { color: #f43f5e; margin-top: 15px; font-size: 0.85rem; display: none; }
-    </style>
+    <title>AURA | Secure Admin Login</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Space+Grotesk:wght@300..700&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Main Style Sheet -->
+    <link rel="stylesheet" href="style.css">
 </head>
-<body>
-    <div class="login-card">
-        <h2 style="margin-bottom:10px">💊 Wolter</h2>
-        <p style="color:#94A3B8; margin-bottom:30px; font-size:0.9rem">Access Wolter Cloud</p>
+<body class="login-body">
 
-        <div id="loader" class="hidden">
-            <i class="fas fa-spinner fa-spin fa-2x"></i>
-            <p>Authenticating...</p>
-        </div>
+    <div class="hero-bg-grid"></div>
+    <div class="hero-glow"></div>
 
-        <div id="auth-controls">
-            <div class="form-group">
-                <label class="form-label">Email</label>
-                <input type="email" id="email" class="form-control" placeholder="name@wolter.com">
+    <!-- Login Container -->
+    <div class="login-container">
+        <!-- Back to Storefront Link -->
+        <a href="index.html" class="back-link"><i class="fa-solid fa-arrow-left-long"></i> Back to Storefront</a>
+
+        <div class="login-card glass border">
+            <div class="login-header">
+                <i class="fa-solid fa-bolt login-card-icon"></i>
+                <h2>AURA PORTAL</h2>
+                <p>Authenticate system credentials to access admin dashboard.</p>
             </div>
-            <div class="form-group">
-                <label class="form-label">Password</label>
-                <input type="password" id="password" class="form-control" placeholder="••••••••">
-            </div>
-            <button onclick="handleLogin()" class="btn btn-primary">Login</button>
-            
-            <div style="margin:20px 0; color:#475569">OR</div>
 
-            <button onclick="handleGoogle()" class="btn btn-outline">
-                <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/google/google-original.svg" width="18">
-                Continue with Google
-            </button>
+            <!-- Form -->
+            <form id="login-form" class="lead-form">
+                <div class="form-group">
+                    <label for="login-email"><i class="fa-solid fa-user-shield"></i> Username or Admin Email</label>
+                    <input type="text" id="login-email" required placeholder="Type 'admin'" autocomplete="off">
+                </div>
+                
+                <div class="form-group">
+                    <label for="login-password"><i class="fa-solid fa-lock"></i> Password</label>
+                    <div class="pass-input-wrapper">
+                        <input type="password" id="login-password" required placeholder="Type 'admin123'">
+                        <button type="button" id="pass-toggle" class="pass-toggle-btn"><i class="fa-solid fa-eye"></i></button>
+                    </div>
+                </div>
+
+                <!-- Error Display Toast -->
+                <div id="login-error" class="login-error-box">
+                    <i class="fa-solid fa-circle-exclamation"></i>
+                    <span>Invalid credentials. Access Denied.</span>
+                </div>
+
+                <div class="form-helpers">
+                    <label class="remember-me">
+                        <input type="checkbox" id="remember">
+                        <span>Remember credentials</span>
+                    </label>
+                </div>
+
+                <button type="submit" class="btn btn-primary w-full">
+                    <span>Secure Sign In</span>
+                    <i class="fa-solid fa-shield-halved"></i>
+                </button>
+            </form>
         </div>
-
-        <div id="error-alert"></div>
     </div>
 
+    <!-- Script specifically for Login authentication flow -->
     <script>
-        const { Client, Account, Databases, ID } = Appwrite;
-        const client = new Client().setEndpoint('https://nyc.cloud.appwrite.io/v1').setProject('69fec2ae0012dadf853f');
-        const account = new Account(client);
-        const databases = new Databases(client);
+        (function() {
+            // Theme setup
+            const htmlElement = document.documentElement;
+            const savedTheme = localStorage.getItem("aura-theme") || "normal";
+            htmlElement.setAttribute("data-theme", savedTheme);
 
-        async function init() {
-            try {
-                const user = await account.get();
-                redirect(user);
-            } catch(e) {}
-        }
+            const loginForm = document.getElementById("login-form");
+            const emailInput = document.getElementById("login-email");
+            const passInput = document.getElementById("login-password");
+            const errorBox = document.getElementById("login-error");
+            const passToggle = document.getElementById("pass-toggle");
 
-        async function handleLogin() {
-            const email = document.getElementById('email').value;
-            const pass = document.getElementById('password').value;
-            if(!email || !pass) return alert("Enter credentials");
-            
-            toggleLoad(true);
-            try {
-                await account.createEmailPasswordSession(email, pass);
-                const user = await account.get();
-                redirect(user);
-            } catch(e) { 
-                alert(e.message);
-                toggleLoad(false);
-            }
-        }
-
-        function handleGoogle() {
-            toggleLoad(true);
-            const url = window.location.href.split('?')[0].split('#')[0];
-            account.createOAuth2Session('google', url, url);
-        }
-
-        async function redirect(user) {
-            console.log("[Login] Redirecting user: " + user.email);
-            
-            // --- FEATURE 1: Capture and Save User Data ---
-            const userData = {
-                name: user.name,
-                email: user.email,
-                photo: `https://cloud.appwrite.io/v1/avatars/initials?name=${encodeURIComponent(user.name)}&project=69fec2ae0012dadf853f`,
-                loginTime: new Date().toISOString()
-            };
-            
-            // Save to localStorage for immediate use
-            localStorage.setItem('wolter_user_data', JSON.stringify(userData));
-            
-            // Track in database (Update or Create employee record)
-            const uid = user.email.replace(/[@.]/g, '-');
-            try {
-                // Try updating first (for returning users)
-                await databases.updateDocument('69ff3a310008961aa77d', 'employees', uid, {
-                    name: userData.name
+            // Password Toggle safe guard
+            if (passToggle && passInput) {
+                passToggle.addEventListener("click", () => {
+                    const isPass = passInput.getAttribute("type") === "password";
+                    passInput.setAttribute("type", isPass ? "text" : "password");
+                    const icon = passToggle.querySelector("i");
+                    if (icon) {
+                        icon.className = isPass ? "fa-solid fa-eye-slash" : "fa-solid fa-eye";
+                    }
                 });
-            } catch(e) {
-                // If document doesn't exist, create it with essential fields only
-                try {
-                    await databases.createDocument('69ff3a310008961aa77d', 'employees', uid, {
-                        name: userData.name,
-                        email: userData.email,
-                        role: 'MR',
-                        isApproved: false
-                    });
-                } catch(createErr) {
-                    if(createErr.code !== 409) console.error("Create Error:", createErr);
-                }
-            }
-            // ----------------------------------------------
-
-            const superAdmins = ['pratikverma025@gmail.com', 'wolterpharma@gmail.com', 'admin.wolter@gmail.com'];
-            
-            let isAdmin = superAdmins.includes(user.email);
-            
-            if(!isAdmin) {
-                try {
-                    const emp = await databases.getDocument('69ff3a310008961aa77d', 'employees', uid);
-                    if(emp.role === 'Admin') isAdmin = true;
-                } catch(e) {}
             }
 
-            if(isAdmin) {
-                const path = window.location.pathname.includes('samir-app') ? '/samir-app/admin.html' : '/admin.html';
-                location.href = path;
-            } else {
-                const path = window.location.pathname.includes('samir-app') ? '/samir-app/dashboard.html' : '/dashboard.html';
-                location.href = path;
+            // Login check safe guard & clean URLs resolution
+            if (loginForm && emailInput && passInput) {
+                loginForm.addEventListener("submit", (e) => {
+                    e.preventDefault();
+                    
+                    const email = emailInput.value.trim().toLowerCase();
+                    const password = passInput.value;
+
+                    // Simple admin verification credentials as requested
+                    if (email === "admin" && password === "admin123") {
+                        localStorage.setItem("aura-admin-logged-in", "true");
+                        alert("Secure Admin session authenticated successfully!");
+                        window.location.href = "admin.html";
+                    } 
+                    // Cross-portal support for Customer login on Admin page to prevent confusion
+                    else if (email === "user@aura.com" && password === "user123") {
+                        localStorage.setItem("aura-user-logged-in", "true");
+                        localStorage.setItem("aura-user-email", email);
+                        alert("Customer session authenticated successfully!");
+                        window.location.href = "index.html";
+                    } else {
+                        if (errorBox) {
+                            errorBox.classList.add("show");
+                            setTimeout(() => errorBox.classList.remove("show"), 4000);
+                        }
+                    }
+                });
             }
-        }
-
-        function toggleLoad(show) {
-            document.getElementById('loader').classList.toggle('hidden', !show);
-            document.getElementById('auth-controls').classList.toggle('hidden', show);
-        }
-
-        init();
+        })();
     </script>
 </body>
 </html>

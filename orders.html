@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="normal">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AURA | Customer Order Dashboard</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Space+Grotesk:wght@300..700&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Main Style Sheet -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Professional Sleek Header -->
+    <header class="header">
+        <div class="header-left-group" style="display: flex; align-items: center; gap: 16px;">
+            <button id="left-settings-trigger" class="theme-btn" title="Settings & Admin Control" style="margin-right: 4px;">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+            <div class="logo" onclick="window.location.href='index.html'">
+                <i class="fa-solid fa-bolt logo-icon"></i>
+                <span>AURA</span>
+            </div>
+        </div>
+        <nav class="nav">
+            <a href="index.html" class="nav-link">Systems</a>
+            <a href="b2c-store.html" class="nav-link">B2C Products</a>
+            <a href="calculator.html" class="nav-link">Calculator</a>
+            <a href="customize.html" class="nav-link">Customize</a>
+            <a href="repair.html" class="nav-link">Repair Service</a>
+            <a href="orders.html" class="nav-link active">My Orders</a>
+        </nav>
+        <div class="header-actions">
+            <button id="theme-toggle" class="theme-btn" title="Toggle Light/Dark Theme">
+                <i class="fa-solid fa-moon"></i>
+            </button>
+            <button id="admin-trigger-btn" class="theme-btn admin-btn" title="Open Admin Control Panel">
+                <i class="fa-solid fa-user-gear"></i>
+            </button>
+            <button id="user-login-btn" class="theme-btn user-btn" title="Customer Portal Login">
+                <i class="fa-solid fa-user"></i>
+            </button>
+            <a href="contact.html" class="btn btn-primary btn-quote">
+                <span>Get B2B Pricing</span>
+                <i class="fa-brands fa-whatsapp"></i>
+            </a>
+        </div>
+    </header>
+
+    <!-- Orders Dashboard Grid -->
+    <section class="orders-section" style="margin-top: 64px; padding: 60px 0; background: var(--bg-color); min-height: 80vh; transition: background-color 0.3s ease;">
+        <div class="container">
+            <div class="section-header" style="margin-bottom: 45px;">
+                <span class="section-tag">Customer Portal</span>
+                <h2 class="section-title">My Technical Orders</h2>
+                <p class="section-desc">Track real-time engineering audits, components sourcing, assembly progress, and dispatch metrics for your purchases.</p>
+            </div>
+
+            <!-- Empty State Container -->
+            <div id="orders-empty-state" class="admin-card-section text-center" style="display: none; padding: 60px 30px; border-radius: 6px; background: var(--card-bg); border: 1px solid var(--card-border);">
+                <i class="fa-solid fa-box-open" style="font-size: 54px; color: var(--text-muted); margin-bottom: 20px;"></i>
+                <h3 style="font-size: 18px; color: var(--text-color); margin-bottom: 8px;">No Configured Orders Found</h3>
+                <p style="font-size: 13px; color: var(--text-muted); max-width: 420px; margin: 0 auto 24px auto;">
+                    You haven't purchased a backup system, designed a custom UPS plant, or submitted any hardware repair tickets yet.
+                </p>
+                <div class="hero-actions">
+                    <a href="index.html" class="btn btn-secondary">Storefront Catalog</a>
+                    <a href="customize.html" class="btn btn-glass">Design Custom UPS</a>
+                    <a href="repair.html" class="btn btn-primary" style="background: var(--secondary); border: none;">Repair My UPS</a>
+                </div>
+            </div>
+
+            <!-- Active Orders Shelf -->
+            <div id="orders-shelf-container" style="display: flex; flex-direction: column; gap: 30px;">
+                
+                <!-- 1. UPS Repair & Servicing Tickets Table -->
+                <div class="admin-card-section" id="repairs-block" style="border-radius: 6px; padding: 24px; background: var(--card-bg); border: 1px solid var(--card-border);">
+                    <div class="card-section-header" style="margin-bottom: 20px; border-bottom: 1px solid var(--card-border); padding-bottom: 12px;">
+                        <h3>UPS Repair & Servicing Tickets</h3>
+                        <p>Track SLA response times, diagnostic stages, and technician dispatches for your existing hardware repairs.</p>
+                    </div>
+
+                    <div class="inventory-table-container">
+                        <table class="inventory-table">
+                            <thead>
+                                <tr>
+                                    <th>Ticket ID</th>
+                                    <th>UPS Brand / Model</th>
+                                    <th>Capacity</th>
+                                    <th>Reported Fault</th>
+                                    <th>SLA Tracking Status</th>
+                                    <th>Submitted On</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="repair-tickets-rows">
+                                <!-- Loaded dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- 2. Custom Engineered Configs Table -->
+                <div class="admin-card-section" id="customs-block" style="border-radius: 6px; padding: 24px; background: var(--card-bg); border: 1px solid var(--card-border);">
+                    <div class="card-section-header" style="margin-bottom: 20px; border-bottom: 1px solid var(--card-border); padding-bottom: 12px;">
+                        <h3>Custom Engineered Builds</h3>
+                        <p>Specialized UPS single-line configurations engineered according to your floor parameters and neutral isolations.</p>
+                    </div>
+
+                    <div class="inventory-table-container">
+                        <table class="inventory-table">
+                            <thead>
+                                <tr>
+                                    <th>Build ID</th>
+                                    <th>Phase Topology</th>
+                                    <th>Required Capacity</th>
+                                    <th>Battery Tech</th>
+                                    <th>Status Details</th>
+                                    <th>Requested</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="custom-orders-rows">
+                                <!-- Loaded dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- 3. Standard Storefront Systems Table -->
+                <div class="admin-card-section" id="standards-block" style="border-radius: 6px; padding: 24px; background: var(--card-bg); border: 1px solid var(--card-border);">
+                    <div class="card-section-header" style="margin-bottom: 20px; border-bottom: 1px solid var(--card-border); padding-bottom: 12px;">
+                        <h3>Standard Systems Purchases</h3>
+                        <p>Orders triggered directly from the storefront product shelves, sizing calculators, or bulk inquiries.</p>
+                    </div>
+
+                    <div class="inventory-table-container">
+                        <table class="inventory-table">
+                            <thead>
+                                <tr>
+                                    <th>Order ID</th>
+                                    <th>System Model</th>
+                                    <th>UPS Rating</th>
+                                    <th>Order Price</th>
+                                    <th>Tracking Status</th>
+                                    <th>Placed On</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="standard-orders-rows">
+                                <!-- Loaded dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container footer-container">
+            <div class="footer-logo">
+                <i class="fa-solid fa-bolt"></i>
+                <span>AURA</span>
+            </div>
+            <p class="footer-copy">© <span id="year"></span> Aura Power Solutions. Engineered for Excellence.</p>
+        </div>
+    </footer>
+
+    <!-- Sliding Settings Sidebar -->
+    <div id="settings-sidebar" class="sidebar-panel">
+        <div class="sidebar-header">
+            <h3><i class="fa-solid fa-gears"></i> Settings Panel</h3>
+            <button id="sidebar-close-btn" class="close-btn">&times;</button>
+        </div>
+        <div class="sidebar-body">
+            <!-- Theme Preference -->
+            <div class="settings-group">
+                <label><i class="fa-solid fa-circle-half-stroke"></i> Select Theme</label>
+                <div class="theme-select-grid">
+                    <button id="theme-normal-select" class="theme-select-btn active">Flipkart Light</button>
+                    <button id="theme-neon-select" class="theme-select-btn">Cyber Neon</button>
+                </div>
+            </div>
+
+            <!-- Admin Access Gate -->
+            <div class="settings-group admin-gate-group">
+                <label><i class="fa-solid fa-user-shield"></i> Administration</label>
+                <p class="settings-desc">Access factory scaling multipliers, WhatsApp leads trackers, and catalog upload desks.</p>
+                <button id="sidebar-admin-btn" class="btn btn-secondary w-full">
+                    <span>Admin Portal Access</span>
+                    <i class="fa-solid fa-right-to-bracket"></i>
+                </button>
+            </div>
+            
+            <!-- Quick Portal links -->
+            <div class="settings-group">
+                <label><i class="fa-solid fa-link"></i> Quick Navigation</label>
+                <ul class="settings-nav-links">
+                    <li><a href="index.html"><i class="fa-solid fa-house"></i> Home Systems</a></li>
+                    <li><a href="calculator.html"><i class="fa-solid fa-calculator"></i> Capacity Sizer</a></li>
+                    <li><a href="customize.html"><i class="fa-solid fa-sliders"></i> Custom Plant Designer</a></li>
+                    <li><a href="repair.html"><i class="fa-solid fa-wrench"></i> Repair Dispatch</a></li>
+                    <li><a href="orders.html"><i class="fa-solid fa-cart-flatbed"></i> My Orders Registry</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div id="sidebar-overlay" class="sidebar-overlay"></div>
+
+    <!-- Orders dynamic binding script -->
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            document.getElementById("year").textContent = new Date().getFullYear();
+
+            // Load data
+            const standardOrders = JSON.parse(localStorage.getItem("aura-user-orders")) || [];
+            const customBuilds = JSON.parse(localStorage.getItem("aura-user-customizations")) || [];
+            const repairTickets = JSON.parse(localStorage.getItem("aura-user-repairs")) || [];
+
+            const emptyState = document.getElementById("orders-empty-state");
+            const shelfContainer = document.getElementById("orders-shelf-container");
+            const customsBlock = document.getElementById("customs-block");
+            const standardsBlock = document.getElementById("standards-block");
+            const repairsBlock = document.getElementById("repairs-block");
+
+            const customRows = document.getElementById("custom-orders-rows");
+            const standardRows = document.getElementById("standard-orders-rows");
+            const repairRows = document.getElementById("repair-tickets-rows");
+
+            // Empty checker
+            if (standardOrders.length === 0 && customBuilds.length === 0 && repairTickets.length === 0) {
+                emptyState.style.display = "block";
+                shelfContainer.style.display = "none";
+            } else {
+                emptyState.style.display = "none";
+                shelfContainer.style.display = "flex";
+
+                // Populate Repairs
+                if (repairTickets.length === 0) {
+                    repairsBlock.style.display = "none";
+                } else {
+                    repairsBlock.style.display = "block";
+                    repairRows.innerHTML = "";
+                    repairTickets.forEach(t => {
+                        const tr = document.createElement("tr");
+                        tr.innerHTML = `
+                            <td><strong style="color: var(--secondary);">${t.id}</strong></td>
+                            <td>${t.brand} (${t.model})</td>
+                            <td>${t.capacity}</td>
+                            <td title="${t.desc}" style="max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${t.fault}</td>
+                            <td><span class="lead-time" style="background: rgba(251,100,27,0.06); color: var(--secondary); font-size: 11px; padding: 4px 10px; font-weight: bold; border-radius: 50px;">${t.status}</span></td>
+                            <td>${t.timestamp}</td>
+                            <td>
+                                <button class="btn btn-glass btn-chat-rep" data-id="${t.id}" data-model="${t.model}" style="padding: 6px 12px; font-size: 11px; border-color: rgba(251,100,27,0.3); color: var(--secondary);">
+                                    <span>Track</span> <i class="fa-brands fa-whatsapp"></i>
+                                </button>
+                            </td>
+                        `;
+                        repairRows.appendChild(tr);
+                    });
+                }
+
+                // Populate Custom designs
+                if (customBuilds.length === 0) {
+                    customsBlock.style.display = "none";
+                } else {
+                    customsBlock.style.display = "block";
+                    customRows.innerHTML = "";
+                    customBuilds.forEach(build => {
+                        const tr = document.createElement("tr");
+                        tr.innerHTML = `
+                            <td><strong style="color: var(--primary);">${build.id}</strong></td>
+                            <td>${build.phase}</td>
+                            <td>${build.capacity}</td>
+                            <td>${build.battery}</td>
+                            <td><span class="lead-time" style="background: rgba(40,116,240,0.06); color: var(--primary); font-size: 11px; padding: 4px 10px; font-weight: bold; border-radius: 50px;">${build.status}</span></td>
+                            <td>${build.timestamp}</td>
+                            <td>
+                                <button class="btn btn-glass btn-chat-spec" data-id="${build.id}" data-specs="${encodeURIComponent(build.specs)}" style="padding: 6px 12px; font-size: 11px;">
+                                    <span>Track</span> <i class="fa-brands fa-whatsapp"></i>
+                                </button>
+                            </td>
+                        `;
+                        customRows.appendChild(tr);
+                    });
+                }
+
+                // Populate Standard purchases
+                if (standardOrders.length === 0) {
+                    standardsBlock.style.display = "none";
+                } else {
+                    standardsBlock.style.display = "block";
+                    standardRows.innerHTML = "";
+                    standardOrders.forEach(order => {
+                        const tr = document.createElement("tr");
+                        tr.innerHTML = `
+                            <td><strong style="color: var(--primary);">${order.id}</strong></td>
+                            <td>${order.title}</td>
+                            <td>${order.capacity}</td>
+                            <td>₹${Number(order.price).toLocaleString()}</td>
+                            <td><span class="lead-time" style="background: rgba(16,185,129,0.06); color: #10b981; font-size: 11px; padding: 4px 10px; font-weight: bold; border-radius: 50px;">${order.status}</span></td>
+                            <td>${order.timestamp}</td>
+                            <td>
+                                <button class="btn btn-glass btn-chat-order" data-id="${order.id}" data-title="${order.title}" style="padding: 6px 12px; font-size: 11px;">
+                                    <span>Track</span> <i class="fa-brands fa-whatsapp"></i>
+                                </button>
+                            </td>
+                        `;
+                        standardRows.appendChild(tr);
+                    });
+                }
+            }
+
+            // WhatsApp track buttons routing
+            document.querySelectorAll(".btn-chat-rep").forEach(btn => {
+                btn.addEventListener("click", () => {
+                    const id = btn.getAttribute("data-id");
+                    const model = btn.getAttribute("data-model");
+                    const message = `Hello Support!\n\nI want to track the repair diagnostics of my *UPS Servicing Ticket: ${id}* (${model}).`;
+                    window.open(`https://wa.me/919999999999?text=${encodeURIComponent(message)}`, "_blank");
+                });
+            });
+
+            document.querySelectorAll(".btn-chat-spec").forEach(btn => {
+                btn.addEventListener("click", () => {
+                    const id = btn.getAttribute("data-id");
+                    const specs = decodeURIComponent(btn.getAttribute("data-specs"));
+                    const message = `Hello Aura Support!\n\nI want to track the manufacturing progress of my *Custom UPS Build ID: ${id}*.\n*Specs:* ${specs}`;
+                    window.open(`https://wa.me/919999999999?text=${encodeURIComponent(message)}`, "_blank");
+                });
+            });
+
+            document.querySelectorAll(".btn-chat-order").forEach(btn => {
+                btn.addEventListener("click", () => {
+                    const id = btn.getAttribute("data-id");
+                    const title = btn.getAttribute("data-title");
+                    const message = `Hello Aura Support!\n\nI want to track the dispatch delivery of my *Aura Purchase Order ID: ${id}*.\n*System:* ${title}`;
+                    window.open(`https://wa.me/919999999999?text=${encodeURIComponent(message)}`, "_blank");
+                });
+            });
+
+            // Theme Switcher Sync
+            const htmlElement = document.documentElement;
+            const themeToggle = document.getElementById("theme-toggle");
+            
+            const savedTheme = localStorage.getItem("aura-theme") || "normal";
+            htmlElement.setAttribute("data-theme", savedTheme);
+            updateThemeIcon(savedTheme);
+
+            themeToggle.addEventListener("click", () => {
+                const currentTheme = htmlElement.getAttribute("data-theme");
+                const newTheme = currentTheme === "normal" ? "neon" : "normal";
+                
+                htmlElement.setAttribute("data-theme", newTheme);
+                localStorage.setItem("aura-theme", newTheme);
+                updateThemeIcon(newTheme);
+            });
+
+            function updateThemeIcon(theme) {
+                const icon = themeToggle.querySelector("i");
+                if (theme === "neon") {
+                    icon.className = "fa-solid fa-sun";
+                } else {
+                    icon.className = "fa-solid fa-moon";
+                }
+            }
+
+            // Admin Routing Check
+            const adminTriggerBtn = document.getElementById("admin-trigger-btn");
+            const isAdminLoggedIn = localStorage.getItem("aura-admin-logged-in") === "true";
+            
+            if (isAdminLoggedIn) {
+                adminTriggerBtn.classList.add("logged-in");
+                
+                // Add logout
+                const logoutBtn = document.createElement("button");
+                logoutBtn.className = "theme-btn logout-trigger";
+                logoutBtn.setAttribute("title", "Logout Securely");
+                logoutBtn.innerHTML = '<i class="fa-solid fa-power-off"></i>';
+                adminTriggerBtn.parentNode.insertBefore(logoutBtn, adminTriggerBtn.nextSibling);
+                
+                logoutBtn.addEventListener("click", () => {
+                    if (confirm("Are you sure you want to sign out from the Admin Portal?")) {
+                        localStorage.removeItem("aura-admin-logged-in");
+                        window.location.reload();
+                    }
+                });
+            }
+
+            adminTriggerBtn.addEventListener("click", () => {
+                if (localStorage.getItem("aura-admin-logged-in") === "true") {
+                    window.location.href = "admin.html";
+                } else {
+                    window.location.href = "login.html";
+                }
+            });
+
+            // Customer Portal Routing
+            const userLoginBtn = document.getElementById("user-login-btn");
+            const isUserLoggedIn = localStorage.getItem("aura-user-logged-in") === "true";
+
+            if (isUserLoggedIn) {
+                userLoginBtn.classList.add("logged-in");
+                userLoginBtn.setAttribute("title", `Logged in as Customer (Click to Logout)`);
+                
+                userLoginBtn.addEventListener("click", () => {
+                    if (confirm("Are you sure you want to log out from the Customer Portal?")) {
+                        localStorage.removeItem("aura-user-logged-in");
+                        localStorage.removeItem("aura-user-email");
+                        window.location.reload();
+                    }
+                });
+            } else {
+                userLoginBtn.addEventListener("click", () => {
+                    window.location.href = "customer-login.html";
+                });
+            }
+
+            // ==========================================
+            // SLIDING SETTINGS SIDEBAR EVENT HANDLERS
+            // ==========================================
+            const leftTrigger = document.getElementById("left-settings-trigger");
+            const settingsSidebar = document.getElementById("settings-sidebar");
+            const sidebarCloseBtn = document.getElementById("sidebar-close-btn");
+            const sidebarOverlay = document.getElementById("sidebar-overlay");
+            const sidebarAdminBtn = document.getElementById("sidebar-admin-btn");
+
+            if (leftTrigger && settingsSidebar && sidebarCloseBtn && sidebarOverlay) {
+                leftTrigger.addEventListener("click", () => {
+                    settingsSidebar.classList.add("open");
+                    sidebarOverlay.classList.add("open");
+                });
+
+                const closeSidebar = () => {
+                    settingsSidebar.classList.remove("open");
+                    sidebarOverlay.classList.remove("open");
+                };
+
+                sidebarCloseBtn.addEventListener("click", closeSidebar);
+                sidebarOverlay.addEventListener("click", closeSidebar);
+
+                const normalThemeSelect = document.getElementById("theme-normal-select");
+                const neonThemeSelect = document.getElementById("theme-neon-select");
+
+                if (normalThemeSelect && neonThemeSelect) {
+                    const currentTheme = document.documentElement.getAttribute("data-theme") || "normal";
+                    if (currentTheme === "neon") {
+                        normalThemeSelect.classList.remove("active");
+                        neonThemeSelect.classList.add("active");
+                    } else {
+                        normalThemeSelect.classList.add("active");
+                        neonThemeSelect.classList.remove("active");
+                    }
+
+                    normalThemeSelect.addEventListener("click", () => {
+                        document.documentElement.setAttribute("data-theme", "normal");
+                        localStorage.setItem("aura-theme", "normal");
+                        normalThemeSelect.classList.add("active");
+                        neonThemeSelect.classList.remove("active");
+                        const mainToggle = document.getElementById("theme-toggle");
+                        if (mainToggle) {
+                            const icon = mainToggle.querySelector("i");
+                            if (icon) icon.className = "fa-solid fa-moon";
+                        }
+                    });
+
+                    neonThemeSelect.addEventListener("click", () => {
+                        document.documentElement.setAttribute("data-theme", "neon");
+                        localStorage.setItem("aura-theme", "neon");
+                        neonThemeSelect.classList.add("active");
+                        normalThemeSelect.classList.remove("active");
+                        const mainToggle = document.getElementById("theme-toggle");
+                        if (mainToggle) {
+                            const icon = mainToggle.querySelector("i");
+                            if (icon) icon.className = "fa-solid fa-sun";
+                        }
+                    });
+                }
+
+                if (sidebarAdminBtn) {
+                    sidebarAdminBtn.addEventListener("click", () => {
+                        closeSidebar();
+                        if (localStorage.getItem("aura-admin-logged-in") === "true") {
+                            window.location.href = "admin.html";
+                        } else {
+                            window.location.href = "login.html";
+                        }
+                    });
+                }
+            }
+        });
+    </script>
+</body>
+</html>

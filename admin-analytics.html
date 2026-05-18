@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="normal">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AURA | Smart Analytics Dashboard</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Space+Grotesk:wght@300..700&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Main Style Sheet -->
+    <link rel="stylesheet" href="style.css">
+    <!-- Custom Page-Specific Styles -->
+    <style>
+        .analytics-grid-layout {
+            display: grid;
+            grid-template-columns: 1.6fr 1fr;
+            gap: 24px;
+            margin-bottom: 60px;
+        }
+        .ai-alert-banner {
+            background: linear-gradient(135deg, rgba(40,116,240,0.1) 0%, rgba(251,100,27,0.1) 100%);
+            border: 1px solid rgba(40,116,240,0.2);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 28px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 24px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(40,116,240,0.05);
+        }
+        [data-theme="neon"] .ai-alert-banner {
+            background: linear-gradient(135deg, rgba(6,182,212,0.15) 0%, rgba(16,185,129,0.15) 100%);
+            border: 1px solid rgba(6,182,212,0.25);
+            box-shadow: 0 4px 20px rgba(6,182,212,0.1);
+        }
+        .ai-alert-banner::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.15) 0%, transparent 60%);
+            pointer-events: none;
+            animation: pulse-glow 6s infinite alternate;
+        }
+        @keyframes pulse-glow {
+            0% { transform: scale(0.95); opacity: 0.8; }
+            100% { transform: scale(1.05); opacity: 1.2; }
+        }
+        .ai-alert-content {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            position: relative;
+            z-index: 2;
+        }
+        .ai-avatar-box {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: var(--primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            box-shadow: 0 0 15px rgba(var(--primary-rgb), 0.4);
+            animation: border-wave 2s infinite;
+        }
+        @keyframes border-wave {
+            0% { box-shadow: 0 0 0 0 rgba(40,116,240,0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(40,116,240,0); }
+            100% { box-shadow: 0 0 0 0 rgba(40,116,240,0); }
+        }
+        [data-theme="neon"] .ai-avatar-box {
+            background: var(--primary);
+            box-shadow: 0 0 15px rgba(6,182,212,0.5);
+        }
+        .ai-alert-msg h4 {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--text-color);
+        }
+        .ai-alert-msg p {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-top: 4px;
+            line-height: 1.4;
+        }
+        .ai-alert-action {
+            position: relative;
+            z-index: 2;
+        }
+        .funnel-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 20px;
+        }
+        .funnel-step {
+            position: relative;
+            display: flex;
+            align-items: center;
+            padding: 14px 20px;
+            background: var(--bg-color);
+            border: 1px solid var(--card-border);
+            border-radius: 6px;
+            overflow: hidden;
+            transition: transform 0.2s ease;
+        }
+        .funnel-step:hover {
+            transform: translateX(4px);
+        }
+        .funnel-step::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            background: var(--primary);
+            opacity: 0.15;
+            z-index: 1;
+        }
+        .funnel-step-1::before { width: 100%; }
+        .funnel-step-2::before { width: 75%; }
+        .funnel-step-3::before { width: 50%; }
+        .funnel-step-4::before { width: 30%; }
+        .funnel-step-5::before { width: 12%; }
+        
+        .funnel-label {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-grow: 1;
+            font-size: 13px;
+            font-weight: 700;
+        }
+        .funnel-label i {
+            color: var(--primary);
+            width: 16px;
+        }
+        .funnel-stats {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            font-size: 13px;
+        }
+        .funnel-val {
+            font-weight: bold;
+            font-family: 'Space Grotesk', sans-serif;
+            color: var(--text-color);
+        }
+        .funnel-percent {
+            font-size: 11px;
+            font-weight: bold;
+            color: var(--accent);
+            background: rgba(var(--accent-rgb), 0.08);
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+        .heatmap-badge {
+            font-size: 10px;
+            font-weight: bold;
+            padding: 3px 8px;
+            border-radius: 50px;
+            text-transform: uppercase;
+        }
+        .heatmap-high {
+            background: rgba(251,100,27,0.1);
+            color: var(--secondary);
+            border: 1px solid rgba(251,100,27,0.25);
+        }
+        .heatmap-med {
+            background: rgba(40,116,240,0.08);
+            color: var(--primary);
+            border: 1px solid rgba(40,116,240,0.15);
+        }
+        .heatmap-low {
+            background: rgba(120,119,119,0.06);
+            color: var(--text-muted);
+            border: 1px solid var(--card-border);
+        }
+        .regions-list {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            margin-top: 15px;
+        }
+        .region-item {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .region-meta {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .region-bar-track {
+            height: 6px;
+            background: var(--bg-color);
+            border-radius: 50px;
+            overflow: hidden;
+            position: relative;
+        }
+        .region-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary) 0%, var(--secondary) 100%);
+            border-radius: 50px;
+        }
+        .ai-tag {
+            font-size: 11px;
+            background: var(--bg-color);
+            border: 1px solid var(--card-border);
+            padding: 4px 10px;
+            border-radius: 50px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: bold;
+            color: var(--text-color);
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+        .ai-tag:hover {
+            border-color: var(--primary);
+            background: rgba(var(--primary-rgb), 0.04);
+            transform: scale(1.03);
+        }
+        .ai-tag i {
+            color: var(--secondary);
+        }
+        .trend-highlight-card {
+            background: linear-gradient(135deg, rgba(251,100,27,0.06) 0%, rgba(40,116,240,0.06) 100%);
+            border: 1px solid var(--secondary);
+            border-radius: 8px;
+            padding: 16px;
+            margin-top: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .trend-icon-box {
+            width: 36px;
+            height: 36px;
+            border-radius: 6px;
+            background: var(--secondary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+        }
+        @media (max-width: 1200px) {
+            .analytics-grid-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body class="admin-dashboard-body">
+
+    <!-- Auth Guard (Secure URL protection) -->
+    <script>
+        if (localStorage.getItem("aura-admin-logged-in") !== "true") {
+            window.location.href = "login.html";
+        }
+    </script>
+
+    <!-- Professional Sleek Header -->
+    <header class="header">
+        <div class="logo" onclick="window.location.href='index.html'">
+            <i class="fa-solid fa-bolt logo-icon"></i>
+            <span>AURA</span>
+        </div>
+        <nav class="nav">
+            <a href="index.html" class="nav-link">Systems</a>
+            <a href="calculator.html" class="nav-link">Calculator</a>
+            <a href="customize.html" class="nav-link">Customize</a>
+            <a href="repair.html" class="nav-link">Repair Service</a>
+            <a href="orders.html" class="nav-link">My Orders</a>
+        </nav>
+        <div class="header-actions">
+            <button id="theme-toggle" class="theme-btn" title="Toggle Light/Dark Theme">
+                <i class="fa-solid fa-moon"></i>
+            </button>
+            <button id="secure-logout-btn" class="theme-btn logout-trigger" title="Logout Securely">
+                <i class="fa-solid fa-power-off"></i>
+            </button>
+        </div>
+    </header>
+
+    <div class="container" style="padding-top: 20px;">
+        
+        <!-- Welcome Row & Admin Navigation Tabs -->
+        <div class="admin-welcome-row" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; margin-bottom: 24px;">
+            <div>
+                <h2>Smart Analytics Dashboard</h2>
+                <p style="font-size: 13px; color: var(--text-muted); margin-top: 4px;">Predictive demand modeling, conversions, user telemetry, and AI search query intent analyzer.</p>
+            </div>
+            <div class="admin-nav-tabs" style="display: flex; gap: 10px; flex-wrap: wrap;">
+                <a href="admin.html" class="btn btn-secondary" style="font-size: 12px; padding: 10px 18px; border-radius: 6px; background: var(--card-bg); border: 1px solid var(--card-border); color: var(--text-color); box-shadow: var(--shadow-sm);">
+                    <i class="fa-solid fa-network-wired"></i> Workspace Control
+                </a>
+                <a href="admin-analytics.html" class="btn btn-primary" style="font-size: 12px; padding: 10px 18px; border-radius: 6px; box-shadow: var(--shadow-md);">
+                    <i class="fa-solid fa-chart-line"></i> Smart Analytics
+                </a>
+                <a href="admin-bihar-trends.html" class="btn btn-secondary" style="font-size: 12px; padding: 10px 18px; border-radius: 6px; background: var(--card-bg); border: 1px solid var(--card-border); color: var(--text-color); box-shadow: var(--shadow-sm);">
+                    <i class="fa-solid fa-hospital-user"></i> Bihar Demand
+                </a>
+                <a href="admin-billing.html" class="btn btn-secondary" style="font-size: 12px; padding: 10px 18px; border-radius: 6px; background: var(--card-bg); border: 1px solid var(--card-border); color: var(--text-color); box-shadow: var(--shadow-sm);">
+                    <i class="fa-solid fa-file-invoice-dollar"></i> Billing Generator
+                </a>
+                <a href="admin-quotation.html" class="btn btn-secondary" style="font-size: 12px; padding: 10px 18px; border-radius: 6px; background: var(--card-bg); border: 1px solid var(--card-border); color: var(--text-color); box-shadow: var(--shadow-sm);">
+                    <i class="fa-solid fa-file-signature"></i> Quotation Maker
+                </a>
+                <a href="admin-b2c.html" class="btn btn-secondary" style="font-size: 12px; padding: 10px 18px; border-radius: 6px; background: var(--card-bg); border: 1px solid var(--card-border); color: var(--text-color); box-shadow: var(--shadow-sm);">
+                    <i class="fa-solid fa-shop"></i> B2C Catalog CMS
+                </a>
+            </div>
+        </div>
+
+        <!-- 1. AI Suggestion alert card ( বিহার / bihar trend banner ) -->
+        <div class="ai-alert-banner">
+            <div class="ai-alert-content">
+                <div class="ai-avatar-box">
+                    <i class="fa-solid fa-robot"></i>
+                </div>
+                <div class="ai-alert-msg">
+                    <h4>AURA AI Sourced Market Prediction</h4>
+                    <p>Primary Health Center (PHC) grid modernizations have triggered a <strong>+34% demand spike</strong> for double-conversion online UPS systems in <strong>Bihar</strong>. Patna B2B sales leads have surged this week.</p>
+                </div>
+            </div>
+            <div class="ai-alert-action">
+                <a href="admin-bihar-trends.html" class="btn btn-primary" style="background: var(--secondary); border: none; font-size: 12px; padding: 10px 18px; border-radius: 6px; color: white; display: flex; align-items: center; gap: 8px; box-shadow: 0 4px 14px rgba(251,100,27,0.3);">
+                    <span>Bihar Demand Center</span>
+                    <i class="fa-solid fa-arrow-right-long"></i>
+                </a>
+            </div>
+        </div>
+
+        <!-- 2. Dashboard Analytics Metrics Row -->
+        <div class="admin-metrics-row" style="grid-template-columns: repeat(4, 1fr); margin-bottom: 28px;">
+            <div class="metric-card">
+                <div class="metric-icon"><i class="fa-solid fa-eye"></i></div>
+                <div class="metric-info">
+                    <span id="metric-traffic-count">10,420</span>
+                    <label>Storefront Views</label>
+                </div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-icon" style="color: var(--secondary); background: rgba(251,100,27,0.06);"><i class="fa-brands fa-whatsapp"></i></div>
+                <div class="metric-info">
+                    <span id="metric-wa-clicks" style="color: var(--secondary);">982</span>
+                    <label>WhatsApp Sales Leads</label>
+                </div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-icon" style="color: var(--accent); background: rgba(var(--accent-rgb),0.06);"><i class="fa-solid fa-percent"></i></div>
+                <div class="metric-info">
+                    <span id="metric-conversion-rate" style="color: var(--accent);">9.4%</span>
+                    <label>Direct Conversion Rate</label>
+                </div>
+            </div>
+            <div class="metric-card" style="border-color: rgba(6,182,212,0.2);">
+                <div class="metric-icon" style="color: #06b6d4; background: rgba(6,182,212,0.06);"><i class="fa-solid fa-map-location-dot"></i></div>
+                <div class="metric-info">
+                    <span id="metric-hotspot-region" style="color: #06b6d4;">Bihar</span>
+                    <label>Hot-Spot Region</label>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. Smart Analytics Dashboard Workspace Grid Layout -->
+        <div class="analytics-grid-layout">
+            
+            <!-- Left Side: Funnel, Heatmap, and Views -->
+            <div style="display: flex; flex-direction: column; gap: 24px;">
+                
+                <!-- 3a. Most Viewed & Converting Products catalog shelf -->
+                <div class="admin-card-section">
+                    <div class="card-section-header">
+                        <h3><i class="fa-solid fa-chart-column" style="color: var(--primary); margin-right: 6px;"></i>Most Viewed & Converting Products</h3>
+                        <p>Track which clean backup infrastructures are capturing user attention and their view-to-order ratio.</p>
+                    </div>
+
+                    <div class="inventory-table-container">
+                        <table class="inventory-table">
+                            <thead>
+                                <tr>
+                                    <th>Product Details</th>
+                                    <th>Views</th>
+                                    <th>Views Autonomy Trend</th>
+                                    <th>Conversion Rate</th>
+                                </tr>
+                            </thead>
+                            <tbody id="analytics-views-body">
+                                <!-- Loaded dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- 3b. WhatsApp Lead Click Heatmap Table -->
+                <div class="admin-card-section" style="border-color: rgba(251,100,27,0.25);">
+                    <div class="card-section-header">
+                        <h3 style="color: var(--secondary);"><i class="fa-brands fa-whatsapp" style="margin-right: 6px;"></i>WhatsApp Inquiry Lead Heatmap</h3>
+                        <p>Telemetry analysis tracking direct WhatsApp quote requests generated by product deals cards.</p>
+                    </div>
+
+                    <div class="inventory-table-container">
+                        <table class="inventory-table">
+                            <thead>
+                                <tr>
+                                    <th>UPS System Layout</th>
+                                    <th>Category</th>
+                                    <th>WhatsApp Clicks</th>
+                                    <th>Inquiry Severity</th>
+                                    <th>Conversion Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="analytics-heatmap-body">
+                                <!-- Loaded dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- 3c. Conversion Funnel Visualizer -->
+                <div class="admin-card-section">
+                    <div class="card-section-header">
+                        <h3><i class="fa-solid fa-filter" style="color: var(--primary); margin-right: 6px;"></i>Customer E-Commerce Conversion Funnel</h3>
+                        <p>Breakdown of sales lead leakage from direct catalog traffic down to customized plant requests and B2B invoices.</p>
+                    </div>
+
+                    <div class="funnel-wrapper">
+                        <!-- Funnel 1 -->
+                        <div class="funnel-step funnel-step-1">
+                            <div class="funnel-label"><i class="fa-solid fa-users"></i> Storefront Traffic base</div>
+                            <div class="funnel-stats">
+                                <span class="funnel-val">10,420 Users</span>
+                                <span class="funnel-percent" style="background: rgba(40,116,240,0.08); color: var(--primary);">100%</span>
+                            </div>
+                        </div>
+
+                        <!-- Funnel 2 -->
+                        <div class="funnel-step funnel-step-2">
+                            <div class="funnel-label"><i class="fa-solid fa-box-open"></i> Product Details Viewed</div>
+                            <div class="funnel-stats">
+                                <span class="funnel-val">5,810 Clicks</span>
+                                <span class="funnel-percent">55.8%</span>
+                            </div>
+                        </div>
+
+                        <!-- Funnel 3 -->
+                        <div class="funnel-step funnel-step-3">
+                            <div class="funnel-label"><i class="fa-solid fa-calculator"></i> Sized / Customized Autonomy</div>
+                            <div class="funnel-stats">
+                                <span class="funnel-val">2,430 Designs</span>
+                                <span class="funnel-percent">23.3%</span>
+                            </div>
+                        </div>
+
+                        <!-- Funnel 4 -->
+                        <div class="funnel-step funnel-step-4">
+                            <div class="funnel-label"><i class="fa-brands fa-whatsapp"></i> WhatsApp Quote B2B Clicks</div>
+                            <div class="funnel-stats">
+                                <span class="funnel-val">982 Quotes</span>
+                                <span class="funnel-percent">9.4%</span>
+                            </div>
+                        </div>
+
+                        <!-- Funnel 5 -->
+                        <div class="funnel-step funnel-step-5">
+                            <div class="funnel-label"><i class="fa-solid fa-file-invoice-dollar"></i> Placed Orders (Standard & Custom)</div>
+                            <div class="funnel-stats">
+                                <span id="funnel-orders-val" class="funnel-val">412 Sales</span>
+                                <span id="funnel-orders-pct" class="funnel-percent" style="background: rgba(16,185,129,0.08); color:#10b981;">4.0%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Right Side: Regions & AI Query Cloud -->
+            <div style="display: flex; flex-direction: column; gap: 24px;">
+                
+                <!-- 3d. Customer Regions demand distribution -->
+                <div class="admin-card-section" style="border-color: rgba(6,182,212,0.25);">
+                    <div class="card-section-header">
+                        <h3 style="color: #06b6d4;"><i class="fa-solid fa-earth-asia" style="margin-right: 6px;"></i>Customer Regions & Autonomy Sizing</h3>
+                        <p>Geographical telemetry capturing localized demand spikes based on B2B inquiries.</p>
+                    </div>
+
+                    <div class="regions-list" id="analytics-regions-box">
+                        <!-- Loaded dynamically -->
+                    </div>
+
+                    <div class="trend-highlight-card">
+                        <div class="trend-icon-box"><i class="fa-solid fa-fire-flame-curved"></i></div>
+                        <div style="font-size: 11.5px; line-height: 1.4;">
+                            <strong style="color: var(--secondary);">High Growth Zone (Bihar)</strong>
+                            <p style="color: var(--text-muted); margin-top: 2px;">Surgical and ICU backup specifications in Patna, Muzaffarpur, and Gaya are generating the highest kVA average size queries.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3e. AI Chatbot queries intent analyzer -->
+                <div class="admin-card-section">
+                    <div class="card-section-header">
+                        <h3><i class="fa-solid fa-brain" style="color: var(--primary); margin-right: 6px;"></i>AI Chatbot Intent Analytics</h3>
+                        <p>Real-time natural language query categorization from visitor queries with Aura AI.</p>
+                    </div>
+
+                    <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-top: 15px;" id="analytics-ai-queries">
+                        <!-- Loaded dynamically -->
+                    </div>
+                </div>
+
+                <!-- 3f. AURA AI Actionable Recommendations -->
+                <div class="admin-card-section" style="border-color: rgba(16,185,129,0.2);">
+                    <div class="card-section-header">
+                        <h3 style="color:#10b981;"><i class="fa-solid fa-lightbulb" style="margin-right: 6px;"></i>Aura AI Supply Recommendations</h3>
+                        <p>Sourced insights to optimize catalog margins, inventory control, and factory line scheduling.</p>
+                    </div>
+
+                    <div style="margin-top: 15px; font-size: 12px; display: flex; flex-direction: column; gap: 12px; line-height: 1.5;">
+                        <div style="display: flex; gap: 10px; align-items: flex-start;">
+                            <i class="fa-solid fa-circle-check" style="color:#10b981; margin-top: 3px;"></i>
+                            <p><strong>Optimize Bihar Grid Stock:</strong> Shift 20% of modular Aegis inventory to Patna depot to capture local surgical hospital bids.</p>
+                        </div>
+                        <div style="display: flex; gap: 10px; align-items: flex-start;">
+                            <i class="fa-solid fa-circle-check" style="color:#10b981; margin-top: 3px;"></i>
+                            <p><strong>Lithium Supply Chain:</strong> Heavy search intents for Lithium lifespan suggest updating storefront cards to offer extended 5-year warranty options on Nova compute bank batteries.</p>
+                        </div>
+                        <div style="display: flex; gap: 10px; align-items: flex-start;">
+                            <i class="fa-solid fa-circle-check" style="color:#10b981; margin-top: 3px;"></i>
+                            <p><strong>Launch Hospital Bundling Campaign:</strong> Sizing sizer shows a 30% conversion boost when UPS systems are priced in combination with pre-configured neutral isolation transformers.</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container footer-container">
+            <div class="footer-logo">
+                <i class="fa-solid fa-bolt"></i>
+                <span>AURA</span>
+            </div>
+            <p class="footer-copy">© <span id="year"></span> Aura Power Solutions. Engineered for Excellence.</p>
+        </div>
+    </footer>
+
+    <!-- Script specifically for Smart Analytics dashboard rendering and local storage sizers -->
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            document.getElementById("year").textContent = new Date().getFullYear();
+
+            // Safe localStorage parser helper
+            function safeParseLocalStorage(key, defaultValue) {
+                try {
+                    const val = localStorage.getItem(key);
+                    if (!val) return defaultValue;
+                    const parsed = JSON.parse(val);
+                    if (Array.isArray(defaultValue)) {
+                        return Array.isArray(parsed) ? parsed : defaultValue;
+                    }
+                    if (typeof defaultValue === "object" && defaultValue !== null) {
+                        return (typeof parsed === "object" && parsed !== null) ? parsed : defaultValue;
+                    }
+                    return parsed;
+                } catch (e) {
+                    console.error("Localstorage parse error:", e);
+                    return defaultValue;
+                }
+            }
+
+            // Theme setup
+            const htmlElement = document.documentElement;
+            const themeToggle = document.getElementById("theme-toggle");
+            const savedTheme = localStorage.getItem("aura-theme") || "normal";
+            htmlElement.setAttribute("data-theme", savedTheme);
+            
+            themeToggle.addEventListener("click", () => {
+                const currentTheme = htmlElement.getAttribute("data-theme");
+                const newTheme = currentTheme === "normal" ? "neon" : "normal";
+                htmlElement.setAttribute("data-theme", newTheme);
+                localStorage.setItem("aura-theme", newTheme);
+                updateThemeIcon(newTheme);
+            });
+            function updateThemeIcon(theme) {
+                const icon = themeToggle.querySelector("i");
+                if (theme === "neon") {
+                    icon.className = "fa-solid fa-sun";
+                } else {
+                    icon.className = "fa-solid fa-moon";
+                }
+            }
+            updateThemeIcon(savedTheme);
+
+            // Secure Logout Trigger
+            document.getElementById("secure-logout-btn").addEventListener("click", () => {
+                if (confirm("Are you sure you want to sign out from the Admin Panel?")) {
+                    localStorage.removeItem("aura-admin-logged-in");
+                    window.location.href = "index.html";
+                }
+            });
+
+            // 1. Fetch Dynamic local storage metrics
+            const stdOrders = safeParseLocalStorage("aura-user-orders", []);
+            const custBuilds = safeParseLocalStorage("aura-user-customizations", []);
+            const repairs = safeParseLocalStorage("aura-user-repairs", []);
+            const products = safeParseLocalStorage("aura-flipkart-products", []);
+
+            const totalOrders = stdOrders.length + custBuilds.length;
+            
+            // Adjust funnel values based on actual orders
+            if (totalOrders > 0) {
+                const funnelOrdersVal = document.getElementById("funnel-orders-val");
+                const funnelOrdersPct = document.getElementById("funnel-orders-pct");
+                
+                const calculatedSalesCount = 412 + totalOrders;
+                const calculatedSalesPct = ((calculatedSalesCount / 10420) * 100).toFixed(1);
+                
+                funnelOrdersVal.textContent = `${calculatedSalesCount} Sales`;
+                funnelOrdersPct.textContent = `${calculatedSalesPct}%`;
+                
+                // Update Conversion Rate Card dynamically
+                document.getElementById("metric-conversion-rate").textContent = `${calculatedSalesPct}%`;
+            }
+
+            // 2. Render Most Viewed Products shelf
+            // Hardcoded views representing a realistic analytics tracker with dynamic catalog integration
+            const productViewsData = [
+                { id: "fk-quantum-tx", views: 3420, baseCvr: 9.6, sparkline: [40, 55, 60, 45, 80, 95, 120] },
+                { id: "fk-aegis-rack", views: 2480, baseCvr: 8.4, sparkline: [20, 30, 45, 50, 48, 70, 85] },
+                { id: "fk-titan-inv", views: 1820, baseCvr: 11.2, sparkline: [50, 60, 55, 70, 68, 90, 110] },
+                { id: "fk-nova-edge", views: 1540, baseCvr: 7.2, sparkline: [10, 15, 20, 25, 40, 55, 60] },
+                { id: "fk-life-pack", views: 1160, baseCvr: 10.8, sparkline: [30, 40, 38, 45, 60, 75, 95] }
+            ];
+
+            const viewsTableBody = document.getElementById("analytics-views-body");
+            viewsTableBody.innerHTML = "";
+
+            products.forEach(prod => {
+                // Find view metrics or assign fallback
+                let metric = productViewsData.find(m => m.id === prod.id);
+                if (!metric) {
+                    metric = {
+                        views: Math.floor(Math.random() * 800) + 200,
+                        baseCvr: parseFloat((Math.random() * 5 + 5).toFixed(1)),
+                        sparkline: [10, 20, 15, 30, 25, 40, 45]
+                    };
+                }
+
+                // Render views progress bar sizer
+                const maxViews = 4000;
+                const progressWidth = Math.min((metric.views / maxViews) * 100, 100);
+
+                const tr = document.createElement("tr");
+                tr.innerHTML = `
+                    <td>
+                        <div style="display:flex; align-items:center; gap:8px;">
+                            <img src="${prod.imageUrl}" style="width:32px; height:32px; border-radius:4px; object-fit:cover; border:1px solid var(--card-border);">
+                            <div>
+                                <strong style="font-size:12px; color:var(--text-color);">${prod.title}</strong>
+                                <span style="display:block; font-size:10px; color:var(--text-muted); text-transform:uppercase;">${prod.category}</span>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div style="font-weight:bold; font-size:12.5px; font-family:'Space Grotesk',sans-serif;">${metric.views.toLocaleString()}</div>
+                    </td>
+                    <td>
+                        <div style="width: 100%; max-width: 150px;">
+                            <div style="display:flex; justify-content:space-between; font-size:10px; color:var(--text-muted); margin-bottom:4px;">
+                                <span>Autonomy Trend</span>
+                                <strong>${progressWidth.toFixed(0)}%</strong>
+                            </div>
+                            <div class="region-bar-track" style="height:4px;">
+                                <div class="region-bar-fill" style="width:${progressWidth}%;"></div>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <span style="font-size:12px; font-weight:bold; color:var(--accent); background:rgba(var(--accent-rgb),0.06); padding:2px 8px; border-radius:4px;">${metric.baseCvr}%</span>
+                    </td>
+                `;
+                viewsTableBody.appendChild(tr);
+            });
+
+            // 3. Render WhatsApp Click inquiry Heatmap
+            // Tracking clicks based on catalog data
+            const waClicksData = [
+                { id: "fk-quantum-tx", clicks: 384, severity: "critical", state: "Completed" },
+                { id: "fk-aegis-rack", clicks: 241, severity: "high", state: "Completed" },
+                { id: "fk-titan-inv", clicks: 156, severity: "medium", state: "Under Production" },
+                { id: "fk-nova-edge", clicks: 122, severity: "medium", state: "Dispatch Ready" },
+                { id: "fk-life-pack", clicks: 79, severity: "low", state: "Under Production" }
+            ];
+
+            const heatmapTableBody = document.getElementById("analytics-heatmap-body");
+            heatmapTableBody.innerHTML = "";
+
+            products.forEach(prod => {
+                let heat = waClicksData.find(h => h.id === prod.id);
+                if (!heat) {
+                    heat = {
+                        clicks: Math.floor(Math.random() * 100) + 10,
+                        severity: "low",
+                        state: prod.stockStatus
+                    };
+                }
+
+                // Severity Class
+                let badgeClass = "heatmap-low";
+                if (heat.clicks > 200) badgeClass = "heatmap-high";
+                else if (heat.clicks > 100) badgeClass = "heatmap-med";
+
+                const tr = document.createElement("tr");
+                tr.innerHTML = `
+                    <td><strong style="font-size:12px; color:var(--text-color);">${prod.title}</strong></td>
+                    <td><span class="badge" style="background:rgba(var(--primary-rgb),0.08); color:var(--primary); font-size:10px; text-transform:uppercase;">${prod.category}</span></td>
+                    <td><strong style="font-family:'Space Grotesk',sans-serif; font-size:12.5px; color:var(--text-color);"><i class="fa-brands fa-whatsapp" style="color:#10b981; margin-right:4px;"></i>${heat.clicks} Clicks</strong></td>
+                    <td><span class="heatmap-badge ${badgeClass}">${badgeClass === 'heatmap-high' ? '🔥 Critical Sourcing' : badgeClass === 'heatmap-med' ? '⚡ High Conversion' : 'Muted'}</span></td>
+                    <td><span style="font-size:11px; font-weight:bold; color:var(--text-muted);">${heat.state}</span></td>
+                `;
+                heatmapTableBody.appendChild(tr);
+            });
+
+            // 4. Render Customer Regions
+            // We read customizations list for any localized region flags
+            let biharCount = 2840;
+            let delhiCount = 2120;
+            let mahCount = 1890;
+            let karCount = 1540;
+            let otherCount = 2030;
+
+            custBuilds.forEach(build => {
+                const specsLower = (build.specs || "").toLowerCase();
+                const nameLower = (build.name || "").toLowerCase();
+                if (specsLower.includes("bihar") || specsLower.includes("patna") || nameLower.includes("patna") || nameLower.includes("bihar")) {
+                    biharCount += 50;
+                } else if (specsLower.includes("delhi") || specsLower.includes("ncr") || nameLower.includes("delhi")) {
+                    delhiCount += 50;
+                } else if (specsLower.includes("mumbai") || specsLower.includes("pune") || specsLower.includes("maharashtra")) {
+                    mahCount += 50;
+                }
+            });
+
+            const totalRegionsSum = biharCount + delhiCount + mahCount + karCount + otherCount;
+            const regionData = [
+                { name: "Bihar (Patna/Gaya PHCs)", count: biharCount, pct: ((biharCount/totalRegionsSum)*100).toFixed(1) },
+                { name: "Delhi NCR (Datacenters/Hubs)", count: delhiCount, pct: ((delhiCount/totalRegionsSum)*100).toFixed(1) },
+                { name: "Maharashtra (Industrial/Server)", count: mahCount, pct: ((mahCount/totalRegionsSum)*100).toFixed(1) },
+                { name: "Karnataka (Bengaluru Edge Tech)", count: karCount, pct: ((karCount/totalRegionsSum)*100).toFixed(1) },
+                { name: "Other Territories", count: otherCount, pct: ((otherCount/totalRegionsSum)*100).toFixed(1) }
+            ];
+
+            const regionsBox = document.getElementById("analytics-regions-box");
+            regionsBox.innerHTML = "";
+            regionData.forEach(reg => {
+                const item = document.createElement("div");
+                item.className = "region-item";
+                item.innerHTML = `
+                    <div class="region-meta">
+                        <span>${reg.name}</span>
+                        <span style="color:var(--primary); font-family:'Space Grotesk',sans-serif;">${reg.count.toLocaleString()} (${reg.pct}%)</span>
+                    </div>
+                    <div class="region-bar-track">
+                        <div class="region-bar-fill" style="width: ${reg.pct}%;"></div>
+                    </div>
+                `;
+                regionsBox.appendChild(item);
+            });
+
+            // 5. Render AI Query Intent Cloud
+            const aiQueries = [
+                { text: "hospital ICU backup time", count: 48, icon: "fa-hospital" },
+                { text: "bihar PHC electrical specs", count: 42, icon: "fa-bolt" },
+                { text: "modular hot-swap scale up", count: 38, icon: "fa-network-wired" },
+                { text: "lithium battery life in heat", count: 34, icon: "fa-temperature-high" },
+                { text: "pure sine wave 40kVA price", count: 28, icon: "fa-tags" },
+                { text: "technician repair ticket SLA", count: 21, icon: "fa-wrench" },
+                { text: "APC Vertiv bypass cabinet", count: 18, icon: "fa-toggle-on" },
+                { text: "3 phase double conversion", count: 15, icon: "fa-shuffle" }
+            ];
+
+            const aiQueriesBox = document.getElementById("analytics-ai-queries");
+            aiQueriesBox.innerHTML = "";
+            aiQueries.forEach(query => {
+                const tag = document.createElement("span");
+                tag.className = "ai-tag";
+                tag.innerHTML = `<i class="fa-solid ${query.icon}"></i> ${query.text} (${query.count})`;
+                aiQueriesBox.appendChild(tag);
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="normal">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AURA | B2C Smart Store & Product Catalog</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Space+Grotesk:wght@300..700&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Main Style Sheet -->
+    <link rel="stylesheet" href="style.css">
+    
+    <style>
+        /* B2C Dynamic Segment Control Selector */
+        .b2c-selector-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 40px auto 20px;
+            max-width: 800px;
+            text-align: center;
+        }
+
+        .b2c-option-toggle {
+            display: flex;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            padding: 6px;
+            border-radius: 50px;
+            box-shadow: var(--shadow-md);
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin-top: 16px;
+        }
+
+        .b2c-toggle-btn {
+            flex: 1;
+            padding: 14px 20px;
+            border: none;
+            background: transparent;
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+            font-size: 14px;
+            color: var(--text-muted);
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            z-index: 2;
+        }
+
+        .b2c-toggle-btn.active {
+            color: #ffffff !important;
+            background: var(--primary);
+            box-shadow: 0 4px 15px rgba(var(--primary-rgb), 0.3);
+        }
+
+        [data-theme="neon"] .b2c-toggle-btn.active {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            box-shadow: 0 0 20px rgba(0, 229, 255, 0.4);
+        }
+
+        .b2c-option-desc {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-top: 12px;
+            max-width: 500px;
+            height: 36px;
+            transition: all 0.3s ease;
+        }
+
+        /* 8 Categories Grid Setup */
+        .b2c-store-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 24px;
+            margin-top: 30px;
+            margin-bottom: 60px;
+        }
+
+        @media (max-width: 1200px) {
+            .b2c-store-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        @media (max-width: 900px) {
+            .b2c-store-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 600px) {
+            .b2c-store-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Premium Product Card Graphic Styling */
+        .b2c-prod-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: var(--shadow-sm);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .b2c-prod-card:hover {
+            transform: translateY(-8px);
+            border-color: var(--primary);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .b2c-prod-badge {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            font-size: 9px;
+            font-weight: bold;
+            padding: 4px 10px;
+            border-radius: 50px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            z-index: 3;
+        }
+
+        .b2c-prod-category-tag {
+            font-size: 10px;
+            text-transform: uppercase;
+            font-weight: 800;
+            color: var(--secondary);
+            letter-spacing: 1px;
+            margin-bottom: 6px;
+            margin-top: 16px;
+        }
+
+        .b2c-prod-title {
+            font-size: 17px;
+            font-weight: bold;
+            color: var(--text-color);
+            margin-bottom: 10px;
+            font-family: 'Space Grotesk', sans-serif;
+            line-height: 1.3;
+        }
+
+        /* High-tech Canvas/SVG Product Illustrations */
+        .b2c-prod-visual {
+            height: 120px;
+            background: linear-gradient(135deg, rgba(var(--primary-rgb), 0.02), rgba(var(--secondary-rgb), 0.05));
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            margin-bottom: 12px;
+            border: 1px dashed var(--card-border);
+            transition: all 0.3s ease;
+        }
+
+        .b2c-prod-visual i {
+            font-size: 42px;
+            color: var(--primary);
+            filter: drop-shadow(0 4px 8px rgba(var(--primary-rgb), 0.2));
+            transition: all 0.3s ease;
+        }
+
+        .b2c-prod-card:hover .b2c-prod-visual i {
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        .b2c-prod-desc {
+            font-size: 12px;
+            color: var(--text-muted);
+            line-height: 1.4;
+            margin-bottom: 16px;
+            flex-grow: 1;
+        }
+
+        /* Premium Dynamic Specs Meter */
+        .b2c-spec-meter-box {
+            background: rgba(var(--primary-rgb), 0.02);
+            border: 1px solid var(--card-border);
+            border-radius: 6px;
+            padding: 10px;
+            margin-bottom: 16px;
+            font-size: 11px;
+        }
+
+        .b2c-spec-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 4px;
+            color: var(--text-muted);
+        }
+
+        .b2c-spec-row strong {
+            color: var(--text-color);
+        }
+
+        .b2c-price-box {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: auto;
+            border-top: 1px solid var(--card-border);
+            padding-top: 14px;
+        }
+
+        .b2c-price {
+            font-size: 19px;
+            font-weight: 800;
+            color: var(--text-color);
+            font-family: 'Space Grotesk', sans-serif;
+        }
+
+        .b2c-price-subtext {
+            font-size: 9px;
+            color: var(--text-muted);
+            display: block;
+        }
+
+        .b2c-btn-buy {
+            font-size: 11px;
+            padding: 8px 14px;
+            border-radius: 6px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            box-shadow: var(--shadow-sm);
+        }
+    </style>
+</head>
+<body class="ecom-body">
+
+    <!-- Transparent Fixed Header -->
+    <header class="header">
+        <div class="header-left-group" style="display: flex; align-items: center; gap: 16px;">
+            <button id="left-settings-trigger" class="theme-btn" title="Settings & Admin Control" style="margin-right: 4px;">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+            <div class="logo" onclick="window.location.href='index.html'">
+                <i class="fa-solid fa-bolt logo-icon"></i>
+                <span>AURA</span>
+            </div>
+        </div>
+        <nav class="nav">
+            <a href="index.html" class="nav-link">Systems</a>
+            <a href="b2c-store.html" class="nav-link active">B2C Products</a>
+            <a href="calculator.html" class="nav-link">Calculator</a>
+            <a href="customize.html" class="nav-link">Customize</a>
+            <a href="repair.html" class="nav-link">Repair Service</a>
+            <a href="orders.html" class="nav-link">My Orders</a>
+        </nav>
+        <div class="header-actions">
+            <!-- Theme Toggle Button -->
+            <button id="theme-toggle" class="theme-btn" title="Toggle Light/Dark Theme">
+                <i class="fa-solid fa-moon"></i>
+            </button>
+            <button id="admin-trigger-btn" class="theme-btn admin-btn" title="Open Admin Control Panel">
+                <i class="fa-solid fa-user-gear"></i>
+            </button>
+            <button id="user-login-btn" class="theme-btn user-btn" title="Customer Portal Login">
+                <i class="fa-solid fa-user"></i>
+            </button>
+            <a href="contact.html" class="btn btn-primary btn-quote">
+                <span>Get B2B Pricing</span>
+                <i class="fa-brands fa-whatsapp"></i>
+            </a>
+        </div>
+    </header>
+
+    <div class="container" style="margin-top: 100px; padding-bottom: 60px;">
+        
+        <!-- Welcome intro section -->
+        <div class="b2c-selector-container">
+            <span class="section-tag" style="background: rgba(var(--primary-rgb), 0.1); color: var(--primary); padding: 4px 12px; border-radius: 50px; font-size: 11px; font-weight: bold; text-transform: uppercase;">Retail Consumer Store</span>
+            <h2 class="section-title" style="margin-top: 10px; font-size: 32px; font-family: 'Space Grotesk', sans-serif;">Dynamic B2C Product Store</h2>
+            <p class="section-desc" style="max-width: 600px; font-size: 14px; color: var(--text-muted); margin-top: 8px;">Switch between our premium battery technologies to dynamically explore matching backup systems across all 8 consumer categories.</p>
+            
+            <!-- The Two Option Toggle Switchers at the top -->
+            <div class="b2c-option-toggle">
+                <button type="button" class="b2c-toggle-btn active" id="btn-opt-tubular">
+                    <i class="fa-solid fa-car-battery"></i> Traditional Backup
+                </button>
+                <button type="button" class="b2c-toggle-btn" id="btn-opt-lithium">
+                    <i class="fa-solid fa-battery-three-quarters"></i> Next-Gen Smart Power
+                </button>
+            </div>
+            
+            <!-- Description that updates dynamically -->
+            <div class="b2c-option-desc" id="toggle-desc-label">
+                Traditional tubular deep cycle systems. Highly affordable, reliable heavy duty, and widely standard.
+            </div>
+        </div>
+
+        <!-- 8 Products Categories Dynamic Grid -->
+        <div class="b2c-store-grid" id="b2c-catalog-grid">
+            <!-- Dynamic product cards render here -->
+        </div>
+
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container footer-container">
+            <div class="footer-logo">
+                <i class="fa-solid fa-bolt"></i>
+                <span>AURA</span>
+            </div>
+            <p class="footer-copy">© 2026 Aura Power Solutions. Engineered for Excellence.</p>
+        </div>
+    </footer>
+
+    <!-- Scripts for dynamic catalog render -->
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            // Theme setup
+            const htmlElement = document.documentElement;
+            const themeToggle = document.getElementById("theme-toggle");
+            
+            const savedTheme = localStorage.getItem("aura-theme") || "normal";
+            htmlElement.setAttribute("data-theme", savedTheme);
+            updateThemeIcon(savedTheme);
+
+            themeToggle.addEventListener("click", () => {
+                const currentTheme = htmlElement.getAttribute("data-theme");
+                const newTheme = currentTheme === "normal" ? "neon" : "normal";
+                
+                htmlElement.setAttribute("data-theme", newTheme);
+                localStorage.setItem("aura-theme", newTheme);
+                updateThemeIcon(newTheme);
+            });
+
+            function updateThemeIcon(theme) {
+                const icon = themeToggle.querySelector("i");
+                if (theme === "neon") {
+                    icon.className = "fa-solid fa-sun";
+                } else {
+                    icon.className = "fa-solid fa-moon";
+                }
+            }
+
+            // Quick Sidebar / Admin navigation logic
+            document.getElementById("admin-trigger-btn").addEventListener("click", () => {
+                window.location.href = "admin.html";
+            });
+            document.getElementById("user-login-btn").addEventListener("click", () => {
+                window.location.href = "customer-login.html";
+            });
+
+            // 8 Category database matching Option 1 (Traditional) vs Option 2 (Lithium Next-Gen)
+            const defaultDb = {
+                tubular: [
+                    {
+                        category: "Home UPS",
+                        title: "AURA EcoShield 1100VA Home UPS",
+                        desc: "Pure Sine wave standard domestic UPS built for stable household appliance backup.",
+                        badge: "Budget-Classic",
+                        badgeBg: "rgba(34, 197, 94, 0.1)",
+                        badgeColor: "#22c55e",
+                        icon: "fa-solid fa-house-chimney-window",
+                        autonomy: "4 Hours typical load",
+                        efficiency: "86% Standard",
+                        lifespan: "3 - 4 Years",
+                        price: 8499
+                    },
+                    {
+                        category: "Inverter",
+                        title: "AURA EcoFlow 1500VA Inverter",
+                        desc: "High conversion copper-transformer inverter designed for heavier tubular racks.",
+                        badge: "Heavy Duty Domestic",
+                        badgeBg: "rgba(59, 130, 246, 0.1)",
+                        badgeColor: "#3b82f6",
+                        icon: "fa-solid fa-arrows-spin",
+                        autonomy: "6 Hours backup",
+                        efficiency: "88% Power Factor",
+                        lifespan: "4 Years Max",
+                        price: 12999
+                    },
+                    {
+                        category: "Gaming UPS",
+                        title: "AURA PlaySafe 1200VA Gaming UPS",
+                        desc: "Fast transfer pure sine wave output designed to protect gaming rigs and consoles.",
+                        badge: "Rig Safeguard",
+                        badgeBg: "rgba(168, 85, 247, 0.1)",
+                        badgeColor: "#a855f7",
+                        icon: "fa-solid fa-gamepad",
+                        autonomy: "45 Mins Full Load",
+                        efficiency: "90% Active",
+                        lifespan: "3 Years",
+                        price: 10800
+                    },
+                    {
+                        category: "WiFi UPS",
+                        title: "AURA Nano Backup 12V Router UPS",
+                        desc: "Standard small-profile battery pack to keep your internet router running.",
+                        badge: "Router Shield",
+                        badgeBg: "rgba(239, 68, 68, 0.1)",
+                        badgeColor: "#ef4444",
+                        icon: "fa-solid fa-wifi",
+                        autonomy: "2 Hours continuous",
+                        efficiency: "92% Direct DC",
+                        lifespan: "2 Years",
+                        price: 1599
+                    },
+                    {
+                        category: "Office UPS",
+                        title: "AURA OfficeCore 3000VA Tubular Cabinet",
+                        desc: "Heavy duty pure sine wave double cabinet office workstation protection system.",
+                        badge: "Workstation Pack",
+                        badgeBg: "rgba(234, 179, 8, 0.1)",
+                        badgeColor: "#eab308",
+                        icon: "fa-solid fa-briefcase",
+                        autonomy: "3 Hours office backup",
+                        efficiency: "85% Rated",
+                        lifespan: "4 Years",
+                        price: 38500
+                    },
+                    {
+                        category: "Battery Systems",
+                        title: "AURA VoltGuard Tubular Battery 150Ah",
+                        desc: "Deep cycle tall tubular thick-grid battery for long, continuous outage schedules.",
+                        badge: "36-M Warranty",
+                        badgeBg: "rgba(20, 184, 166, 0.1)",
+                        badgeColor: "#14b8a6",
+                        icon: "fa-solid fa-car-battery",
+                        autonomy: "150 Ah Sizing",
+                        efficiency: "89% Cycle Yield",
+                        lifespan: "1200 Cycles",
+                        price: 11200
+                    },
+                    {
+                        category: "Solar Inverter",
+                        title: "AURA Helio PWM 1200VA Solar Inverter",
+                        desc: "PWM solar charging hybrid inverter, ideal for residential rooftop installs.",
+                        badge: "Solar Ready",
+                        badgeBg: "rgba(249, 115, 22, 0.1)",
+                        badgeColor: "#f97316",
+                        icon: "fa-solid fa-solar-panel",
+                        autonomy: "Solar Direct + Batt",
+                        efficiency: "PWM Charge Logic",
+                        lifespan: "4 Years",
+                        price: 9990
+                    },
+                    {
+                        category: "Smart Backup Systems",
+                        title: "AURA CloudLink Tubular Controller 2.5kVA",
+                        desc: "Standard inverter bundle equipped with WiFi IoT data logging dongles for live diagnostics.",
+                        badge: "Connected IoT",
+                        badgeBg: "rgba(79, 70, 229, 0.1)",
+                        badgeColor: "#4f46e5",
+                        icon: "fa-solid fa-tower-broadcast",
+                        autonomy: "5 Hours backup",
+                        efficiency: "87% IoT Tracked",
+                        lifespan: "4 Years",
+                        price: 24800
+                    }
+                ],
+                lithium: [
+                    {
+                        category: "Home UPS",
+                        title: "AURA WallWall-Li 2kVA Smart UPS",
+                        desc: "High density integrated LiFePO4 wall-mount cabinet. Modern, compact, zero maintenance.",
+                        badge: "Smart LFP Tech",
+                        badgeBg: "rgba(34, 197, 94, 0.1)",
+                        badgeColor: "#22c55e",
+                        icon: "fa-solid fa-house-chimney-window",
+                        autonomy: "6 Hours smart load",
+                        efficiency: "96% Ultra-High",
+                        lifespan: "10 Years / 4000 Cycles",
+                        price: 29999
+                    },
+                    {
+                        category: "Inverter",
+                        title: "AURA Li-Invert 2.5kVA EV-Ready",
+                        desc: "Compact lithium power inverter designed with high-surge capacities supporting fast EV charging.",
+                        badge: "Supercharge Li",
+                        badgeBg: "rgba(59, 130, 246, 0.1)",
+                        badgeColor: "#3b82f6",
+                        icon: "fa-solid fa-arrows-spin",
+                        autonomy: "8 Hours backup",
+                        efficiency: "97% EV Sized",
+                        lifespan: "12 Years",
+                        price: 34500
+                    },
+                    {
+                        category: "Gaming UPS",
+                        title: "AURA ZeroLag Gaming Lithium 2000VA",
+                        desc: "Zero-millisecond LFP power wall keeping high-end dual ray-traced PCs completely online.",
+                        badge: "0ms Latency ZeroLag",
+                        badgeBg: "rgba(168, 85, 247, 0.1)",
+                        badgeColor: "#a855f7",
+                        icon: "fa-solid fa-gamepad",
+                        autonomy: "2 Hours full gaming load",
+                        efficiency: "99% Pure Sine",
+                        lifespan: "10 Years Warranty",
+                        price: 21900
+                    },
+                    {
+                        category: "WiFi UPS",
+                        title: "AURA SmartLink Li-Ion Router UPS",
+                        desc: "Integrated battery BMS router pack with selectable 5V, 9V, and 12V clean DC output lines.",
+                        badge: "Multi-Voltage LFP",
+                        badgeBg: "rgba(239, 68, 68, 0.1)",
+                        badgeColor: "#ef4444",
+                        icon: "fa-solid fa-wifi",
+                        autonomy: "5 Hours continuous",
+                        efficiency: "98% DC Regulated",
+                        lifespan: "6 Years",
+                        price: 2499
+                    },
+                    {
+                        category: "Office UPS",
+                        title: "AURA PowerWall-Office 5kVA Premium",
+                        desc: "Sleek commercial server rack design featuring integrated LFP blocks and smart BMS load sharing.",
+                        badge: "Server Cluster",
+                        badgeBg: "rgba(234, 179, 8, 0.1)",
+                        badgeColor: "#eab308",
+                        icon: "fa-solid fa-briefcase",
+                        autonomy: "6 Hours server backup",
+                        efficiency: "95% Enterprise Grade",
+                        lifespan: "10+ Years",
+                        price: 118000
+                    },
+                    {
+                        category: "Battery Systems",
+                        title: "AURA Smart-LFP 48V 100Ah Battery",
+                        desc: "Next-gen iron-phosphate module with active balancing smart Bluetooth monitoring systems.",
+                        badge: "6000+ Cycles LFP",
+                        badgeBg: "rgba(20, 184, 166, 0.1)",
+                        badgeColor: "#14b8a6",
+                        icon: "fa-solid fa-car-battery",
+                        autonomy: "4800 Wh Total Capacity",
+                        efficiency: "Active Balance BMS",
+                        lifespan: "15 Years",
+                        price: 88000
+                    },
+                    {
+                        category: "Solar Inverter",
+                        title: "AURA Helio-LFP 3kVA MPPT Solar",
+                        desc: "Dynamic solar tracking MPPT charger tailored for LiFePO4 high conversion rates.",
+                        badge: "MPPT Efficient solar",
+                        badgeBg: "rgba(249, 115, 22, 0.1)",
+                        badgeColor: "#f97316",
+                        icon: "fa-solid fa-solar-panel",
+                        autonomy: "Full Solar Autonomy",
+                        efficiency: "98.5% MPPT Sizing",
+                        lifespan: "10 Years",
+                        price: 44500
+                    },
+                    {
+                        category: "Smart Backup Systems",
+                        title: "AURA AI-PowerWall 10kVA Intelligent",
+                        desc: "Central home energy wall powered by AI load prediction algorithms and smart tariff battery charging.",
+                        badge: "AI Tariff Sentry",
+                        badgeBg: "rgba(79, 70, 229, 0.1)",
+                        badgeColor: "#4f46e5",
+                        icon: "fa-solid fa-tower-broadcast",
+                        autonomy: "12 Hours Smart Backup",
+                        efficiency: "98% Cloud Managed",
+                        lifespan: "15 Years",
+                        price: 285000
+                    }
+                ]
+            };
+
+            let productsDb = JSON.parse(localStorage.getItem("aura-b2c-products"));
+            if (!productsDb) {
+                productsDb = defaultDb;
+                localStorage.setItem("aura-b2c-products", JSON.stringify(defaultDb));
+            }
+
+            const tubularBtn = document.getElementById("btn-opt-tubular");
+            const lithiumBtn = document.getElementById("btn-opt-lithium");
+            const descLabel = document.getElementById("toggle-desc-label");
+            const gridContainer = document.getElementById("b2c-catalog-grid");
+
+            // Toggle handlers
+            tubularBtn.addEventListener("click", () => {
+                tubularBtn.classList.add("active");
+                lithiumBtn.classList.remove("active");
+                descLabel.textContent = "Traditional tubular deep cycle systems. Highly affordable, reliable heavy duty, and widely standard.";
+                renderCatalog("tubular");
+            });
+
+            lithiumBtn.addEventListener("click", () => {
+                lithiumBtn.classList.add("active");
+                tubularBtn.classList.remove("active");
+                descLabel.textContent = "Integrated lithium iron phosphate (LiFePO4) systems. Zero maintenance, 10x life cycle, ultra compact, EV grade.";
+                renderCatalog("lithium");
+            });
+
+            // Dynamic Render Catalog Function
+            function renderCatalog(optionKey) {
+                gridContainer.innerHTML = "";
+                const items = productsDb[optionKey];
+                
+                items.forEach(prod => {
+                    const card = document.createElement("div");
+                    card.className = "b2c-prod-card";
+                    card.innerHTML = `
+                        <div class="b2c-prod-badge" style="background: ${prod.badgeBg || 'rgba(var(--primary-rgb), 0.1)'}; color: ${prod.badgeColor || 'var(--primary)'};">
+                            ${prod.badge}
+                        </div>
+                        <div class="b2c-prod-category-tag">${prod.category}</div>
+                        <h4 class="b2c-prod-title">${prod.title}</h4>
+                        
+                        <!-- Illustration Icon box -->
+                        <div class="b2c-prod-visual">
+                            ${prod.image ? `<img src="${prod.image}" style="max-width: 100%; max-height: 100%; object-fit: contain; border-radius: 6px;">` : `<i class="${prod.icon}"></i>`}
+                        </div>
+                        
+                        <p class="b2c-prod-desc">${prod.desc}</p>
+                        
+                        <!-- Spec Box -->
+                        <div class="b2c-spec-meter-box">
+                            <div class="b2c-spec-row">
+                                <span>Estimated Autonomy:</span>
+                                <strong>${prod.autonomy}</strong>
+                            </div>
+                            <div class="b2c-spec-row">
+                                <span>Cell Lifespan:</span>
+                                <strong>${prod.lifespan}</strong>
+                            </div>
+                            <div class="b2c-spec-row">
+                                <span>System Efficiency:</span>
+                                <strong>${prod.efficiency}</strong>
+                            </div>
+                        </div>
+
+                        <!-- Price & Buy actions -->
+                        <div class="b2c-price-box">
+                            <div>
+                                <span class="b2c-price">₹${prod.price.toLocaleString('en-IN')}</span>
+                                <span class="b2c-price-subtext">All-Inclusive GST Price</span>
+                            </div>
+                            <button type="button" class="btn btn-primary b2c-btn-buy" onclick="handleQuickBuy('${prod.title}', ${prod.price})">
+                                <span>Order Now</span>
+                                <i class="fa-solid fa-cart-shopping"></i>
+                            </button>
+                        </div>
+                    `;
+                    gridContainer.appendChild(card);
+                });
+            }
+
+            // Global quick buy routing handler
+            window.handleQuickBuy = (title, price) => {
+                alert(`Redirecting to Secure checkout panel for Aura System:\n"${title}" (All-inclusive Price: ₹${price.toLocaleString('en-IN')})`);
+            };
+
+            // Render Default Option
+            renderCatalog("tubular");
+        });
+    </script>
+</body>
+</html>

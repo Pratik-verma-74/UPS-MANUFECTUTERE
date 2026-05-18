@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="normal">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AURA | Capacity Sizing Calculator</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Space+Grotesk:wght@300..700&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Main Style Sheet -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Professional Sleek Header -->
+    <header class="header">
+        <div class="header-left-group" style="display: flex; align-items: center; gap: 16px;">
+            <button id="left-settings-trigger" class="theme-btn" title="Settings & Admin Control" style="margin-right: 4px;">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+            <div class="logo" onclick="window.location.href='index.html'">
+                <i class="fa-solid fa-bolt logo-icon"></i>
+                <span>AURA</span>
+            </div>
+        </div>
+        <nav class="nav">
+            <a href="index.html" class="nav-link">Systems</a>
+            <a href="b2c-store.html" class="nav-link">B2C Products</a>
+            <a href="calculator.html" class="nav-link active">Calculator</a>
+            <a href="customize.html" class="nav-link">Customize</a>
+            <a href="repair.html" class="nav-link">Repair Service</a>
+            <a href="orders.html" class="nav-link">My Orders</a>
+        </nav>
+        <div class="header-actions">
+            <button id="theme-toggle" class="theme-btn" title="Toggle Light/Dark Theme">
+                <i class="fa-solid fa-moon"></i>
+            </button>
+            <button id="admin-trigger-btn" class="theme-btn admin-btn" title="Open Admin Control Panel">
+                <i class="fa-solid fa-user-gear"></i>
+            </button>
+            <button id="user-login-btn" class="theme-btn user-btn" title="Customer Portal Login">
+                <i class="fa-solid fa-user"></i>
+            </button>
+            <a href="https://wa.me/919999999999?text=Hello%20Aura%20Power,%20I%20want%20to%20request%20a%20quote." target="_blank" class="btn btn-primary btn-quote">
+                <span>Get B2B Pricing</span>
+                <i class="fa-brands fa-whatsapp"></i>
+            </a>
+        </div>
+    </header>
+
+    <!-- Standalone Calculator Section -->
+    <section class="calculator-section" style="margin-top: 64px; padding: 80px 0; background: var(--bg-color); min-height: 80vh; transition: background-color 0.3s ease;">
+        <div class="container">
+            <div class="section-header" style="margin-bottom: 45px;">
+                <span class="section-tag">Interactive Sizing Desk</span>
+                <h2 class="section-title">Autonomy & Sizing Calculator</h2>
+                <p class="section-desc">Select your industry profile and expected loads to dynamically size your ideal backup configuration.</p>
+            </div>
+            
+            <div class="calc-wrapper glass border">
+                <div class="calc-inputs">
+                    <div class="calc-group">
+                        <label class="calc-label"><i class="fa-solid fa-building-shield"></i> Facility Classification</label>
+                        <div class="facility-grid">
+                            <button class="facility-btn active" data-facility="datacenter" data-multiplier="1.5">
+                                <i class="fa-solid fa-server"></i>
+                                <span>Datacenter</span>
+                            </button>
+                            <button class="facility-btn" data-facility="medical" data-multiplier="1.8">
+                                <i class="fa-solid fa-heart-pulse"></i>
+                                <span>Medical Care</span>
+                            </button>
+                            <button class="facility-btn" data-facility="industrial" data-multiplier="1.4">
+                                <i class="fa-solid fa-industry"></i>
+                                <span>Industrial</span>
+                            </button>
+                            <button class="facility-btn" data-facility="office" data-multiplier="1.2">
+                                <i class="fa-solid fa-laptop-code"></i>
+                                <span>Commercial Office</span>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="calc-group">
+                        <div class="calc-header-row">
+                            <label class="calc-label"><i class="fa-solid fa-plug"></i> Base Load Capacity</label>
+                            <span class="calc-value-display" id="load-display">25 kVA</span>
+                        </div>
+                        <input type="range" id="load-slider" min="5" max="150" value="25" class="calc-slider">
+                        <div class="slider-markers">
+                            <span>5 kVA</span>
+                            <span>50 kVA</span>
+                            <span>100 kVA</span>
+                            <span>150 kVA</span>
+                        </div>
+                    </div>
+
+                    <div class="calc-group">
+                        <div class="calc-header-row">
+                            <label class="calc-label"><i class="fa-solid fa-battery-three-quarters"></i> Desired Autonomy (Backup)</label>
+                            <span class="calc-value-display" id="hours-display">2 Hours</span>
+                        </div>
+                        <input type="range" id="hours-slider" min="1" max="12" value="2" class="calc-slider">
+                        <div class="slider-markers">
+                            <span>1 Hr</span>
+                            <span>4 Hrs</span>
+                            <span>8 Hrs</span>
+                            <span>12 Hrs</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="calc-output-card">
+                    <h3>Recommended System</h3>
+                    <div class="rec-product-box">
+                        <div class="rec-icon"><i class="fa-solid fa-microchip"></i></div>
+                        <div>
+                            <h4 id="rec-title">Quantum TX Series</h4>
+                            <p id="rec-category" class="prod-category">Online UPS</p>
+                        </div>
+                    </div>
+
+                    <div class="rec-metrics">
+                        <div class="metric-row">
+                            <span>Recommended UPS Sizing</span>
+                            <strong id="rec-ups-size">37.5 kVA</strong>
+                        </div>
+                        <div class="metric-row">
+                            <span>Safety Buffer Factor</span>
+                            <strong id="rec-safety-factor">1.5x (High Criticality)</strong>
+                        </div>
+                        <div class="metric-row">
+                            <span>Suggested Battery Bank</span>
+                            <strong id="rec-battery-size">96V / 120Ah LiFePO4</strong>
+                        </div>
+                    </div>
+
+                    <div class="rec-gauge-container">
+                        <div class="rec-gauge-label">
+                            <span>System Load Capacity Utilization</span>
+                            <span id="gauge-percent">66%</span>
+                        </div>
+                        <div class="rec-gauge-bar">
+                            <div class="rec-gauge-fill" id="gauge-fill" style="width: 66%;"></div>
+                        </div>
+                    </div>
+
+                    <button id="calc-quote-btn" class="btn btn-primary w-full">
+                        <span>Get Instant Quote</span>
+                        <i class="fa-brands fa-whatsapp"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container footer-container">
+            <div class="footer-logo">
+                <i class="fa-solid fa-bolt"></i>
+                <span>AURA</span>
+            </div>
+            <p class="footer-copy">© <span id="year"></span> Aura Power Solutions. Engineered for Excellence.</p>
+        </div>
+    </footer>
+
+    <!-- Sliding Settings Sidebar -->
+    <div id="settings-sidebar" class="sidebar-panel">
+        <div class="sidebar-header">
+            <h3><i class="fa-solid fa-gears"></i> Settings Panel</h3>
+            <button id="sidebar-close-btn" class="close-btn">&times;</button>
+        </div>
+        <div class="sidebar-body">
+            <!-- Theme Preference -->
+            <div class="settings-group">
+                <label><i class="fa-solid fa-circle-half-stroke"></i> Select Theme</label>
+                <div class="theme-select-grid">
+                    <button id="theme-normal-select" class="theme-select-btn active">Flipkart Light</button>
+                    <button id="theme-neon-select" class="theme-select-btn">Cyber Neon</button>
+                </div>
+            </div>
+
+            <!-- Admin Access Gate -->
+            <div class="settings-group admin-gate-group">
+                <label><i class="fa-solid fa-user-shield"></i> Administration</label>
+                <p class="settings-desc">Access factory scaling multipliers, WhatsApp leads trackers, and catalog upload desks.</p>
+                <button id="sidebar-admin-btn" class="btn btn-secondary w-full">
+                    <span>Admin Portal Access</span>
+                    <i class="fa-solid fa-right-to-bracket"></i>
+                </button>
+            </div>
+            
+            <!-- Quick Portal links -->
+            <div class="settings-group">
+                <label><i class="fa-solid fa-link"></i> Quick Navigation</label>
+                <ul class="settings-nav-links">
+                    <li><a href="index.html"><i class="fa-solid fa-house"></i> Home Systems</a></li>
+                    <li><a href="calculator.html"><i class="fa-solid fa-calculator"></i> Capacity Sizer</a></li>
+                    <li><a href="customize.html"><i class="fa-solid fa-sliders"></i> Custom Plant Designer</a></li>
+                    <li><a href="repair.html"><i class="fa-solid fa-wrench"></i> Repair Dispatch</a></li>
+                    <li><a href="orders.html"><i class="fa-solid fa-cart-flatbed"></i> My Orders Registry</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div id="sidebar-overlay" class="sidebar-overlay"></div>
+
+    <!-- Interactive script triggers -->
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            document.getElementById("year").textContent = new Date().getFullYear();
+
+            // Load Slider Calculator Logic
+            const loadSlider = document.getElementById("load-slider");
+            const loadDisplay = document.getElementById("load-display");
+            const hoursSlider = document.getElementById("hours-slider");
+            const hoursDisplay = document.getElementById("hours-display");
+            const facilityButtons = document.querySelectorAll(".facility-btn");
+
+            let activeMultiplier = 1.5;
+            let activeProfileName = "Datacenter";
+
+            // Multiplier overrides from localStorage if admin customized
+            const multiplierConfigs = JSON.parse(localStorage.getItem("aura-sizing-multipliers")) || {
+                datacenter: 1.5,
+                medical: 1.8,
+                industrial: 1.4,
+                office: 1.2
+            };
+
+            facilityButtons.forEach(btn => {
+                btn.addEventListener("click", () => {
+                    facilityButtons.forEach(b => b.classList.remove("active"));
+                    btn.classList.add("active");
+                    
+                    const profile = btn.getAttribute("data-facility");
+                    activeMultiplier = parseFloat(multiplierConfigs[profile] || btn.getAttribute("data-multiplier"));
+                    activeProfileName = btn.querySelector("span").textContent;
+                    
+                    calculateCapacity();
+                });
+            });
+
+            loadSlider.addEventListener("input", (e) => {
+                loadDisplay.textContent = `${e.target.value} kVA`;
+                calculateCapacity();
+            });
+
+            hoursSlider.addEventListener("input", (e) => {
+                hoursDisplay.textContent = `${e.target.value} ${e.target.value == 1 ? 'Hour' : 'Hours'}`;
+                calculateCapacity();
+            });
+
+            function calculateCapacity() {
+                const baseLoad = parseInt(loadSlider.value);
+                const hours = parseInt(hoursSlider.value);
+                
+                const recommendedSize = Math.round(baseLoad * activeMultiplier);
+                document.getElementById("rec-ups-size").textContent = `${recommendedSize} kVA`;
+                document.getElementById("rec-safety-factor").textContent = `${activeMultiplier}x (${activeProfileName})`;
+
+                const utilization = Math.round((baseLoad / recommendedSize) * 100);
+                document.getElementById("gauge-percent").textContent = `${utilization}%`;
+                document.getElementById("gauge-fill").style.width = `${utilization}%`;
+
+                let voltage = 96;
+                if (recommendedSize > 80) voltage = 384;
+                else if (recommendedSize > 30) voltage = 192;
+                
+                const ahRating = Math.round((baseLoad * hours * 1000) / (voltage * 0.9));
+                document.getElementById("rec-battery-size").textContent = `${voltage}V / ${ahRating}Ah LiFePO4`;
+
+                let recTitle = "Quantum TX Series 40kVA";
+                let recCategory = "Online UPS";
+                if (recommendedSize > 80) {
+                    recTitle = "Nova Edge Compute 500kVA";
+                    recCategory = "Online UPS";
+                } else if (recommendedSize < 20) {
+                    recTitle = "Aegis Rackmount 20kVA";
+                    recCategory = "Modular Systems";
+                }
+                document.getElementById("rec-title").textContent = recTitle;
+                document.getElementById("rec-category").textContent = recCategory;
+            }
+
+            calculateCapacity();
+
+            // Sizer purchase integration
+            document.getElementById("calc-quote-btn").addEventListener("click", () => {
+                const isUserLoggedIn = localStorage.getItem("aura-user-logged-in") === "true";
+                if (!isUserLoggedIn) {
+                    alert("AURA Security Protocols: Please sign in as a Customer to place orders or request factory quotes!");
+                    localStorage.setItem("aura-auth-redirect", "calculator.html");
+                    window.location.href = "customer-login.html";
+                    return;
+                }
+
+                const baseLoad = loadSlider.value;
+                const recUpsSize = document.getElementById("rec-ups-size").textContent;
+                const recProduct = document.getElementById("rec-title").textContent;
+                const batterySize = document.getElementById("rec-battery-size").textContent;
+
+                const orderId = "ORD-" + Date.now().toString().slice(-6);
+
+                let orders = JSON.parse(localStorage.getItem("aura-user-orders")) || [];
+                const newOrder = {
+                    id: orderId,
+                    title: recProduct,
+                    capacity: recUpsSize,
+                    price: 185000,
+                    status: "Pending Audit",
+                    timestamp: new Date().toLocaleDateString()
+                };
+                orders.unshift(newOrder);
+                localStorage.setItem("aura-user-orders", JSON.stringify(orders));
+
+                // Push lead
+                let leads = JSON.parse(localStorage.getItem("aura-whatsapp-leads")) || [];
+                leads.unshift({
+                    name: "Calculator Sizer Customer",
+                    system: `${recProduct} (${activeProfileName})`,
+                    capacity: recUpsSize,
+                    timestamp: "Just now"
+                });
+                localStorage.setItem("aura-whatsapp-leads", JSON.stringify(leads));
+
+                const message = `Hello Aura Power Systems!\n\nI want to order using Calculator recommendations:\n- *Load demand:* ${baseLoad} kVA\n- *Recommended UPS:* ${recProduct} (${recUpsSize})\n- *Target Battery:* ${batterySize}\n\nPlease share commercial quotes. Reference ID: ${orderId}`;
+                window.open(`https://wa.me/919999999999?text=${encodeURIComponent(message)}`, "_blank");
+
+                window.location.href = "orders.html";
+            });
+
+            // Theme Switcher Sync
+            const htmlElement = document.documentElement;
+            const themeToggle = document.getElementById("theme-toggle");
+            
+            const savedTheme = localStorage.getItem("aura-theme") || "normal";
+            htmlElement.setAttribute("data-theme", savedTheme);
+            updateThemeIcon(savedTheme);
+
+            themeToggle.addEventListener("click", () => {
+                const currentTheme = htmlElement.getAttribute("data-theme");
+                const newTheme = currentTheme === "normal" ? "neon" : "normal";
+                
+                htmlElement.setAttribute("data-theme", newTheme);
+                localStorage.setItem("aura-theme", newTheme);
+                updateThemeIcon(newTheme);
+            });
+
+            function updateThemeIcon(theme) {
+                const icon = themeToggle.querySelector("i");
+                if (theme === "neon") {
+                    icon.className = "fa-solid fa-sun";
+                } else {
+                    icon.className = "fa-solid fa-moon";
+                }
+            }
+
+            // Admin Routing Check
+            const adminTriggerBtn = document.getElementById("admin-trigger-btn");
+            const isAdminLoggedIn = localStorage.getItem("aura-admin-logged-in") === "true";
+            
+            if (isAdminLoggedIn) {
+                adminTriggerBtn.classList.add("logged-in");
+                
+                // Add logout
+                const logoutBtn = document.createElement("button");
+                logoutBtn.className = "theme-btn logout-trigger";
+                logoutBtn.setAttribute("title", "Logout Securely");
+                logoutBtn.innerHTML = '<i class="fa-solid fa-power-off"></i>';
+                adminTriggerBtn.parentNode.insertBefore(logoutBtn, adminTriggerBtn.nextSibling);
+                
+                logoutBtn.addEventListener("click", () => {
+                    if (confirm("Are you sure you want to sign out from the Admin Portal?")) {
+                        localStorage.removeItem("aura-admin-logged-in");
+                        window.location.reload();
+                    }
+                });
+            }
+
+            adminTriggerBtn.addEventListener("click", () => {
+                if (localStorage.getItem("aura-admin-logged-in") === "true") {
+                    window.location.href = "admin.html";
+                } else {
+                    window.location.href = "login.html";
+                }
+            });
+
+            // Customer Portal Routing
+            const userLoginBtn = document.getElementById("user-login-btn");
+            const isUserLoggedIn = localStorage.getItem("aura-user-logged-in") === "true";
+
+            if (isUserLoggedIn) {
+                userLoginBtn.classList.add("logged-in");
+                userLoginBtn.setAttribute("title", `Logged in as Customer (Click to Logout)`);
+                
+                userLoginBtn.addEventListener("click", () => {
+                    if (confirm("Are you sure you want to log out from the Customer Portal?")) {
+                        localStorage.removeItem("aura-user-logged-in");
+                        localStorage.removeItem("aura-user-email");
+                        window.location.reload();
+                    }
+                });
+            } else {
+                userLoginBtn.addEventListener("click", () => {
+                    window.location.href = "customer-login.html";
+                });
+            }
+
+            // ==========================================
+            // SLIDING SETTINGS SIDEBAR EVENT HANDLERS
+            // ==========================================
+            const leftTrigger = document.getElementById("left-settings-trigger");
+            const settingsSidebar = document.getElementById("settings-sidebar");
+            const sidebarCloseBtn = document.getElementById("sidebar-close-btn");
+            const sidebarOverlay = document.getElementById("sidebar-overlay");
+            const sidebarAdminBtn = document.getElementById("sidebar-admin-btn");
+
+            if (leftTrigger && settingsSidebar && sidebarCloseBtn && sidebarOverlay) {
+                leftTrigger.addEventListener("click", () => {
+                    settingsSidebar.classList.add("open");
+                    sidebarOverlay.classList.add("open");
+                });
+
+                const closeSidebar = () => {
+                    settingsSidebar.classList.remove("open");
+                    sidebarOverlay.classList.remove("open");
+                };
+
+                sidebarCloseBtn.addEventListener("click", closeSidebar);
+                sidebarOverlay.addEventListener("click", closeSidebar);
+
+                const normalThemeSelect = document.getElementById("theme-normal-select");
+                const neonThemeSelect = document.getElementById("theme-neon-select");
+
+                if (normalThemeSelect && neonThemeSelect) {
+                    const currentTheme = document.documentElement.getAttribute("data-theme") || "normal";
+                    if (currentTheme === "neon") {
+                        normalThemeSelect.classList.remove("active");
+                        neonThemeSelect.classList.add("active");
+                    } else {
+                        normalThemeSelect.classList.add("active");
+                        neonThemeSelect.classList.remove("active");
+                    }
+
+                    normalThemeSelect.addEventListener("click", () => {
+                        document.documentElement.setAttribute("data-theme", "normal");
+                        localStorage.setItem("aura-theme", "normal");
+                        normalThemeSelect.classList.add("active");
+                        neonThemeSelect.classList.remove("active");
+                        const mainToggle = document.getElementById("theme-toggle");
+                        if (mainToggle) {
+                            const icon = mainToggle.querySelector("i");
+                            if (icon) icon.className = "fa-solid fa-moon";
+                        }
+                    });
+
+                    neonThemeSelect.addEventListener("click", () => {
+                        document.documentElement.setAttribute("data-theme", "neon");
+                        localStorage.setItem("aura-theme", "neon");
+                        neonThemeSelect.classList.add("active");
+                        normalThemeSelect.classList.remove("active");
+                        const mainToggle = document.getElementById("theme-toggle");
+                        if (mainToggle) {
+                            const icon = mainToggle.querySelector("i");
+                            if (icon) icon.className = "fa-solid fa-sun";
+                        }
+                    });
+                }
+
+                if (sidebarAdminBtn) {
+                    sidebarAdminBtn.addEventListener("click", () => {
+                        closeSidebar();
+                        if (localStorage.getItem("aura-admin-logged-in") === "true") {
+                            window.location.href = "admin.html";
+                        } else {
+                            window.location.href = "login.html";
+                        }
+                    });
+                }
+            }
+        });
+    </script>
+</body>
+</html>
