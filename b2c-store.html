@@ -322,6 +322,13 @@
             </div>
             <p class="footer-copy">© 2026 Aura Power Solutions. Engineered for Excellence.</p>
         </div>
+        <!-- Secure Console Gateway Link -->
+        <div style="border-top: 1px solid rgba(255,255,255,0.06); margin-top: 16px; padding-top: 16px; text-align: center; font-size: 11px;">
+            <a href="login.html" style="color: rgba(255,255,255,0.3); text-decoration: none; display: inline-flex; align-items: center; gap: 6px; letter-spacing: 1px; text-transform: uppercase; transition: all 0.3s ease;" onmouseover="this.style.color='#00e5ff'" onmouseout="this.style.color='rgba(255,255,255,0.3)'">
+                <i class="fa-solid fa-user-shield"></i>
+                <span>Secure System Admin Console</span>
+            </a>
+        </div>
     </footer>
 
     <!-- Scripts for dynamic catalog render -->
@@ -578,9 +585,29 @@
             };
 
             let productsDb = JSON.parse(localStorage.getItem("aura-b2c-products"));
-            if (!productsDb) {
+            if (!productsDb || !productsDb.tubular[0].image) {
                 productsDb = defaultDb;
-                localStorage.setItem("aura-b2c-products", JSON.stringify(defaultDb));
+                const imgMapping = {
+                    "Home UPS": "images/ups_online.png",
+                    "Inverter": "images/ups_online.png",
+                    "Gaming UPS": "images/ups_online.png",
+                    "WiFi UPS": "images/ups_online.png",
+                    "Office UPS": "images/power_cabinet.png",
+                    "Battery Systems": "images/battery_bank.png",
+                    "Battery systems": "images/battery_bank.png",
+                    "Solar Inverter": "images/solar_inverter.png",
+                    "Solar inverter": "images/solar_inverter.png",
+                    "Smart Backup Systems": "images/ups_modular.png",
+                    "Smart backup systems": "images/ups_modular.png"
+                };
+                ["tubular", "lithium"].forEach(key => {
+                    if (productsDb[key]) {
+                        productsDb[key].forEach(p => {
+                            p.image = imgMapping[p.category] || "images/ups_online.png";
+                        });
+                    }
+                });
+                localStorage.setItem("aura-b2c-products", JSON.stringify(productsDb));
             }
 
             const tubularBtn = document.getElementById("btn-opt-tubular");
