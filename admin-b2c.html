@@ -225,7 +225,7 @@
                 <h2>B2C Storefront CMS Desk</h2>
                 <p style="font-size: 13px; color: var(--text-muted); margin-top: 4px;">Add new catalog items with base64 pictures, customize details, or delete stale models instantly synced to B2C storefront.</p>
             </div>
-            <div class="admin-nav-tabs" style="display: flex; gap: 10px; flex-wrap: wrap;">
+            <div class="admin-nav-tabs" style="display: flex; gap: 10px; flex-wrap: wrap; width: 100%; align-items: center;">
                 <a href="admin.html" class="btn btn-secondary" style="font-size: 12px; padding: 10px 18px; border-radius: 6px; background: var(--card-bg); border: 1px solid var(--card-border); color: var(--text-color); box-shadow: var(--shadow-sm);">
                     <i class="fa-solid fa-network-wired"></i> Workspace Control
                 </a>
@@ -243,6 +243,9 @@
                 </a>
                 <a href="admin-b2c.html" class="btn btn-primary" style="font-size: 12px; padding: 10px 18px; border-radius: 6px; box-shadow: var(--shadow-md);">
                     <i class="fa-solid fa-shop"></i> B2C Catalog CMS
+                </a>
+                <a href="index.html" class="btn btn-secondary" style="font-size: 12px; padding: 10px 18px; border-radius: 6px; background: rgba(34,197,94,0.1); border: 1px solid #22c55e; color: #22c55e; box-shadow: var(--shadow-sm); margin-left: auto;">
+                    <i class="fa-solid fa-globe"></i> Customer Storefront
                 </a>
             </div>
         </div>
@@ -310,13 +313,21 @@
                 </div>
 
                 <div style="display: flex; align-items: center; gap: 20px; background: rgba(var(--primary-rgb), 0.02); padding: 14px; border-radius: 6px; border: 1px solid var(--card-border);">
-                    <div class="image-preview-slot" id="new-img-preview">
-                        <i class="fa-solid fa-image"></i>
+                    <div class="image-preview-slot" id="new-img-preview" style="width: 80px; height: 80px; border-radius: 6px; border: 1px dashed var(--card-border); display: flex; align-items: center; justify-content: center; overflow: hidden; background: var(--bg-color);">
+                        <i class="fa-solid fa-image" style="font-size: 24px; color: var(--text-muted);"></i>
                     </div>
                     <div class="form-group" style="flex: 1; margin-bottom: 0;">
-                        <label>Upload Product Picture</label>
-                        <input type="file" id="new-prod-file" accept="image/*" style="border: none; padding: 4px 0;">
-                        <span style="font-size: 10px; color: var(--text-muted); display: block; margin-top: 4px;">Upload small size image. Converts automatically to a Base64 database string.</span>
+                        <label>Product Catalog Media</label>
+                        <div style="display: flex; gap: 10px; align-items: center; margin-top: 6px;">
+                            <input type="file" id="new-prod-file" accept="image/*" style="display: none;">
+                            <label for="new-prod-file" class="btn btn-secondary" style="font-size: 11px; padding: 10px 16px; height: auto; cursor: pointer; background: var(--card-bg); border: 1px solid var(--card-border); color: var(--text-color); border-radius: 6px;">
+                                <i class="fa-solid fa-file-image" style="margin-right: 4px;"></i> Browse Local
+                            </label>
+                            <button type="button" id="btn-use-ai-mockup" class="btn btn-secondary" style="font-size: 11px; padding: 10px 16px; height: auto; background: rgba(0, 229, 255, 0.1); border: 1px solid rgba(0, 229, 255, 0.2); color: var(--primary); border-radius: 6px;">
+                                <i class="fa-solid fa-wand-magic-sparkles" style="margin-right: 4px;"></i> Use Premium AI Render
+                            </button>
+                        </div>
+                        <span style="font-size: 10px; color: var(--text-muted); display: block; margin-top: 6px;">Choose a custom file, or click "Use Premium AI Render" to automatically apply our ultra-high fidelity generated mockup.</span>
                     </div>
                 </div>
 
@@ -357,6 +368,12 @@
     <!-- Scripts specifically for CMS engine -->
     <script>
         document.addEventListener("DOMContentLoaded", () => {
+            // Authentication Guard
+            if (localStorage.getItem("aura-admin-logged-in") !== "true") {
+                window.location.href = "login.html";
+                return;
+            }
+
             // Theme Sync
             const htmlElement = document.documentElement;
             const themeToggle = document.getElementById("theme-toggle");
@@ -459,6 +476,12 @@
             let newProductBase64 = "";
             const newProdFile = document.getElementById("new-prod-file");
             const newImgPreview = document.getElementById("new-img-preview");
+            const btnUseAiMockup = document.getElementById("btn-use-ai-mockup");
+
+            btnUseAiMockup.addEventListener("click", () => {
+                newProductBase64 = "images/ai_product.jpg";
+                newImgPreview.innerHTML = `<img src="images/ai_product.jpg" style="width: 100%; height: 100%; object-fit: cover;">`;
+            });
 
             newProdFile.addEventListener("change", (e) => {
                 const file = e.target.files[0];
@@ -466,7 +489,7 @@
                     const reader = new FileReader();
                     reader.onload = function(evt) {
                         newProductBase64 = evt.target.result;
-                        newImgPreview.innerHTML = `<img src="${newProductBase64}">`;
+                        newImgPreview.innerHTML = `<img src="${newProductBase64}" style="width: 100%; height: 100%; object-fit: cover;">`;
                     };
                     reader.readAsDataURL(file);
                 }
@@ -509,7 +532,7 @@
                 // Reset Form
                 newProductForm.reset();
                 newProductBase64 = "";
-                newImgPreview.innerHTML = `<i class="fa-solid fa-image"></i>`;
+                newImgPreview.innerHTML = `<i class="fa-solid fa-image" style="font-size: 24px; color: var(--text-muted);"></i>`;
                 newProductForm.style.display = "none";
                 creatorChevron.className = "fa-solid fa-chevron-down";
 
