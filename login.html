@@ -12,75 +12,476 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Main Style Sheet -->
     <link rel="stylesheet" href="style.css">
+    
+    <style>
+        /* Cyber Holographic Layout */
+        .portal-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: radial-gradient(circle at center, rgba(16, 28, 55, 0.95) 0%, rgba(6, 10, 22, 1) 100%) !important;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .portal-grid-lines {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-image: 
+                linear-gradient(rgba(0, 229, 255, 0.025) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 229, 255, 0.025) 1px, transparent 1px);
+            background-size: 50px 50px;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .portal-glow-spot {
+            position: fixed;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(0, 229, 255, 0.07) 0%, transparent 70%);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 0;
+            pointer-events: none;
+            filter: blur(80px);
+        }
+
+        /* Glassmorphism Rotating Border Card */
+        .advanced-login-wrapper {
+            position: relative;
+            width: 100%;
+            max-width: 440px;
+            z-index: 5;
+        }
+
+        .advanced-login-card {
+            background: rgba(10, 22, 47, 0.65);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(0, 229, 255, 0.15);
+            border-radius: 16px;
+            box-shadow: 
+                0 20px 50px rgba(0, 0, 0, 0.4),
+                0 0 30px rgba(0, 229, 255, 0.08),
+                inset 0 0 20px rgba(255, 255, 255, 0.02);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Ambient scan effect on card */
+        .advanced-login-card::after {
+            content: '';
+            position: absolute;
+            top: -100%;
+            left: 0;
+            width: 100%;
+            height: 50%;
+            background: linear-gradient(180deg, transparent, rgba(0, 229, 255, 0.04), transparent);
+            animation: card-scan 8s linear infinite;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        @keyframes card-scan {
+            0% { top: -100%; }
+            100% { top: 200%; }
+        }
+
+        .advanced-login-card-inner {
+            padding: 40px;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Advanced Cyber Inputs */
+        .cyber-input-group {
+            position: relative;
+            margin-bottom: 22px;
+        }
+
+        .cyber-input-group label {
+            display: block;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: rgba(0, 229, 255, 0.7);
+            font-weight: 700;
+            margin-bottom: 8px;
+            font-family: 'Space Grotesk', sans-serif;
+        }
+
+        .cyber-input-wrapper {
+            position: relative;
+        }
+
+        .cyber-input {
+            width: 100%;
+            background: rgba(4, 9, 23, 0.75) !important;
+            border: 1px solid rgba(0, 229, 255, 0.2) !important;
+            color: #ffffff !important;
+            padding: 14px 16px 14px 44px !important;
+            border-radius: 8px !important;
+            font-size: 14px !important;
+            outline: none !important;
+            font-family: 'DM Sans', sans-serif;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.2) !important;
+        }
+
+        .cyber-input:focus {
+            border-color: rgba(0, 229, 255, 0.85) !important;
+            box-shadow: 
+                0 0 18px rgba(0, 229, 255, 0.25),
+                inset 0 2px 5px rgba(0,0,0,0.3) !important;
+            background: rgba(4, 9, 23, 0.9) !important;
+        }
+
+        .cyber-icon {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: rgba(0, 229, 255, 0.4);
+            font-size: 14px;
+            pointer-events: none;
+            transition: color 0.3s ease;
+        }
+
+        .cyber-input:focus + .cyber-icon {
+            color: rgba(0, 229, 255, 1);
+            filter: drop-shadow(0 0 4px rgba(0, 229, 255, 0.5));
+        }
+
+        .cyber-eye-btn {
+            position: absolute;
+            right: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: transparent;
+            border: none;
+            color: rgba(0, 229, 255, 0.4);
+            cursor: pointer;
+            font-size: 14px;
+            padding: 4px;
+            transition: color 0.3s ease;
+            z-index: 10;
+        }
+
+        .cyber-eye-btn:hover {
+            color: rgba(0, 229, 255, 1);
+        }
+
+        /* Advanced Button Neon styling */
+        .btn-cyber-primary {
+            background: linear-gradient(135deg, #0072ff, #00c6ff);
+            border: 1px solid rgba(0, 229, 255, 0.3);
+            color: #ffffff;
+            padding: 14px 24px;
+            border-radius: 8px;
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+            font-size: 14px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            cursor: pointer;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 15px rgba(0, 114, 255, 0.3);
+            position: relative;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+
+        .btn-cyber-primary:hover {
+            background: linear-gradient(135deg, #0080ff, #00e5ff);
+            box-shadow: 0 0 25px rgba(0, 229, 255, 0.5);
+            transform: translateY(-2px);
+        }
+
+        .btn-cyber-primary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -150%;
+            width: 50%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            transform: skewX(-25deg);
+            transition: 0.75s;
+        }
+
+        .btn-cyber-primary:hover::before {
+            left: 150%;
+        }
+
+        /* Demo Key Cybernetic box */
+        .cyber-demo-box {
+            background: rgba(0, 114, 255, 0.05);
+            border: 1px solid rgba(0, 114, 255, 0.25);
+            border-left: 4px solid #00c6ff;
+            border-radius: 6px;
+            padding: 14px 18px;
+            margin-bottom: 24px;
+            font-size: 12px;
+            color: #ffffff;
+            position: relative;
+        }
+
+        /* Glowing HUD overlay scan */
+        .cyber-hud-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: #040813;
+            z-index: 100000;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #00e5ff;
+            font-family: 'Space Grotesk', monospace;
+            overflow: hidden;
+        }
+
+        .hud-scanner {
+            position: absolute;
+            width: 100%;
+            height: 8px;
+            background: linear-gradient(180deg, transparent, rgba(0, 229, 255, 0.4), rgba(0, 229, 255, 0.7), rgba(0, 229, 255, 0.4), transparent);
+            top: -20px;
+            animation: sweep-down 4s ease-in-out infinite;
+            pointer-events: none;
+            box-shadow: 0 0 30px rgba(0, 229, 255, 0.6);
+        }
+
+        @keyframes sweep-down {
+            0% { top: -20px; }
+            50% { top: 100%; }
+            100% { top: -20px; }
+        }
+
+        .hud-radial-grid {
+            position: relative;
+            width: 400px;
+            height: 400px;
+            border: 1px dashed rgba(0, 229, 255, 0.15);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+
+        .hud-radial-inner {
+            width: 300px;
+            height: 300px;
+            border: 2px solid rgba(0, 229, 255, 0.25);
+            border-radius: 50%;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 40px rgba(0, 229, 255, 0.05);
+        }
+
+        .hud-radar-sweep {
+            position: absolute;
+            width: 50%;
+            height: 50%;
+            background: conic-gradient(from 0deg, rgba(0, 229, 255, 0.25), transparent 45%);
+            top: 0;
+            left: 0;
+            transform-origin: bottom right;
+            border-radius: 100% 0 0 0;
+            animation: radar-sweep 2s linear infinite;
+        }
+
+        @keyframes radar-sweep {
+            100% { transform: rotate(360deg); }
+        }
+
+        .hud-center-padlock {
+            font-size: 56px;
+            color: #00e5ff;
+            filter: drop-shadow(0 0 15px rgba(0, 229, 255, 0.8));
+            margin-bottom: 12px;
+            z-index: 10;
+        }
+
+        .hud-center-percent {
+            font-size: 24px;
+            font-weight: 800;
+            color: #ffffff;
+            z-index: 10;
+            letter-spacing: 1px;
+            text-shadow: 0 0 10px rgba(0, 229, 255, 0.5);
+        }
+
+        .hud-console {
+            width: 100%;
+            max-width: 600px;
+            height: 120px;
+            background: rgba(0,0,0,0.5);
+            border: 1px solid rgba(0, 229, 255, 0.15);
+            border-radius: 8px;
+            padding: 16px;
+            font-size: 12px;
+            line-height: 1.6;
+            color: rgba(0, 229, 255, 0.8);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            box-shadow: inset 0 0 15px rgba(0,0,0,0.8);
+        }
+
+        .hud-console-line {
+            margin: 2px 0;
+            display: block;
+        }
+
+        .hud-console-line.success {
+            color: #22c55e;
+        }
+
+        .back-link {
+            position: absolute;
+            top: -45px;
+            left: 0;
+            color: rgba(0, 229, 255, 0.7);
+            font-family: 'Space Grotesk', sans-serif;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .back-link:hover {
+            color: #00e5ff;
+            text-shadow: 0 0 10px rgba(0, 229, 255, 0.5);
+            transform: translateX(-4px);
+        }
+    </style>
 </head>
-<body class="login-body">
+<body class="portal-bg">
 
-    <div class="hero-bg-grid"></div>
-    <div class="hero-glow"></div>
+    <!-- Interactive Grid lines -->
+    <div class="portal-grid-lines"></div>
+    <div class="portal-glow-spot"></div>
 
-    <!-- Login Container -->
-    <div class="login-container">
-        <!-- Back to Storefront Link -->
-        <a href="index.html" class="back-link"><i class="fa-solid fa-arrow-left-long"></i> Back to Storefront</a>
+    <!-- Particles Background for Wow Factor -->
+    <canvas id="particles-canvas" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 1; pointer-events: none; opacity: 0.85;"></canvas>
 
-        <div class="login-card glass border">
-            <div class="login-header">
-                <i class="fa-solid fa-bolt login-card-icon"></i>
-                <h2>AURA PORTAL</h2>
-                <p>Authenticate system credentials to access admin dashboard.</p>
-            </div>
+    <!-- Center Card Section -->
+    <div style="flex: 1; display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 40px 20px;">
+        <div class="advanced-login-wrapper">
+            <!-- Back to Storefront Link -->
+            <a href="index.html" class="back-link"><i class="fa-solid fa-arrow-left-long"></i> Back to Storefront</a>
 
-            <!-- Form -->
-            <form id="login-form" class="lead-form">
-                <div class="form-group">
-                    <label for="login-email"><i class="fa-solid fa-user-shield"></i> Username or Admin Email</label>
-                    <input type="text" id="login-email" required placeholder="Type 'admin'" autocomplete="off">
-                </div>
-                
-                <div class="form-group">
-                    <label for="login-password"><i class="fa-solid fa-lock"></i> Password</label>
-                    <div class="pass-input-wrapper">
-                        <input type="password" id="login-password" required placeholder="Type 'admin123'">
-                        <button type="button" id="pass-toggle" class="pass-toggle-btn"><i class="fa-solid fa-eye"></i></button>
+            <div class="advanced-login-card">
+                <div class="advanced-login-card-inner">
+                    
+                    <div style="text-align: center; margin-bottom: 28px;">
+                        <div style="width: 48px; height: 48px; border-radius: 50%; background: rgba(0, 229, 255, 0.08); color: #00e5ff; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px auto; font-size: 18px; border: 1px solid rgba(0, 229, 255, 0.2); box-shadow: 0 0 15px rgba(0, 229, 255, 0.15);">
+                            <i class="fa-solid fa-bolt"></i>
+                        </div>
+                        <h2 style="font-size: 22px; color: #ffffff; font-weight: 800; font-family: 'Space Grotesk', sans-serif; letter-spacing: 0.5px; margin-bottom: 8px;">AURA ADMIN PORTAL</h2>
+                        <p style="font-size: 12px; color: var(--text-muted); line-height: 1.4;">Authenticate administrative credentials to scale multipliers and track raw leads.</p>
                     </div>
-                </div>
 
-                <!-- Error Display Toast -->
-                <div id="login-error" class="login-error-box">
-                    <i class="fa-solid fa-circle-exclamation"></i>
-                    <span>Invalid credentials. Access Denied.</span>
-                </div>
+                    <!-- Main Form -->
+                    <form id="login-form">
+                        <div class="cyber-input-group">
+                            <label for="login-email">Admin Username</label>
+                            <div class="cyber-input-wrapper">
+                                <input type="text" id="login-email" required placeholder="Type 'admin'" class="cyber-input" autocomplete="off">
+                                <i class="fa-solid fa-user-shield cyber-icon"></i>
+                            </div>
+                        </div>
+                        
+                        <div class="cyber-input-group" style="margin-bottom: 24px;">
+                            <label for="login-password">System Password</label>
+                            <div class="cyber-input-wrapper">
+                                <input type="password" id="login-password" required placeholder="Type 'admin123'" class="cyber-input">
+                                <i class="fa-solid fa-lock cyber-icon"></i>
+                                <button type="button" id="pass-toggle" class="cyber-eye-btn" title="Toggle Password Visibility">
+                                    <i class="fa-solid fa-eye"></i>
+                                </button>
+                            </div>
+                        </div>
 
-                <div class="form-helpers">
-                    <label class="remember-me">
-                        <input type="checkbox" id="remember">
-                        <span>Remember credentials</span>
-                    </label>
-                </div>
+                        <!-- Neon Demo Key helper -->
+                        <div class="cyber-demo-box" style="border-left-color: #0072ff; background: rgba(0, 114, 255, 0.04);">
+                            <span style="font-size: 10px; text-transform: uppercase; letter-spacing: 1px; font-weight: 800; color: #00c6ff; display: block; margin-bottom: 4px;"><i class="fa-solid fa-key"></i> Root Access Credentials</span>
+                            <div style="display: flex; gap: 15px; margin-top: 6px; font-family: 'Space Grotesk', sans-serif;">
+                                <span>Username: <strong>admin</strong></span>
+                                <span>Password: <strong>admin123</strong></span>
+                            </div>
+                        </div>
 
-                <button type="submit" class="btn btn-primary w-full">
-                    <span>Secure Sign In</span>
-                    <i class="fa-solid fa-shield-halved"></i>
-                </button>
-            </form>
+                        <button type="submit" class="btn-cyber-primary">
+                            <span>Authenticate Access</span>
+                            <i class="fa-solid fa-shield-halved"></i>
+                        </button>
+                    </form>
+
+                </div>
+            </div>
         </div>
     </div>
 
-    <!-- Script specifically for Login authentication flow -->
+    <!-- FULL SCREEN FUTURISTIC DECRYPTION SCAN HUD OVERLAY -->
+    <div class="cyber-hud-overlay" id="cyber-hud">
+        <div class="hud-scanner"></div>
+        
+        <div class="hud-radial-grid">
+            <div class="hud-radar-sweep"></div>
+            <div class="hud-radial-inner">
+                <i class="fa-solid fa-shield-halved hud-center-padlock" id="hud-status-icon"></i>
+                <div class="hud-center-percent" id="hud-progress-percent">00%</div>
+                <div style="font-size: 10px; text-transform: uppercase; letter-spacing: 2px; color: rgba(255,255,255,0.4); margin-top: 14px;" id="hud-status-label">Syncing Node</div>
+            </div>
+        </div>
+
+        <div style="font-size: 20px; font-weight: 800; font-family: 'Space Grotesk', sans-serif; letter-spacing: 4px; margin-bottom: 24px; text-shadow: 0 0 10px rgba(0, 229, 255, 0.4);" id="hud-main-headline">
+            DECRYPTING SECURITY KEY
+        </div>
+
+        <div class="hud-console">
+            <div id="hud-console-output"></div>
+        </div>
+    </div>
+
+    <!-- Logic / Auth Scripts -->
     <script>
-        (function() {
+        document.addEventListener("DOMContentLoaded", () => {
             // Theme setup
             const htmlElement = document.documentElement;
             const savedTheme = localStorage.getItem("aura-theme") || "normal";
             htmlElement.setAttribute("data-theme", savedTheme);
 
-            const loginForm = document.getElementById("login-form");
-            const emailInput = document.getElementById("login-email");
+            // Password Toggle safe guard
             const passInput = document.getElementById("login-password");
-            const errorBox = document.getElementById("login-error");
             const passToggle = document.getElementById("pass-toggle");
 
-            // Password Toggle safe guard
             if (passToggle && passInput) {
                 passToggle.addEventListener("click", () => {
                     const isPass = passInput.getAttribute("type") === "password";
@@ -92,35 +493,164 @@
                 });
             }
 
-            // Login check safe guard & clean URLs resolution
-            if (loginForm && emailInput && passInput) {
-                loginForm.addEventListener("submit", (e) => {
-                    e.preventDefault();
-                    
-                    const email = emailInput.value.trim().toLowerCase();
-                    const password = passInput.value;
+            // Form Submit Login Trigger
+            const loginForm = document.getElementById("login-form");
+            loginForm.addEventListener("submit", (e) => {
+                e.preventDefault();
+                const username = document.getElementById("login-email").value.trim().toLowerCase();
+                const pass = passInput.value.trim();
 
-                    // Simple admin verification credentials as requested
-                    if (email === "admin" && password === "admin123") {
+                if (username === "admin" && pass === "admin123") {
+                    startFuturisticScanningAuth("admin", "Admin System Access Approved");
+                } else if (username === "user@aura.com" && pass === "user123") {
+                    startFuturisticScanningAuth("user@aura.com", "Customer Cross-Portal Redirect");
+                } else {
+                    alert("AURA Security Denied: Invalid root access keys!");
+                }
+            });
+
+            // FULL FUTURISTIC HUB SCANNER DECRYPTION LOGIC
+            function startFuturisticScanningAuth(emailValue, authMethodLabel) {
+                const hudOverlay = document.getElementById("cyber-hud");
+                hudOverlay.style.display = "flex";
+
+                const percentDisplay = document.getElementById("hud-progress-percent");
+                const labelDisplay = document.getElementById("hud-status-label");
+                const mainHeadline = document.getElementById("hud-main-headline");
+                const consoleBox = document.getElementById("hud-console-output");
+                const statusIcon = document.getElementById("hud-status-icon");
+
+                consoleBox.innerHTML = "";
+                
+                const logLines = [
+                    { t: `[INIT] Booting Aura Root Command Protocols...`, wait: 100, progress: 5, status: "SYNCING" },
+                    { t: `[INFO] Channel Established via: ${authMethodLabel}`, wait: 400, progress: 15, status: "ESTABLISHING" },
+                    { t: `[INFO] Decrypting Root Admin hashes: SHA-512...`, wait: 800, progress: 40, status: "DECRYPTING" },
+                    { t: `[SUCCESS] Secure Admin Handshake match verified.`, wait: 1400, progress: 70, status: "VERIFYING", color: "success" },
+                    { t: `[SUCCESS] ROOT COMMAND SYNC APPROVED!`, wait: 2000, progress: 90, status: "APPROVED", color: "success" },
+                    { t: `[INIT] Generating Temporal Session Access Key...`, wait: 2500, progress: 100, status: "AUTHORIZED" }
+                ];
+
+                logLines.forEach((line) => {
+                    setTimeout(() => {
+                        const lineSpan = document.createElement("span");
+                        lineSpan.className = "hud-console-line" + (line.color ? " " + line.color : "");
+                        lineSpan.textContent = line.t;
+                        consoleBox.appendChild(lineSpan);
+                        
+                        percentDisplay.textContent = `${line.progress}%`;
+                        labelDisplay.textContent = line.status;
+                        
+                        if (navigator.vibrate) navigator.vibrate(20);
+                    }, line.wait);
+                });
+
+                // Final redirect
+                setTimeout(() => {
+                    mainHeadline.textContent = "ACCESS GRANTED";
+                    mainHeadline.style.color = "#22c55e";
+                    mainHeadline.style.textShadow = "0 0 20px rgba(34, 197, 94, 0.8)";
+                    
+                    statusIcon.className = "fa-solid fa-circle-check";
+                    statusIcon.style.color = "#22c55e";
+                    statusIcon.style.filter = "drop-shadow(0 0 25px rgba(34, 197, 94, 0.9))";
+
+                    // Save state & redirect
+                    if (emailValue.includes("admin") || emailValue === "admin") {
                         localStorage.setItem("aura-admin-logged-in", "true");
-                        alert("Secure Admin session authenticated successfully!");
-                        window.location.href = "admin.html";
-                    } 
-                    // Cross-portal support for Customer login on Admin page to prevent confusion
-                    else if (email === "user@aura.com" && password === "user123") {
-                        localStorage.setItem("aura-user-logged-in", "true");
-                        localStorage.setItem("aura-user-email", email);
-                        alert("Customer session authenticated successfully!");
-                        window.location.href = "index.html";
+                        setTimeout(() => {
+                            window.location.href = "admin.html";
+                        }, 1200);
                     } else {
-                        if (errorBox) {
-                            errorBox.classList.add("show");
-                            setTimeout(() => errorBox.classList.remove("show"), 4000);
+                        localStorage.setItem("aura-user-logged-in", "true");
+                        localStorage.setItem("aura-user-email", emailValue);
+                        setTimeout(() => {
+                            window.location.href = "index.html";
+                        }, 1200);
+                    }
+                }, 3100);
+            }
+
+            // ==========================================
+            // HIGH-PERFORMANCE AMBIENT PARTICLES ENGINE
+            // ==========================================
+            const canvas = document.getElementById("particles-canvas");
+            const ctx = canvas.getContext("2d");
+
+            let particlesArray = [];
+            let width = (canvas.width = window.innerWidth);
+            let height = (canvas.height = window.innerHeight);
+
+            window.addEventListener("resize", () => {
+                width = canvas.width = window.innerWidth;
+                height = canvas.height = window.innerHeight;
+            });
+
+            class Particle {
+                constructor() {
+                    this.x = Math.random() * width;
+                    this.y = Math.random() * height;
+                    this.size = Math.random() * 2 + 0.5;
+                    this.speedX = Math.random() * 0.4 - 0.2;
+                    this.speedY = Math.random() * 0.4 - 0.2;
+                    this.opacity = Math.random() * 0.5 + 0.2;
+                }
+
+                update() {
+                    this.x += this.speedX;
+                    this.y += this.speedY;
+
+                    if (this.x > width || this.x < 0) this.speedX = -this.speedX;
+                    if (this.y > height || this.y < 0) this.speedY = -this.speedY;
+                }
+
+                draw() {
+                    ctx.fillStyle = `rgba(0, 229, 255, ${this.opacity})`;
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            }
+
+            function initParticles() {
+                particlesArray = [];
+                const numberOfParticles = Math.floor((width * height) / 9000);
+                for (let i = 0; i < numberOfParticles; i++) {
+                    particlesArray.push(new Particle());
+                }
+            }
+
+            function animateParticles() {
+                ctx.clearRect(0, 0, width, height);
+                particlesArray.forEach((particle) => {
+                    particle.update();
+                    particle.draw();
+                });
+                
+                for (let a = 0; a < particlesArray.length; a++) {
+                    for (let b = a; b < particlesArray.length; b++) {
+                        let dx = particlesArray[a].x - particlesArray[b].x;
+                        let dy = particlesArray[a].y - particlesArray[b].y;
+                        let distance = Math.sqrt(dx * dx + dy * dy);
+
+                        if (distance < 100) {
+                            let alpha = (1 - distance / 100) * 0.08;
+                            ctx.strokeStyle = `rgba(0, 229, 255, ${alpha})`;
+                            ctx.lineWidth = 0.5;
+                            ctx.beginPath();
+                            ctx.moveTo(particlesArray[a].x, particlesArray[a].y);
+                            ctx.lineTo(particlesArray[b].x, particlesArray[b].y);
+                            ctx.stroke();
                         }
                     }
-                });
+                }
+
+                requestAnimationFrame(animateParticles);
             }
-        })();
+
+            initParticles();
+            animateParticles();
+        });
     </script>
 </body>
 </html>
