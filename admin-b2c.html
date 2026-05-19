@@ -191,6 +191,9 @@
     <!-- Professional Sleek Header -->
     <header class="header">
         <div class="header-left-group" style="display: flex; align-items: center; gap: 16px;">
+            <button id="left-settings-trigger" class="theme-btn" title="Settings & Admin Control" style="margin-right: 4px;">
+                <i class="fa-solid fa-bars"></i>
+            </button>
             <div class="logo" onclick="window.location.href='index.html'">
                 <i class="fa-solid fa-bolt logo-icon"></i>
                 <span>AURA</span>
@@ -252,7 +255,7 @@
             </div>
             
             <form id="new-product-form" class="creator-form-content" style="display: none;">
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                <div class="grid-2-col">
                     <div class="form-group">
                         <label>Select Category Sizing Slot</label>
                         <select id="new-prod-category" required style="background: var(--bg-color); color: var(--text-color); border: 1px solid var(--card-border); padding: 10px; border-radius: 6px; width: 100%;">
@@ -275,7 +278,7 @@
                     </div>
                 </div>
 
-                <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 16px;">
+                <div class="grid-2-3-split">
                     <div class="form-group">
                         <label>Product Sizing Model Title</label>
                         <input type="text" id="new-prod-title" placeholder="e.g. AURA HyperVolt 2000VA smart pack" required>
@@ -286,7 +289,7 @@
                     </div>
                 </div>
 
-                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px;">
+                <div class="grid-3-col">
                     <div class="form-group">
                         <label>Sizing Badge</label>
                         <input type="text" id="new-prod-badge" placeholder="e.g. Smart-Choice" required>
@@ -610,7 +613,7 @@
                                 <textarea class="cms-input-desc" data-idx="${index}" style="background: var(--bg-color); color: var(--text-color); border: 1px solid var(--card-border); padding: 8px; border-radius: 4px; font-size: 12px; resize: vertical; height: 60px;">${prod.desc}</textarea>
                             </div>
 
-                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                            <div class="grid-2-col" style="gap: 10px;">
                                 <div class="form-group">
                                     <label style="font-size: 11px;">Sizing Badge</label>
                                     <input type="text" class="cms-input-badge" data-idx="${index}" value="${prod.badge}">
@@ -621,7 +624,7 @@
                                 </div>
                             </div>
 
-                            <div style="display: grid; grid-template-columns: 1.2fr 0.9fr; gap: 10px;">
+                            <div class="grid-2-col" style="gap: 10px;">
                                 <div class="form-group">
                                     <label style="font-size: 11px;">Est. Autonomy</label>
                                     <input type="text" class="cms-input-autonomy" data-idx="${index}" value="${prod.autonomy}">
@@ -693,9 +696,119 @@
                 alert(`Storefront Synced! B2C Catalog changes for ${activeTabKey.toUpperCase()} successfully saved to the active consumer shop.`);
             });
 
+            // ==========================================
+            // SLIDING SETTINGS SIDEBAR EVENT HANDLERS
+            // ==========================================
+            const leftTrigger = document.getElementById("left-settings-trigger");
+            const settingsSidebar = document.getElementById("settings-sidebar");
+            const sidebarCloseBtn = document.getElementById("sidebar-close-btn");
+            const sidebarOverlay = document.getElementById("sidebar-overlay");
+            const sidebarAdminBtn = document.getElementById("sidebar-admin-btn");
+
+            if (leftTrigger && settingsSidebar && sidebarCloseBtn && sidebarOverlay) {
+                leftTrigger.addEventListener("click", () => {
+                    settingsSidebar.classList.add("open");
+                    sidebarOverlay.classList.add("open");
+                });
+
+                const closeSidebar = () => {
+                    settingsSidebar.classList.remove("open");
+                    sidebarOverlay.classList.remove("open");
+                };
+
+                sidebarCloseBtn.addEventListener("click", closeSidebar);
+                sidebarOverlay.addEventListener("click", closeSidebar);
+
+                const normalThemeSelect = document.getElementById("theme-normal-select");
+                const neonThemeSelect = document.getElementById("theme-neon-select");
+
+                if (normalThemeSelect && neonThemeSelect) {
+                    const currentTheme = document.documentElement.getAttribute("data-theme") || "normal";
+                    if (currentTheme === "neon") {
+                        normalThemeSelect.classList.remove("active");
+                        neonThemeSelect.classList.add("active");
+                    } else {
+                        normalThemeSelect.classList.add("active");
+                        neonThemeSelect.classList.remove("active");
+                    }
+
+                    normalThemeSelect.addEventListener("click", () => {
+                        document.documentElement.setAttribute("data-theme", "normal");
+                        localStorage.setItem("aura-theme", "normal");
+                        normalThemeSelect.classList.add("active");
+                        neonThemeSelect.classList.remove("active");
+                        const mainToggle = document.getElementById("theme-toggle");
+                        if (mainToggle) {
+                            const icon = mainToggle.querySelector("i");
+                            if (icon) icon.className = "fa-solid fa-moon";
+                        }
+                    });
+
+                    neonThemeSelect.addEventListener("click", () => {
+                        document.documentElement.setAttribute("data-theme", "neon");
+                        localStorage.setItem("aura-theme", "neon");
+                        neonThemeSelect.classList.add("active");
+                        normalThemeSelect.classList.remove("active");
+                        const mainToggle = document.getElementById("theme-toggle");
+                        if (mainToggle) {
+                            const icon = mainToggle.querySelector("i");
+                            if (icon) icon.className = "fa-solid fa-sun";
+                        }
+                    });
+                }
+
+                if (sidebarAdminBtn) {
+                    sidebarAdminBtn.addEventListener("click", () => {
+                        closeSidebar();
+                        window.location.href = "admin.html";
+                    });
+                }
+            }
+
             // Initial render
             renderCmsForms();
         });
     </script>
+
+    <!-- Sliding Settings Sidebar HTML -->
+    <div id="settings-sidebar" class="sidebar-panel">
+        <div class="sidebar-header">
+            <h3><i class="fa-solid fa-gears"></i> Settings Panel</h3>
+            <button id="sidebar-close-btn" class="close-btn">&times;</button>
+        </div>
+        <div class="sidebar-body">
+            <!-- Theme Preference -->
+            <div class="settings-group">
+                <label><i class="fa-solid fa-circle-half-stroke"></i> Select Theme</label>
+                <div class="theme-select-grid">
+                    <button id="theme-normal-select" class="theme-select-btn active">Flipkart Light</button>
+                    <button id="theme-neon-select" class="theme-select-btn">Cyber Neon</button>
+                </div>
+            </div>
+
+            <!-- Admin Access Gate -->
+            <div class="settings-group admin-gate-group">
+                <label><i class="fa-solid fa-user-shield"></i> Administration</label>
+                <p class="settings-desc">Access factory scaling multipliers, WhatsApp leads trackers, and catalog upload desks.</p>
+                <button id="sidebar-admin-btn" class="btn btn-secondary w-full">
+                    <span>Admin Workspace Active</span>
+                    <i class="fa-solid fa-check-circle"></i>
+                </button>
+            </div>
+            
+            <!-- Quick Portal links -->
+            <div class="settings-group">
+                <label><i class="fa-solid fa-link"></i> Quick Navigation</label>
+                <ul class="settings-nav-links">
+                    <li><a href="index.html"><i class="fa-solid fa-house"></i> Home Systems</a></li>
+                    <li><a href="calculator.html"><i class="fa-solid fa-calculator"></i> Capacity Sizer</a></li>
+                    <li><a href="customize.html"><i class="fa-solid fa-sliders"></i> Custom Plant Designer</a></li>
+                    <li><a href="repair.html"><i class="fa-solid fa-wrench"></i> Repair Dispatch</a></li>
+                    <li><a href="orders.html"><i class="fa-solid fa-cart-flatbed"></i> My Orders Registry</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div id="sidebar-overlay" class="sidebar-overlay"></div>
 </body>
 </html>

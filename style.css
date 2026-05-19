@@ -1721,6 +1721,56 @@ h1, h2, h3, h4, .font-space {
     }
 }
 
+/* ADMIN DASHBOARD STRUCTURAL ELEMENTS */
+.admin-metrics-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.factory-pipeline-board {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-top: 16px;
+}
+
+.inventory-table-container {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    margin-top: 15px;
+    border-radius: 8px;
+    border: 1px solid var(--card-border);
+    scrollbar-width: thin;
+}
+
+.inventory-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 750px; /* Ensures professional tabular alignment while scrolling horizontally on mobile */
+}
+
+/* RESPONSIVE LAYOUT UTILITIES */
+.grid-2-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+.grid-3-col {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+}
+
+.grid-2-3-split {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 16px;
+}
+
 /* RESPONSIVE CSS */
 @media (max-width: 1200px) {
     .admin-grid-layout {
@@ -1744,6 +1794,9 @@ h1, h2, h3, h4, .font-space {
         font-size: 38px;
     }
     .calc-wrapper {
+        grid-template-columns: 1fr;
+    }
+    .factory-pipeline-board {
         grid-template-columns: 1fr;
     }
 }
@@ -1780,6 +1833,12 @@ h1, h2, h3, h4, .font-space {
     }
     .admin-metrics-row {
         grid-template-columns: 1fr;
+    }
+    .factory-pipeline-board {
+        grid-template-columns: 1fr;
+    }
+    .grid-2-col, .grid-3-col, .grid-2-3-split {
+        grid-template-columns: 1fr !important;
     }
     .multipliers-editor-grid {
         grid-template-columns: 1fr;

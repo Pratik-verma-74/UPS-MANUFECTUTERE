@@ -24,9 +24,14 @@
 
     <!-- Professional Sleek Header -->
     <header class="header">
-        <div class="logo" onclick="window.location.href='index.html'">
-            <i class="fa-solid fa-bolt logo-icon"></i>
-            <span>AURA</span>
+        <div class="header-left-group" style="display: flex; align-items: center; gap: 16px;">
+            <button id="left-settings-trigger" class="theme-btn" title="Settings & Admin Control" style="margin-right: 4px;">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+            <div class="logo" onclick="window.location.href='index.html'">
+                <i class="fa-solid fa-bolt logo-icon"></i>
+                <span>AURA</span>
+            </div>
         </div>
         <nav class="nav">
             <a href="index.html" class="nav-link">Systems</a>
@@ -75,7 +80,7 @@
             </div>
         </div>
 
-        <div class="admin-metrics-row" style="grid-template-columns: repeat(4, 1fr);">
+        <div class="admin-metrics-row">
             <div class="metric-card">
                 <div class="metric-icon"><i class="fa-solid fa-boxes-stacked"></i></div>
                 <div class="metric-info">
@@ -145,7 +150,7 @@
                         <p>Dynamic pipeline tracking client custom builds and catalog standard purchase orders currently actively processed on the factory floor.</p>
                     </div>
                     
-                    <div class="factory-pipeline-board" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 16px;">
+                    <div class="factory-pipeline-board">
                         <!-- Production Queue Column -->
                         <div class="pipeline-col" style="background: rgba(120,119,119,0.03); border: 1px dashed var(--card-border); padding: 16px; border-radius: 6px;">
                             <div class="pipeline-col-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; border-bottom: 2px solid var(--primary); padding-bottom: 6px;">
@@ -976,6 +981,75 @@
                 }
             }
 
+            // ==========================================
+            // SLIDING SETTINGS SIDEBAR EVENT HANDLERS
+            // ==========================================
+            const leftTrigger = document.getElementById("left-settings-trigger");
+            const settingsSidebar = document.getElementById("settings-sidebar");
+            const sidebarCloseBtn = document.getElementById("sidebar-close-btn");
+            const sidebarOverlay = document.getElementById("sidebar-overlay");
+            const sidebarAdminBtn = document.getElementById("sidebar-admin-btn");
+
+            if (leftTrigger && settingsSidebar && sidebarCloseBtn && sidebarOverlay) {
+                leftTrigger.addEventListener("click", () => {
+                    settingsSidebar.classList.add("open");
+                    sidebarOverlay.classList.add("open");
+                });
+
+                const closeSidebar = () => {
+                    settingsSidebar.classList.remove("open");
+                    sidebarOverlay.classList.remove("open");
+                };
+
+                sidebarCloseBtn.addEventListener("click", closeSidebar);
+                sidebarOverlay.addEventListener("click", closeSidebar);
+
+                const normalThemeSelect = document.getElementById("theme-normal-select");
+                const neonThemeSelect = document.getElementById("theme-neon-select");
+
+                if (normalThemeSelect && neonThemeSelect) {
+                    const currentTheme = document.documentElement.getAttribute("data-theme") || "normal";
+                    if (currentTheme === "neon") {
+                        normalThemeSelect.classList.remove("active");
+                        neonThemeSelect.classList.add("active");
+                    } else {
+                        normalThemeSelect.classList.add("active");
+                        neonThemeSelect.classList.remove("active");
+                    }
+
+                    normalThemeSelect.addEventListener("click", () => {
+                        document.documentElement.setAttribute("data-theme", "normal");
+                        localStorage.setItem("aura-theme", "normal");
+                        normalThemeSelect.classList.add("active");
+                        neonThemeSelect.classList.remove("active");
+                        const mainToggle = document.getElementById("theme-toggle");
+                        if (mainToggle) {
+                            const icon = mainToggle.querySelector("i");
+                            if (icon) icon.className = "fa-solid fa-moon";
+                        }
+                    });
+
+                    neonThemeSelect.addEventListener("click", () => {
+                        document.documentElement.setAttribute("data-theme", "neon");
+                        localStorage.setItem("aura-theme", "neon");
+                        neonThemeSelect.classList.add("active");
+                        normalThemeSelect.classList.remove("active");
+                        const mainToggle = document.getElementById("theme-toggle");
+                        if (mainToggle) {
+                            const icon = mainToggle.querySelector("i");
+                            if (icon) icon.className = "fa-solid fa-sun";
+                        }
+                    });
+                }
+
+                if (sidebarAdminBtn) {
+                    sidebarAdminBtn.addEventListener("click", () => {
+                        closeSidebar();
+                        window.location.href = "admin.html";
+                    });
+                }
+            }
+
             // Init dashboard
             renderMetrics();
             renderCatalog();
@@ -985,5 +1059,46 @@
             renderFactoryBoard();
         });
     </script>
+
+    <!-- Sliding Settings Sidebar HTML -->
+    <div id="settings-sidebar" class="sidebar-panel">
+        <div class="sidebar-header">
+            <h3><i class="fa-solid fa-gears"></i> Settings Panel</h3>
+            <button id="sidebar-close-btn" class="close-btn">&times;</button>
+        </div>
+        <div class="sidebar-body">
+            <!-- Theme Preference -->
+            <div class="settings-group">
+                <label><i class="fa-solid fa-circle-half-stroke"></i> Select Theme</label>
+                <div class="theme-select-grid">
+                    <button id="theme-normal-select" class="theme-select-btn active">Flipkart Light</button>
+                    <button id="theme-neon-select" class="theme-select-btn">Cyber Neon</button>
+                </div>
+            </div>
+
+            <!-- Admin Access Gate -->
+            <div class="settings-group admin-gate-group">
+                <label><i class="fa-solid fa-user-shield"></i> Administration</label>
+                <p class="settings-desc">Access factory scaling multipliers, WhatsApp leads trackers, and catalog upload desks.</p>
+                <button id="sidebar-admin-btn" class="btn btn-secondary w-full">
+                    <span>Admin Workspace Active</span>
+                    <i class="fa-solid fa-check-circle"></i>
+                </button>
+            </div>
+            
+            <!-- Quick Portal links -->
+            <div class="settings-group">
+                <label><i class="fa-solid fa-link"></i> Quick Navigation</label>
+                <ul class="settings-nav-links">
+                    <li><a href="index.html"><i class="fa-solid fa-house"></i> Home Systems</a></li>
+                    <li><a href="calculator.html"><i class="fa-solid fa-calculator"></i> Capacity Sizer</a></li>
+                    <li><a href="customize.html"><i class="fa-solid fa-sliders"></i> Custom Plant Designer</a></li>
+                    <li><a href="repair.html"><i class="fa-solid fa-wrench"></i> Repair Dispatch</a></li>
+                    <li><a href="orders.html"><i class="fa-solid fa-cart-flatbed"></i> My Orders Registry</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div id="sidebar-overlay" class="sidebar-overlay"></div>
 </body>
 </html>
