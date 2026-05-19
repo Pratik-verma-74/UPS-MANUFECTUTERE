@@ -8,7 +8,7 @@ const defaultProducts = [
         dealPrice: 82900,
         rating: 4.6,
         reviewsCount: 11324,
-        imageUrl: "https://images.unsplash.com/photo-1620245648834-8c88fdce1d45?q=80&w=600&auto=format&fit=crop",
+        imageUrl: "images/ups_online.png",
         capacity: "10-40 kVA",
         phase: "3/3 Phase",
         transfer: "0 ms",
@@ -28,7 +28,7 @@ const defaultProducts = [
         dealPrice: 49999,
         rating: 4.5,
         reviewsCount: 4936,
-        imageUrl: "https://images.unsplash.com/photo-1544197150-b99a580bb7a8?q=80&w=600&auto=format&fit=crop",
+        imageUrl: "images/ups_modular.png",
         capacity: "5-20 kVA",
         phase: "1/1 Phase",
         transfer: "0 ms",
@@ -48,7 +48,7 @@ const defaultProducts = [
         dealPrice: 28999,
         rating: 4.3,
         reviewsCount: 3526,
-        imageUrl: "https://images.unsplash.com/photo-1581092160562-40aa08e78837?q=80&w=600&auto=format&fit=crop",
+        imageUrl: "images/solar_inverter.png",
         capacity: "5-10 kW",
         phase: "1 Phase",
         transfer: "< 10 ms",
@@ -68,7 +68,7 @@ const defaultProducts = [
         dealPrice: 599999,
         rating: 4.8,
         reviewsCount: 911,
-        imageUrl: "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?q=80&w=600&auto=format&fit=crop",
+        imageUrl: "images/power_cabinet.png",
         capacity: "50-500 kVA",
         phase: "3/3 Phase",
         transfer: "0 ms",
@@ -88,7 +88,7 @@ const defaultProducts = [
         dealPrice: 79999,
         rating: 4.7,
         reviewsCount: 2043,
-        imageUrl: "https://images.unsplash.com/photo-1620245648834-8c88fdce1d45?q=80&w=600&auto=format&fit=crop",
+        imageUrl: "images/battery_bank.png",
         capacity: "48V / 200Ah",
         phase: "DC Bank",
         transfer: "Instant",
@@ -142,6 +142,21 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!appProducts || appProducts.length === 0 || !appProducts.find(p => p.id.startsWith("fk-"))) {
         appProducts = defaultProducts;
         localStorage.setItem("aura-flipkart-products", JSON.stringify(appProducts));
+    } else {
+        // Upgrade existing user local storage to local image paths automatically!
+        let hasUpgrade = false;
+        appProducts.forEach(p => {
+            if (p.imageUrl && p.imageUrl.includes("unsplash.com")) {
+                const match = defaultProducts.find(dp => dp.id === p.id);
+                if (match) {
+                    p.imageUrl = match.imageUrl;
+                    hasUpgrade = true;
+                }
+            }
+        });
+        if (hasUpgrade) {
+            localStorage.setItem("aura-flipkart-products", JSON.stringify(appProducts));
+        }
     }
 
     // 2. Theme Management (Normal / Neon)
@@ -341,7 +356,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 // Open WhatsApp
                 const message = `Hello Aura Power Systems!\n\nI want to place an order for the *${product.title}*:\n*Sizing Rating:* ${product.capacity}\n*Order Reference ID:* ${orderId}`;
-                window.open(`https://wa.me/919999999999?text=${encodeURIComponent(message)}`, "_blank");
+                window.open(`https://wa.me/917463053829?text=${encodeURIComponent(message)}`, "_blank");
 
                 // Redirect
                 window.location.href = "orders.html";
