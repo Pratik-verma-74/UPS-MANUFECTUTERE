@@ -558,6 +558,7 @@ const FirebaseService = {
         localStorage.removeItem("aura-admin-logged-in");
         console.log("Firebase Auth: Logged out successfully");
     
+    },
     async adminDeleteDocument(collectionName, documentId) {
         if (!db) return false;
         try {
