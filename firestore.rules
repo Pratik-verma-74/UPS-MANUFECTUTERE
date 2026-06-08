@@ -6,7 +6,9 @@ service cloud.firestore {
     function isAdmin() {
       return request.auth != null && (
         request.auth.token.email == "pratikverma025@gmail.com" || 
-        request.auth.token.email == "shivamsri639463@gmail.com"
+        request.auth.token.email == "shivamsri639463@gmail.com" ||
+        request.auth.token.email == "info.roboart@gmail.com" ||
+        request.auth.token.email == "pratikkumar99469@gmail.com"
       );
     }
 
