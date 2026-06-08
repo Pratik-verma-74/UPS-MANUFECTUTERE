@@ -417,9 +417,13 @@
                         
                         try {
                             // Fire the actual login logic
-                            await FirebaseService.loginWithGoogle();
-                            // Note: if popup succeeds, onAuthStateChanged handles the rest
-                            // If redirect falls back, page will navigate away
+                            const result = await FirebaseService.loginWithGoogle();
+                            
+                            // If popup succeeded, result will exist
+                            if (result && result.user) {
+                                startFuturisticScanningAuth(result.user.email, `Google Identity (${result.user.displayName || result.user.email})`);
+                            }
+                            // Note: If redirect fallback happened, page will just navigate away and not reach here
                         } catch (err) {
                             // Reset the UI so user can try again
                             if (svg && loader && text) {
