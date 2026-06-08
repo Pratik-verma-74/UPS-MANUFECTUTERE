@@ -491,24 +491,41 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // 5b. Customer Portal Authentication Control
+    const adminLoginBtn = document.getElementById("admin-login-btn");
+    if (adminLoginBtn) {
+        if (localStorage.getItem("aura-admin-logged-in") === "true") {
+            adminLoginBtn.classList.add("logged-in");
+            adminLoginBtn.setAttribute("title", `Logged in as Admin (Click to Logout)`);
+            
+            adminLoginBtn.addEventListener("click", () => {
+                if (confirm("Are you sure you want to log out from Admin Panel?")) {
+                    localStorage.removeItem("aura-admin-logged-in");
+                    window.location.reload();
+                }
+            });
+        }
+    }
+
     const userLoginBtn = document.getElementById("user-login-btn");
     const isUserLoggedIn = localStorage.getItem("aura-user-logged-in") === "true";
 
-    if (isUserLoggedIn) {
-        userLoginBtn.classList.add("logged-in");
-        userLoginBtn.setAttribute("title", `Logged in as Customer (Click to Logout)`);
-        
-        userLoginBtn.addEventListener("click", () => {
-            if (confirm("Are you sure you want to log out from the Customer Portal?")) {
-                localStorage.removeItem("aura-user-logged-in");
-                localStorage.removeItem("aura-user-email");
-                window.location.reload();
-            }
-        });
-    } else {
-        userLoginBtn.addEventListener("click", () => {
-            window.location.href = "customer-login.html";
-        });
+    if (userLoginBtn) {
+        if (isUserLoggedIn) {
+            userLoginBtn.classList.add("logged-in");
+            userLoginBtn.setAttribute("title", `Logged in as Customer (Click to Logout)`);
+            
+            userLoginBtn.addEventListener("click", () => {
+                if (confirm("Are you sure you want to log out from the Customer Portal?")) {
+                    localStorage.removeItem("aura-user-logged-in");
+                    localStorage.removeItem("aura-user-email");
+                    window.location.reload();
+                }
+            });
+        } else {
+            userLoginBtn.addEventListener("click", () => {
+                window.location.href = "customer-login.html";
+            });
+        }
     }
 
     // 7. Interactive Groq-Powered AI Chatbot
