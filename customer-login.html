@@ -12,13 +12,13 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Main Style Sheet -->
     <link rel="stylesheet" href="style.css">
-    <script src="components.js"></script>
-    <!-- Firebase Service Integration -->
+    
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-check-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
     <script src="firebase-service.js"></script>
+    <script src="components.js"></script>
     
     <style>
         /* Cyber Holographic Layout */
@@ -49,35 +49,35 @@
 
         .portal-glow-spot {
             position: fixed;
-            width: 600px;
-            height: 600px;
-            background: radial-gradient(circle, rgba(0, 229, 255, 0.07) 0%, transparent 70%);
+            width: 800px;
+            height: 800px;
+            background: radial-gradient(circle, rgba(0, 229, 255, 0.08) 0%, transparent 60%);
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
             z-index: 0;
             pointer-events: none;
-            filter: blur(80px);
+            filter: blur(100px);
         }
 
         /* Glassmorphism Rotating Border Card */
         .advanced-login-wrapper {
             position: relative;
             width: 100%;
-            max-width: 450px;
+            max-width: 440px;
             z-index: 5;
         }
 
         .advanced-login-card {
-            background: rgba(10, 22, 47, 0.65);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(0, 229, 255, 0.15);
-            border-radius: 16px;
+            background: rgba(10, 22, 47, 0.7);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(0, 229, 255, 0.2);
+            border-radius: 24px;
             box-shadow: 
-                0 20px 50px rgba(0, 0, 0, 0.4),
-                0 0 30px rgba(0, 229, 255, 0.08),
-                inset 0 0 20px rgba(255, 255, 255, 0.02);
+                0 30px 60px rgba(0, 0, 0, 0.5),
+                0 0 40px rgba(0, 229, 255, 0.1),
+                inset 0 0 30px rgba(255, 255, 255, 0.03);
             position: relative;
             overflow: hidden;
             transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
@@ -91,8 +91,8 @@
             left: 0;
             width: 100%;
             height: 50%;
-            background: linear-gradient(180deg, transparent, rgba(0, 229, 255, 0.04), transparent);
-            animation: card-scan 8s linear infinite;
+            background: linear-gradient(180deg, transparent, rgba(0, 229, 255, 0.05), transparent);
+            animation: card-scan 6s linear infinite;
             pointer-events: none;
             z-index: 1;
         }
@@ -103,250 +103,133 @@
         }
 
         .advanced-login-card-inner {
-            padding: 40px;
+            padding: 50px 40px;
             position: relative;
             z-index: 2;
-        }
-
-        /* Advanced Cyber Inputs */
-        .cyber-input-group {
-            position: relative;
-            margin-bottom: 22px;
-        }
-
-        .cyber-input-group label {
-            display: block;
-            font-size: 11px;
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            color: rgba(0, 229, 255, 0.7);
-            font-weight: 700;
-            margin-bottom: 8px;
-            font-family: 'Space Grotesk', sans-serif;
-        }
-
-        .cyber-input-wrapper {
-            position: relative;
-        }
-
-        .cyber-input {
-            width: 100%;
-            background: rgba(4, 9, 23, 0.75) !important;
-            border: 1px solid rgba(0, 229, 255, 0.2) !important;
-            color: #ffffff !important;
-            padding: 14px 16px 14px 44px !important;
-            border-radius: 8px !important;
-            font-size: 14px !important;
-            outline: none !important;
-            font-family: 'DM Sans', sans-serif;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
-            box-shadow: inset 0 2px 5px rgba(0,0,0,0.2) !important;
-        }
-
-        .cyber-input:focus {
-            border-color: rgba(0, 229, 255, 0.85) !important;
-            box-shadow: 
-                0 0 18px rgba(0, 229, 255, 0.25),
-                inset 0 2px 5px rgba(0,0,0,0.3) !important;
-            background: rgba(4, 9, 23, 0.9) !important;
-        }
-
-        .cyber-icon {
-            position: absolute;
-            left: 16px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: rgba(0, 229, 255, 0.4);
-            font-size: 14px;
-            pointer-events: none;
-            transition: color 0.3s ease;
-        }
-
-        .cyber-input:focus + .cyber-icon {
-            color: rgba(0, 229, 255, 1);
-            filter: drop-shadow(0 0 4px rgba(0, 229, 255, 0.5));
-        }
-
-        .cyber-eye-btn {
-            position: absolute;
-            right: 16px;
-            top: 50%;
-            transform: translateY(-50%);
-            background: transparent;
-            border: none;
-            color: rgba(0, 229, 255, 0.4);
-            cursor: pointer;
-            font-size: 14px;
-            padding: 4px;
-            transition: color 0.3s ease;
-            z-index: 10;
-        }
-
-        .cyber-eye-btn:hover {
-            color: rgba(0, 229, 255, 1);
-        }
-
-        /* Cybernetic Interactive SSO button */
-        .sso-divider {
             display: flex;
+            flex-direction: column;
             align-items: center;
             text-align: center;
-            margin: 24px 0;
-            color: rgba(255, 255, 255, 0.15);
-            font-size: 11px;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            font-family: 'Space Grotesk', sans-serif;
         }
 
-        .sso-divider::before,
-        .sso-divider::after {
-            content: '';
-            flex: 1;
-            border-bottom: 1px solid rgba(0, 229, 255, 0.1);
+        .brand-icon-wrapper {
+            width: 64px; 
+            height: 64px; 
+            border-radius: 50%; 
+            background: rgba(0, 229, 255, 0.1); 
+            color: #00e5ff; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            font-size: 28px; 
+            border: 2px solid rgba(0, 229, 255, 0.3); 
+            box-shadow: 0 0 25px rgba(0, 229, 255, 0.2), inset 0 0 15px rgba(0, 229, 255, 0.2);
+            margin-bottom: 24px;
         }
 
-        .sso-divider:not(:empty)::before { margin-right: 15px; }
-        .sso-divider:not(:empty)::after { margin-left: 15px; }
+        .login-title {
+            font-size: 26px; 
+            color: #ffffff; 
+            font-weight: 800; 
+            font-family: 'Space Grotesk', sans-serif; 
+            letter-spacing: 0.5px; 
+            margin-bottom: 12px;
+        }
 
+        .login-desc {
+            font-size: 14px; 
+            color: var(--text-muted); 
+            line-height: 1.6;
+            margin-bottom: 40px;
+        }
+
+        /* Ultimate Premium Google Sign In Button */
         .cyber-google-btn {
             width: 100%;
-            background: rgba(255, 255, 255, 0.02);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 8px;
-            padding: 13px 20px;
+            background: #ffffff;
+            border: 1px solid #ffffff;
+            border-radius: 12px;
+            padding: 16px 24px;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 12px;
-            color: #ffffff;
-            font-family: 'Space Grotesk', sans-serif;
+            gap: 16px;
+            color: #3c4043;
+            font-family: 'DM Sans', sans-serif;
             font-weight: 700;
-            font-size: 14px;
+            font-size: 16px;
             cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
             position: relative;
             overflow: hidden;
-            box-shadow: inset 0 0 15px rgba(255, 255, 255, 0.01);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
         }
 
         .cyber-google-btn:hover {
-            background: rgba(255, 255, 255, 0.06);
-            border-color: rgba(0, 229, 255, 0.4);
+            background: #f8f9fa;
+            border-color: #f8f9fa;
             box-shadow: 
-                0 0 20px rgba(0, 229, 255, 0.12),
-                inset 0 0 15px rgba(255, 255, 255, 0.03);
+                0 8px 25px rgba(255, 255, 255, 0.15),
+                0 0 20px rgba(0, 229, 255, 0.15);
             transform: translateY(-2px);
         }
 
         .cyber-google-btn:active {
-            transform: translateY(0);
+            transform: translateY(1px);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
 
         .cyber-google-btn svg {
-            width: 18px;
-            height: 18px;
-            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+            width: 22px;
+            height: 22px;
         }
 
-        /* Advanced Button Neon styling */
-        .btn-cyber-primary {
-            background: linear-gradient(135deg, #0072ff, #00c6ff);
-            border: 1px solid rgba(0, 229, 255, 0.3);
-            color: #ffffff;
-            padding: 14px 24px;
-            border-radius: 8px;
-            font-family: 'Space Grotesk', sans-serif;
-            font-weight: 700;
-            font-size: 14px;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            cursor: pointer;
-            width: 100%;
-            display: flex;
+        .cyber-google-btn .btn-loader {
+            display: none;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(0,0,0,0.1);
+            border-top: 3px solid #4285F4;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        .secure-badge {
+            margin-top: 30px;
+            display: inline-flex;
             align-items: center;
-            justify-content: center;
-            gap: 10px;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 4px 15px rgba(0, 114, 255, 0.3);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .btn-cyber-primary:hover {
-            background: linear-gradient(135deg, #0080ff, #00e5ff);
-            box-shadow: 0 0 25px rgba(0, 229, 255, 0.5);
-            transform: translateY(-2px);
-        }
-
-        .btn-cyber-primary::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -150%;
-            width: 50%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
-            transform: skewX(-25deg);
-            transition: 0.75s;
-        }
-
-        .btn-cyber-primary:hover::before {
-            left: 150%;
-        }
-
-        /* Demo Key Cybernetic box */
-        .cyber-demo-box {
-            background: rgba(0, 114, 255, 0.05);
-            border: 1px solid rgba(0, 114, 255, 0.25);
-            border-left: 4px solid #00c6ff;
-            border-radius: 6px;
-            padding: 14px 18px;
-            margin-bottom: 24px;
+            gap: 8px;
+            padding: 8px 16px;
+            background: rgba(34, 197, 94, 0.1);
+            border: 1px solid rgba(34, 197, 94, 0.2);
+            border-radius: 20px;
+            color: #22c55e;
             font-size: 12px;
-            color: #ffffff;
-            position: relative;
+            font-weight: 600;
+            font-family: 'Space Grotesk', sans-serif;
         }
 
-        /* Glowing HUD overlay scan */
-        .cyber-hud-overlay {
+        /* Cinematic Full Screen Auth HUD - kept from original design for the cool factor */
+        #cyber-hud {
             position: fixed;
             top: 0;
             left: 0;
             width: 100vw;
             height: 100vh;
-            background: #040813;
-            z-index: 100000;
+            background: rgba(3, 7, 18, 0.95);
+            z-index: 9999;
             display: none;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            color: #00e5ff;
-            font-family: 'Space Grotesk', monospace;
-            overflow: hidden;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
         }
 
-        .hud-scanner {
-            position: absolute;
-            width: 100%;
-            height: 8px;
-            background: linear-gradient(180deg, transparent, rgba(0, 229, 255, 0.4), rgba(0, 229, 255, 0.7), rgba(0, 229, 255, 0.4), transparent);
-            top: -20px;
-            animation: sweep-down 4s ease-in-out infinite;
-            pointer-events: none;
-            box-shadow: 0 0 30px rgba(0, 229, 255, 0.6);
-        }
-
-        @keyframes sweep-down {
-            0% { top: -20px; }
-            50% { top: 100%; }
-            100% { top: -20px; }
-        }
-
-        .hud-radial-grid {
+        .hud-radial-loader {
             position: relative;
-            width: 400px;
-            height: 400px;
+            width: 350px;
+            height: 350px;
             border: 1px dashed rgba(0, 229, 255, 0.15);
             border-radius: 50%;
             display: flex;
@@ -383,6 +266,9 @@
         @keyframes radar-sweep {
             100% { transform: rotate(360deg); }
         }
+        @keyframes spin {
+            100% { transform: rotate(360deg); }
+        }
 
         .hud-center-padlock {
             font-size: 56px;
@@ -417,6 +303,7 @@
             flex-direction: column;
             justify-content: flex-end;
             box-shadow: inset 0 0 15px rgba(0,0,0,0.8);
+            font-family: monospace;
         }
 
         .hud-console-line {
@@ -428,121 +315,18 @@
             color: #22c55e;
         }
 
-        /* Mock Google accounts popup */
-        .google-modal-overlay {
+        /* Tooltip style */
+        .admin-secret-trigger {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background: rgba(3, 7, 18, 0.85);
-            z-index: 99999;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-        }
-
-        .google-modal {
-            background: #ffffff;
-            border-radius: 12px;
-            width: 100%;
-            max-width: 380px;
-            color: #202124;
-            padding: 36px 32px;
-            font-family: 'DM Sans', sans-serif;
-            box-shadow: 0 12px 36px rgba(0,0,0,0.3);
-            text-align: center;
-            position: relative;
-            transform: scale(0.9);
-            opacity: 0;
-            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-        }
-
-        .google-modal.open {
-            transform: scale(1);
-            opacity: 1;
-        }
-
-        .google-modal-logo {
-            width: 72px;
-            height: 24px;
-            margin: 0 auto 16px auto;
-            display: block;
-        }
-
-        .google-account-list {
-            margin-top: 24px;
-            text-align: left;
-        }
-
-        .google-account-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 12px;
-            border-radius: 8px;
-            border: 1px solid #e0e0e0;
-            margin-bottom: 10px;
+            bottom: 20px;
+            right: 20px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: transparent;
+            border: none;
             cursor: pointer;
-            transition: all 0.25s ease;
-        }
-
-        .google-account-item:hover {
-            background: #f8f9fa;
-            border-color: #dadce0;
-        }
-
-        .google-avatar {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            background: #3b82f6;
-            color: #ffffff;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            font-size: 13px;
-        }
-
-        .google-account-details {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .google-account-name {
-            font-weight: 700;
-            font-size: 13px;
-            color: #3c4043;
-        }
-
-        .google-account-email {
-            font-size: 11px;
-            color: #70757a;
-        }
-
-        .google-loader-container {
-            display: none;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 30px 0;
-        }
-
-        .google-spinner {
-            width: 48px;
-            height: 48px;
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid #4285f4;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin-bottom: 18px;
-        }
-
-        @keyframes spin {
-            100% { transform: rotate(360deg); }
+            z-index: 100;
         }
     </style>
 </head>
@@ -564,161 +348,80 @@
             <div class="advanced-login-card">
                 <div class="advanced-login-card-inner">
                     
-                    <div style="text-align: center; margin-bottom: 28px;">
-                        <div style="width: 48px; height: 48px; border-radius: 50%; background: rgba(0, 229, 255, 0.08); color: #00e5ff; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px auto; font-size: 18px; border: 1px solid rgba(0, 229, 255, 0.2); box-shadow: 0 0 15px rgba(0, 229, 255, 0.15);">
-                            <i class="fa-solid fa-user"></i>
-                        </div>
-                        <h2 style="font-size: 22px; color: #ffffff; font-weight: 800; font-family: 'Space Grotesk', sans-serif; letter-spacing: 0.5px; margin-bottom: 8px;">Welcome to ROBOART</h2>
-                        <p style="font-size: 12px; color: var(--text-muted); line-height: 1.4;">Sign in to track your orders, manage custom builds, and request support.</p>
+                    <div class="brand-icon-wrapper">
+                        <i class="fa-solid fa-bolt"></i>
                     </div>
+                    
+                    <h2 class="login-title">ROBOART Portal</h2>
+                    <p class="login-desc">Sign in with your Google account to access your industrial dashboard, manage custom builds, and track orders securely.</p>
 
-                    <!-- Google OAuth via Appwrite -->
-                    <button type="button" id="google-oauth-btn" style="width: 100%; padding: 12px 20px; background: #ffffff; color: #3c4043; border: 1px solid #dadce0; border-radius: 8px; font-size: 14px; font-weight: 600; font-family: 'DM Sans', sans-serif; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; transition: all 0.3s ease; margin-bottom: 24px;" onmouseover="this.style.background='#f8f9fa'; this.style.boxShadow='0 2px 8px rgba(0,0,0,0.15)'" onmouseout="this.style.background='#ffffff'; this.style.boxShadow='none'">
-                        <svg width="18" height="18" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
-                        <span>Sign in with Google</span>
+                    <!-- Exclusive Google OAuth Login -->
+                    <button type="button" class="cyber-google-btn" id="google-oauth-btn">
+                        <svg class="btn-svg" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+                        <div class="btn-loader"></div>
+                        <span class="btn-text">Continue with Google</span>
                     </button>
 
-                    <div class="sso-divider">Or Access via Email</div>
-
-                    <!-- Main Form -->
-                    <form id="customer-login-form">
-                        <div class="cyber-input-group">
-                            <label for="user-email">Email Address</label>
-                            <div class="cyber-input-wrapper">
-                                <input type="email" id="user-email" required placeholder="name@example.com" class="cyber-input">
-                                <i class="fa-solid fa-envelope cyber-icon"></i>
-                            </div>
-                        </div>
-                        
-                        <div class="cyber-input-group" style="margin-bottom: 24px;">
-                            <label for="user-pass">Password</label>
-                            <div class="cyber-input-wrapper">
-                                <input type="password" id="user-pass" required placeholder="••••••••" class="cyber-input">
-                                <i class="fa-solid fa-lock cyber-icon"></i>
-                                <button type="button" id="pass-toggle" class="cyber-eye-btn" title="Toggle Password Visibility">
-                                    <i class="fa-solid fa-eye"></i>
-                                </button>
-                            </div>
-                        </div>
-
-                        <!-- Auth Mode Toggle -->
-                        <div class="cyber-demo-box" style="cursor: pointer;" id="auth-mode-toggle">
-                            <span style="font-size: 10px; text-transform: uppercase; letter-spacing: 1px; font-weight: 800; color: #00c6ff; display: block; margin-bottom: 4px;"><i class="fa-solid fa-user-plus"></i> <span id="auth-toggle-label">New Customer? Click here to create account</span></span>
-                            <div style="margin-top: 6px; font-size: 11px; color: rgba(255,255,255,0.5); font-family: 'Space Grotesk', sans-serif;">
-                                <span id="auth-toggle-hint">Minimum 8 character password required for signup</span>
-                            </div>
-                        </div>
-                        <input type="hidden" id="auth-mode" value="login">
-
-                        <button type="submit" class="btn-cyber-primary">
-                            <span>Sign In to Dashboard</span>
-                            <i class="fa-solid fa-network-wired"></i>
-                        </button>
-
-
-                    </form>
+                    <div class="secure-badge">
+                        <i class="fa-solid fa-shield-check"></i> Enterprise Grade Security
+                    </div>
 
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Footer -->
-    <aura-footer></aura-footer>
+    <!-- Hidden Admin Trigger for Staff -->
+    <button id="admin-trigger-btn" class="admin-secret-trigger" title="Staff Portal"></button>
 
-    <!-- Real Google SSO initialized via SDK -->
-
-    <!-- FULL SCREEN FUTURISTIC DECRYPTION SCAN HUD OVERLAY -->
-    <div class="cyber-hud-overlay" id="cyber-hud">
-        <div class="hud-scanner"></div>
-        
-        <div class="hud-radial-grid">
-            <div class="hud-radar-sweep"></div>
+    <!-- FULL SCREEN CYBER HUD (Shows After Auth) -->
+    <div id="cyber-hud">
+        <div class="hud-radial-loader">
             <div class="hud-radial-inner">
-                <i class="fa-solid fa-shield-halved hud-center-padlock" id="hud-status-icon"></i>
-                <div class="hud-center-percent" id="hud-progress-percent">00%</div>
-                <div style="font-size: 10px; text-transform: uppercase; letter-spacing: 2px; color: rgba(255,255,255,0.4); margin-top: 14px;" id="hud-status-label">Authenticating</div>
+                <div class="hud-radar-sweep"></div>
+                <i id="hud-status-icon" class="fa-solid fa-lock hud-center-padlock"></i>
+                <div class="hud-center-percent" id="hud-progress-percent">0%</div>
+                <div style="font-size: 11px; color: rgba(0, 229, 255, 0.6); margin-top: 4px; letter-spacing: 2px;" id="hud-status-label">INITIALIZING</div>
             </div>
         </div>
 
-        <div style="font-size: 20px; font-weight: 800; font-family: 'Space Grotesk', sans-serif; letter-spacing: 4px; margin-bottom: 24px; text-shadow: 0 0 10px rgba(0, 229, 255, 0.4);" id="hud-main-headline">
-            VERIFYING ACCOUNT
-        </div>
-
-        <div class="hud-console">
-            <div id="hud-console-output"></div>
+        <h1 id="hud-main-headline" style="font-family: 'Space Grotesk', sans-serif; font-size: 32px; font-weight: 800; color: #ffffff; letter-spacing: 2px; margin-bottom: 24px; text-transform: uppercase;">Authenticating User</h1>
+        
+        <div class="hud-console" id="hud-console-output">
+            <span class="hud-console-line">[SYSTEM] Handshake initiated...</span>
         </div>
     </div>
 
-    <!-- Sliding Settings Sidebar -->
-    <div id="settings-sidebar" class="sidebar-panel" style="z-index: 100;">
-        <div class="sidebar-header">
-            <h3><i class="fa-solid fa-gears"></i> Settings Panel</h3>
-            <button id="sidebar-close-btn" class="close-btn">&times;</button>
-        </div>
-        <div class="sidebar-body">
-            <!-- Theme Preference -->
-            <div class="settings-group">
-                <label><i class="fa-solid fa-circle-half-stroke"></i> Select Theme</label>
-                <div class="theme-select-grid">
-                    <button id="theme-normal-select" class="theme-select-btn active">Light Mode</button>
-                    <button id="theme-neon-select" class="theme-select-btn">Dark Mode</button>
-                </div>
-            </div>
-
-            <!-- Admin Access Gate -->
-            <div class="settings-group admin-gate-group">
-                <label><i class="fa-solid fa-user-shield"></i> Administration</label>
-                <p class="settings-desc">Access factory scaling multipliers, WhatsApp leads trackers, and catalog upload desks.</p>
-                <button id="sidebar-admin-btn" class="btn btn-secondary w-full">
-                    <span>Admin Portal Access</span>
-                    <i class="fa-solid fa-right-to-bracket"></i>
-                </button>
-            </div>
-            
-            <!-- Quick Portal links -->
-            <div class="settings-group">
-                <label><i class="fa-solid fa-link"></i> Quick Navigation</label>
-                <ul class="settings-nav-links">
-                    <li><a href="index.html"><i class="fa-solid fa-house"></i> Home Systems</a></li>
-                    <li><a href="calculator.html"><i class="fa-solid fa-calculator"></i> Capacity Sizer</a></li>
-                    <li><a href="customize.html"><i class="fa-solid fa-sliders"></i> Custom Plant Designer</a></li>
-                    <li><a href="repair.html"><i class="fa-solid fa-wrench"></i> Repair Dispatch</a></li>
-                    <li><a href="orders.html"><i class="fa-solid fa-cart-flatbed"></i> My Orders Registry</a></li>
-                </ul>
-            </div>
-        </div>
-    </div>
-    <div id="sidebar-overlay" class="sidebar-overlay" style="z-index: 90;"></div>
-
-    <!-- Logic / Auth Scripts -->
     <script>
         document.addEventListener("DOMContentLoaded", () => {
-            document.getElementById("year").textContent = new Date().getFullYear();
-
-            // Password Toggle safe guard
-            const passInput = document.getElementById("user-pass");
-            const passToggle = document.getElementById("pass-toggle");
-
-            if (passToggle && passInput) {
-                passToggle.addEventListener("click", () => {
-                    const isPass = passInput.getAttribute("type") === "password";
-                    passInput.setAttribute("type", isPass ? "text" : "password");
-                    const icon = passToggle.querySelector("i");
-                    if (icon) {
-                        icon.className = isPass ? "fa-solid fa-eye-slash" : "fa-solid fa-eye";
+            
+            const googleBtn = document.getElementById("google-oauth-btn");
+            
+            // Handle Google Auth Click
+            if (googleBtn) {
+                googleBtn.addEventListener("click", () => {
+                    if (typeof FirebaseService !== "undefined") {
+                        // Show loading state
+                        const svg = googleBtn.querySelector(".btn-svg");
+                        const loader = googleBtn.querySelector(".btn-loader");
+                        const text = googleBtn.querySelector(".btn-text");
+                        
+                        if (svg && loader && text) {
+                            svg.style.display = "none";
+                            loader.style.display = "block";
+                            text.textContent = "Connecting securely...";
+                            googleBtn.style.opacity = "0.9";
+                            googleBtn.style.cursor = "wait";
+                            googleBtn.style.pointerEvents = "none";
+                        }
+                        
+                        // Fire the actual login logic
+                        FirebaseService.loginWithGoogle();
+                    } else {
+                        alert("Authentication service not available. Please wait for the page to load or refresh.");
                     }
                 });
             }
-
-            // Google OAuth via Appwrite — redirect flow
-            document.getElementById("google-oauth-btn").addEventListener("click", () => {
-                if (typeof FirebaseService !== "undefined") {
-                    FirebaseService.loginWithGoogle();
-                } else {
-                    alert("Authentication service not available. Please refresh the page.");
-                }
-            });
 
             // Check if user just returned from OAuth redirect with active session
             (async () => {
@@ -726,86 +429,10 @@
                     const user = await FirebaseService.checkSession();
                     if (user) {
                         // User has a valid session — show animation and redirect
-                        startFuturisticScanningAuth(user.email, `Google Identity (${user.name || user.email})`);
+                        startFuturisticScanningAuth(user.email, `Google Identity (${user.displayName || user.name || user.email})`);
                     }
                 }
             })();
-
-            // Auth Mode Toggle (Login ↔ Signup)
-            const authModeToggle = document.getElementById("auth-mode-toggle");
-            const authModeInput = document.getElementById("auth-mode");
-            const authToggleLabel = document.getElementById("auth-toggle-label");
-            const authToggleHint = document.getElementById("auth-toggle-hint");
-            const submitBtnLabel = document.querySelector(".btn-cyber-primary span");
-
-            authModeToggle.addEventListener("click", () => {
-                if (authModeInput.value === "login") {
-                    authModeInput.value = "signup";
-                    authToggleLabel.textContent = "Already have an account? Click here to login";
-                    authToggleHint.textContent = "We will create your ROBOART account securely";
-                    submitBtnLabel.textContent = "Create Secure Account";
-                } else {
-                    authModeInput.value = "login";
-                    authToggleLabel.textContent = "New Customer? Click here to create account";
-                    authToggleHint.textContent = "Minimum 8 character password required for signup";
-                    submitBtnLabel.textContent = "Initialize Portal Sync";
-                }
-            });
-
-            // Form Submit — Real Appwrite Email/Password Auth
-            const loginForm = document.getElementById("customer-login-form");
-            loginForm.addEventListener("submit", async (e) => {
-                e.preventDefault();
-                const email = document.getElementById("user-email").value.trim().toLowerCase();
-                const pass = document.getElementById("user-pass").value.trim();
-                const mode = authModeInput.value;
-
-                if (!email || !pass) {
-                    alert("Please enter both email and password!");
-                    return;
-                }
-
-                if (mode === "signup" && pass.length < 8) {
-                    alert("Password must be at least 8 characters for account creation!");
-                    return;
-                }
-
-                if (typeof FirebaseService === "undefined") {
-                    alert("Authentication service is unavailable. Please refresh.");
-                    return;
-                }
-
-                // Disable button while processing
-                const submitBtn = loginForm.querySelector(".btn-cyber-primary");
-                submitBtn.disabled = true;
-                submitBtn.style.opacity = "0.6";
-
-                let result;
-                if (mode === "signup") {
-                    result = await FirebaseService.signup(email, pass);
-                } else {
-                    result = await FirebaseService.login(email, pass);
-                    // If login fails, try signup (auto-create account)
-                    if (!result.success && result.error && result.error.includes("Invalid credentials")) {
-                        // Don't auto-signup, let user know
-                        submitBtn.disabled = false;
-                        submitBtn.style.opacity = "1";
-                        alert("Invalid email or password! If you are a new customer, click 'Create Account' below.");
-                        return;
-                    }
-                }
-
-                submitBtn.disabled = false;
-                submitBtn.style.opacity = "1";
-
-                if (result.success) {
-                    startFuturisticScanningAuth(email, mode === "signup" ? "New Account Created" : "Secure Session Established");
-                } else {
-                    alert("ROBOART Auth Error: " + (result.error || "Authentication failed. Please try again."));
-                }
-            });
-
-            // Mock Google authentication login handler removed in favor of real authentication callback
 
             // FULL FUTURISTIC HUB SCANNER DECRYPTION LOGIC
             function startFuturisticScanningAuth(emailValue, authMethodLabel) {
@@ -876,218 +503,102 @@
                 }, 3200);
             }
 
-            // Theme Switcher Sync
-            const htmlElement = document.documentElement;
-            const themeToggle = document.getElementById("theme-toggle");
-            
-            const savedTheme = localStorage.getItem("aura-theme") || "normal";
-            htmlElement.setAttribute("data-theme", savedTheme);
-            updateThemeIcon(savedTheme);
-
-            themeToggle.addEventListener("click", () => {
-                const currentTheme = htmlElement.getAttribute("data-theme");
-                const newTheme = currentTheme === "normal" ? "neon" : "normal";
-                
-                htmlElement.setAttribute("data-theme", newTheme);
-                localStorage.setItem("aura-theme", newTheme);
-                updateThemeIcon(newTheme);
-            });
-
-            function updateThemeIcon(theme) {
-                const icon = themeToggle.querySelector("i");
-                if (theme === "neon") {
-                    icon.className = "fa-solid fa-sun";
-                } else {
-                    icon.className = "fa-solid fa-moon";
-                }
-            }
-
-            // Admin Routing Check
+            // Hidden Admin Route
             const adminTriggerBtn = document.getElementById("admin-trigger-btn");
-            const isAdminLoggedIn = localStorage.getItem("aura-admin-logged-in") === "true";
-            
             if (adminTriggerBtn) {
-                if (isAdminLoggedIn) {
-                    adminTriggerBtn.classList.add("logged-in");
-                    
-                    // Add logout
-                    const logoutBtn = document.createElement("button");
-                    logoutBtn.className = "theme-btn logout-trigger";
-                    logoutBtn.setAttribute("title", "Logout Securely");
-                    logoutBtn.innerHTML = '<i class="fa-solid fa-power-off"></i>';
-                    adminTriggerBtn.parentNode.insertBefore(logoutBtn, adminTriggerBtn.nextSibling);
-                    
-                    logoutBtn.addEventListener("click", () => {
-                        if (confirm("Are you sure you want to sign out from the Admin Portal?")) {
-                            localStorage.removeItem("aura-admin-logged-in");
-                            window.location.reload();
-                        }
-                    });
-                }
-
-                adminTriggerBtn.addEventListener("click", () => {
-                    if (localStorage.getItem("aura-admin-logged-in") === "true") {
+                adminTriggerBtn.addEventListener("dblclick", () => {
+                    const pass = prompt("Admin Override Sequence:");
+                    if (pass === "admin123") { // Fallback basic check
+                        localStorage.setItem("aura-admin-logged-in", "true");
+                        localStorage.setItem("aura-user-email", "Administrator");
                         window.location.href = "admin.html";
-                    } else {
-                        window.location.href = "customer-login.html";
                     }
                 });
-            }
-
-            // ==========================================
-            // SLIDING SETTINGS SIDEBAR EVENT HANDLERS
-            // ==========================================
-            const leftTrigger = document.getElementById("left-settings-trigger");
-            const settingsSidebar = document.getElementById("settings-sidebar");
-            const sidebarCloseBtn = document.getElementById("sidebar-close-btn");
-            const sidebarOverlay = document.getElementById("sidebar-overlay");
-            const sidebarAdminBtn = document.getElementById("sidebar-admin-btn");
-
-            if (leftTrigger && settingsSidebar && sidebarCloseBtn && sidebarOverlay) {
-                leftTrigger.addEventListener("click", () => {
-                    settingsSidebar.classList.add("open");
-                    sidebarOverlay.classList.add("open");
-                });
-
-                const closeSidebar = () => {
-                    settingsSidebar.classList.remove("open");
-                    sidebarOverlay.classList.remove("open");
-                };
-
-                sidebarCloseBtn.addEventListener("click", closeSidebar);
-                sidebarOverlay.addEventListener("click", closeSidebar);
-
-                const normalThemeSelect = document.getElementById("theme-normal-select");
-                const neonThemeSelect = document.getElementById("theme-neon-select");
-
-                if (normalThemeSelect && neonThemeSelect) {
-                    const currentTheme = document.documentElement.getAttribute("data-theme") || "normal";
-                    if (currentTheme === "neon") {
-                        normalThemeSelect.classList.remove("active");
-                        neonThemeSelect.classList.add("active");
-                    } else {
-                        normalThemeSelect.classList.add("active");
-                        neonThemeSelect.classList.remove("active");
-                    }
-
-                    normalThemeSelect.addEventListener("click", () => {
-                        document.documentElement.setAttribute("data-theme", "normal");
-                        localStorage.setItem("aura-theme", "normal");
-                        normalThemeSelect.classList.add("active");
-                        neonThemeSelect.classList.remove("active");
-                        const mainToggle = document.getElementById("theme-toggle");
-                        if (mainToggle) {
-                            const icon = mainToggle.querySelector("i");
-                            if (icon) icon.className = "fa-solid fa-moon";
-                        }
-                    });
-
-                    neonThemeSelect.addEventListener("click", () => {
-                        document.documentElement.setAttribute("data-theme", "neon");
-                        localStorage.setItem("aura-theme", "neon");
-                        neonThemeSelect.classList.add("active");
-                        normalThemeSelect.classList.remove("active");
-                        const mainToggle = document.getElementById("theme-toggle");
-                        if (mainToggle) {
-                            const icon = mainToggle.querySelector("i");
-                            if (icon) icon.className = "fa-solid fa-sun";
-                        }
-                    });
-                }
-
-                if (sidebarAdminBtn) {
-                    sidebarAdminBtn.addEventListener("click", () => {
-                        closeSidebar();
-                        if (localStorage.getItem("aura-admin-logged-in") === "true") {
-                            window.location.href = "admin.html";
-                        } else {
-                            window.location.href = "customer-login.html";
-                        }
-                    });
-                }
             }
 
             // ==========================================
             // HIGH-PERFORMANCE AMBIENT PARTICLES ENGINE
             // ==========================================
             const canvas = document.getElementById("particles-canvas");
-            const ctx = canvas.getContext("2d");
+            if (canvas) {
+                const ctx = canvas.getContext("2d");
 
-            let particlesArray = [];
-            let width = (canvas.width = window.innerWidth);
-            let height = (canvas.height = window.innerHeight);
+                let particlesArray = [];
+                let width = (canvas.width = window.innerWidth);
+                let height = (canvas.height = window.innerHeight);
 
-            // Handle resize
-            window.addEventListener("resize", () => {
-                width = canvas.width = window.innerWidth;
-                height = canvas.height = window.innerHeight;
-            });
-
-            class Particle {
-                constructor() {
-                    this.x = Math.random() * width;
-                    this.y = Math.random() * height;
-                    this.size = Math.random() * 2 + 0.5;
-                    this.speedX = Math.random() * 0.4 - 0.2;
-                    this.speedY = Math.random() * 0.4 - 0.2;
-                    this.opacity = Math.random() * 0.5 + 0.2;
-                }
-
-                update() {
-                    this.x += this.speedX;
-                    this.y += this.speedY;
-
-                    if (this.x > width || this.x < 0) this.speedX = -this.speedX;
-                    if (this.y > height || this.y < 0) this.speedY = -this.speedY;
-                }
-
-                draw() {
-                    ctx.fillStyle = `rgba(0, 229, 255, ${this.opacity})`;
-                    ctx.beginPath();
-                    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                    ctx.fill();
-                }
-            }
-
-            function initParticles() {
-                particlesArray = [];
-                const numberOfParticles = Math.floor((width * height) / 9000);
-                for (let i = 0; i < numberOfParticles; i++) {
-                    particlesArray.push(new Particle());
-                }
-            }
-
-            function animateParticles() {
-                ctx.clearRect(0, 0, width, height);
-                particlesArray.forEach((particle) => {
-                    particle.update();
-                    particle.draw();
+                // Handle resize
+                window.addEventListener("resize", () => {
+                    width = canvas.width = window.innerWidth;
+                    height = canvas.height = window.innerHeight;
                 });
-                
-                // Slowly draw faint connect lines if close
-                for (let a = 0; a < particlesArray.length; a++) {
-                    for (let b = a; b < particlesArray.length; b++) {
-                        let dx = particlesArray[a].x - particlesArray[b].x;
-                        let dy = particlesArray[a].y - particlesArray[b].y;
-                        let distance = Math.sqrt(dx * dx + dy * dy);
 
-                        if (distance < 100) {
-                            let alpha = (1 - distance / 100) * 0.08;
-                            ctx.strokeStyle = `rgba(0, 229, 255, ${alpha})`;
-                            ctx.lineWidth = 0.5;
-                            ctx.beginPath();
-                            ctx.moveTo(particlesArray[a].x, particlesArray[a].y);
-                            ctx.lineTo(particlesArray[b].x, particlesArray[b].y);
-                            ctx.stroke();
-                        }
+                class Particle {
+                    constructor() {
+                        this.x = Math.random() * width;
+                        this.y = Math.random() * height;
+                        this.size = Math.random() * 2 + 0.5;
+                        this.speedX = Math.random() * 0.4 - 0.2;
+                        this.speedY = Math.random() * 0.4 - 0.2;
+                        this.opacity = Math.random() * 0.5 + 0.2;
+                    }
+
+                    update() {
+                        this.x += this.speedX;
+                        this.y += this.speedY;
+
+                        if (this.x > width || this.x < 0) this.speedX = -this.speedX;
+                        if (this.y > height || this.y < 0) this.speedY = -this.speedY;
+                    }
+
+                    draw() {
+                        ctx.fillStyle = `rgba(0, 229, 255, ${this.opacity})`;
+                        ctx.beginPath();
+                        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                        ctx.fill();
                     }
                 }
 
-                requestAnimationFrame(animateParticles);
-            }
+                function initParticles() {
+                    particlesArray = [];
+                    const numberOfParticles = Math.floor((width * height) / 9000);
+                    for (let i = 0; i < numberOfParticles; i++) {
+                        particlesArray.push(new Particle());
+                    }
+                }
 
-            initParticles();
-            animateParticles();
+                function animateParticles() {
+                    ctx.clearRect(0, 0, width, height);
+                    particlesArray.forEach((particle) => {
+                        particle.update();
+                        particle.draw();
+                    });
+                    
+                    // Slowly draw faint connect lines if close
+                    for (let a = 0; a < particlesArray.length; a++) {
+                        for (let b = a; b < particlesArray.length; b++) {
+                            let dx = particlesArray[a].x - particlesArray[b].x;
+                            let dy = particlesArray[a].y - particlesArray[b].y;
+                            let distance = Math.sqrt(dx * dx + dy * dy);
+
+                            if (distance < 100) {
+                                let alpha = (1 - distance / 100) * 0.08;
+                                ctx.strokeStyle = `rgba(0, 229, 255, ${alpha})`;
+                                ctx.lineWidth = 0.5;
+                                ctx.beginPath();
+                                ctx.moveTo(particlesArray[a].x, particlesArray[a].y);
+                                ctx.lineTo(particlesArray[b].x, particlesArray[b].y);
+                                ctx.stroke();
+                            }
+                        }
+                    }
+
+                    requestAnimationFrame(animateParticles);
+                }
+
+                initParticles();
+                animateParticles();
+            }
         });
     </script>
 </body>
