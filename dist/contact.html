@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="normal">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ROBOART | Contact Systems Architect</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Space+Grotesk:wght@300..700&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Main Style Sheet -->
+    <script src="components.js"></script>
+  <link rel="stylesheet" crossorigin href="/assets/style-Bg7YTivN.css">
+</head>
+<body>
+
+    <!-- Web Component Header -->
+    <aura-header active="contact"></aura-header>
+
+    <!-- Contact & Lead Form Section -->
+    <section class="contact-section" style="margin-top: 64px; padding: 80px 0; background: var(--bg-color); min-height: 80vh; transition: background-color 0.3s ease;">
+        <div class="container">
+            <div class="section-header" style="margin-bottom: 45px;">
+                <span class="section-tag">Reach Us Instantly</span>
+                <h2 class="section-title">Initiate Your Technical Integration</h2>
+                <p class="section-desc">Connect with our systems architects to design isolations, input bypass specs, or request standard price sheets.</p>
+            </div>
+
+            <div class="contact-grid">
+                <div class="contact-info">
+                    <span class="section-tag font-space" style="color: var(--secondary);">Industrial Support desk</span>
+                    <h3 style="font-size: 20px; color: var(--text-color); margin-bottom: 12px;">Factory Head Office</h3>
+                    <p class="contact-desc">
+                        Fill out the B2B consult sheet. Submitting will register your ticket, push details to our support board, and open an active WhatsApp session with our systems architect.
+                    </p>
+                    <div class="contact-methods">
+                        <div class="method">
+                            <i class="fa-solid fa-envelope"></i>
+                            <span>info.roboart@gmail.com</span>
+                        </div>
+                        <div class="method">
+                            <i class="fa-solid fa-phone"></i>
+                            <span>+91 7827 562528 | 6394635914</span>
+                        </div>
+                        <div class="method">
+                            <i class="fa-solid fa-location-dot"></i>
+                            <span>D-54, Gurukul Industrial Area, Plot No. 4, Anangpur, Faridabad, Haryana 121003</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="contact-card">
+                    <form id="whatsapp-form" class="lead-form">
+                        <div class="form-group">
+                            <label for="client-name">Full Name / Company Name</label>
+                            <input type="text" id="client-name" required placeholder="Enter name">
+                        </div>
+                        <div class="form-group">
+                            <label for="system-choice">Required System</label>
+                            <select id="system-choice">
+                                <option value="Control Transformers">Control Transformers</option>
+                                <option value="Step Down Transformers">Step Down Transformers</option>
+                                <option value="Isolation Transformers">Isolation Transformers</option>
+                                <option value="Three Phase Transformers">Three Phase Transformers</option>
+                                <option value="Custom Specification">Custom Specification</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="load-capacity">Expected Load Capacity (kVA / kW)</label>
+                            <input type="text" id="load-capacity" required placeholder="e.g. 20 kVA">
+                        </div>
+                        <button type="submit" class="btn btn-primary w-full">
+                            <span>Submit to WhatsApp</span>
+                            <i class="fa-brands fa-whatsapp"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Web Component Footer -->
+    <aura-footer></aura-footer>
+
+    <!-- Web Component Sidebar -->
+    <aura-sidebar></aura-sidebar>
+
+    <!-- Interactive script triggers -->
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            document.getElementById("year").textContent = new Date().getFullYear();
+
+            // Lead Form Submit
+            document.getElementById("whatsapp-form").addEventListener("submit", (e) => {
+                e.preventDefault();
+                const isUserLoggedIn = localStorage.getItem("aura-user-logged-in") === "true";
+                if (!isUserLoggedIn) {
+                    alert("ROBOART Security Protocols: Please sign in as a Customer to initiate industrial technical consulting session!");
+                    localStorage.setItem("aura-auth-redirect", "contact.html");
+                    window.location.href = "customer-login.html";
+                    return;
+                }
+
+                const name = document.getElementById("client-name").value.trim();
+                const system = document.getElementById("system-choice").value;
+                const capacity = document.getElementById("load-capacity").value.trim();
+                
+                // Save B2B lead to local lead log
+                let leads = JSON.parse(localStorage.getItem("aura-whatsapp-leads")) || [];
+                leads.unshift({
+                    name: name,
+                    system: `Consultation: ${system}`,
+                    capacity: capacity,
+                    timestamp: "Just now"
+                });
+                localStorage.setItem("aura-whatsapp-leads", JSON.stringify(leads));
+
+                const message = `Hello Roboart Transformers!\n\nI want to request an industrial quote consultation.\n*Company/Name:* ${name}\n*Transformer Required:* ${system}\n*Expected Load:* ${capacity}\n\nPlease connect me with a systems engineer.`;
+                window.open(`https://wa.me/916394635914?text=${encodeURIComponent(message)}`, "_blank");
+            });
+
+            // Theme Switcher Sync
+            const htmlElement = document.documentElement;
+            const themeToggle = document.getElementById("theme-toggle");
+            
+            const savedTheme = localStorage.getItem("aura-theme") || "normal";
+            htmlElement.setAttribute("data-theme", savedTheme);
+            updateThemeIcon(savedTheme);
+
+            themeToggle.addEventListener("click", () => {
+                const currentTheme = htmlElement.getAttribute("data-theme");
+                const newTheme = currentTheme === "normal" ? "neon" : "normal";
+                
+                htmlElement.setAttribute("data-theme", newTheme);
+                localStorage.setItem("aura-theme", newTheme);
+                updateThemeIcon(newTheme);
+            });
+
+            function updateThemeIcon(theme) {
+                const icon = themeToggle.querySelector("i");
+                if (theme === "neon") {
+                    icon.className = "fa-solid fa-sun";
+                } else {
+                    icon.className = "fa-solid fa-moon";
+                }
+            }
+
+            // Admin Routing Check
+            const adminTriggerBtn = document.getElementById("admin-trigger-btn");
+            const isAdminLoggedIn = localStorage.getItem("aura-admin-logged-in") === "true";
+            
+            if (adminTriggerBtn) {
+                if (isAdminLoggedIn) {
+                    adminTriggerBtn.classList.add("logged-in");
+                    
+                    // Add logout
+                    const logoutBtn = document.createElement("button");
+                    logoutBtn.className = "theme-btn logout-trigger";
+                    logoutBtn.setAttribute("title", "Logout Securely");
+                    logoutBtn.innerHTML = '<i class="fa-solid fa-power-off"></i>';
+                    adminTriggerBtn.parentNode.insertBefore(logoutBtn, adminTriggerBtn.nextSibling);
+                    
+                    logoutBtn.addEventListener("click", () => {
+                        if (confirm("Are you sure you want to sign out from the Admin Portal?")) {
+                            localStorage.removeItem("aura-admin-logged-in");
+                            window.location.reload();
+                        }
+                    });
+                }
+
+                adminTriggerBtn.addEventListener("click", () => {
+                    if (localStorage.getItem("aura-admin-logged-in") === "true") {
+                        window.location.href = "admin.html";
+                    } else {
+                        window.location.href = "customer-login.html";
+                    }
+                });
+            }
+
+            // Customer Portal Routing
+            const userLoginBtn = document.getElementById("user-login-btn");
+            const isUserLoggedIn = localStorage.getItem("aura-user-logged-in") === "true";
+
+            if (isUserLoggedIn) {
+                userLoginBtn.classList.add("logged-in");
+                userLoginBtn.setAttribute("title", `Logged in as Customer (Click to Logout)`);
+                
+                userLoginBtn.addEventListener("click", () => {
+                    if (confirm("Are you sure you want to log out from the Customer Portal?")) {
+                        localStorage.removeItem("aura-user-logged-in");
+                        localStorage.removeItem("aura-user-email");
+                        window.location.reload();
+                    }
+                });
+            } else {
+                userLoginBtn.addEventListener("click", () => {
+                    window.location.href = "customer-login.html";
+                });
+            }
+
+            // ==========================================
+            // SLIDING SETTINGS SIDEBAR EVENT HANDLERS
+            // ==========================================
+            const leftTrigger = document.getElementById("left-settings-trigger");
+            const settingsSidebar = document.getElementById("settings-sidebar");
+            const sidebarCloseBtn = document.getElementById("sidebar-close-btn");
+            const sidebarOverlay = document.getElementById("sidebar-overlay");
+            const sidebarAdminBtn = document.getElementById("sidebar-admin-btn");
+
+            if (leftTrigger && settingsSidebar && sidebarCloseBtn && sidebarOverlay) {
+                leftTrigger.addEventListener("click", () => {
+                    settingsSidebar.classList.add("open");
+                    sidebarOverlay.classList.add("open");
+                });
+
+                const closeSidebar = () => {
+                    settingsSidebar.classList.remove("open");
+                    sidebarOverlay.classList.remove("open");
+                };
+
+                sidebarCloseBtn.addEventListener("click", closeSidebar);
+                sidebarOverlay.addEventListener("click", closeSidebar);
+
+                const normalThemeSelect = document.getElementById("theme-normal-select");
+                const neonThemeSelect = document.getElementById("theme-neon-select");
+
+                if (normalThemeSelect && neonThemeSelect) {
+                    const currentTheme = document.documentElement.getAttribute("data-theme") || "normal";
+                    if (currentTheme === "neon") {
+                        normalThemeSelect.classList.remove("active");
+                        neonThemeSelect.classList.add("active");
+                    } else {
+                        normalThemeSelect.classList.add("active");
+                        neonThemeSelect.classList.remove("active");
+                    }
+
+                    normalThemeSelect.addEventListener("click", () => {
+                        document.documentElement.setAttribute("data-theme", "normal");
+                        localStorage.setItem("aura-theme", "normal");
+                        normalThemeSelect.classList.add("active");
+                        neonThemeSelect.classList.remove("active");
+                        const mainToggle = document.getElementById("theme-toggle");
+                        if (mainToggle) {
+                            const icon = mainToggle.querySelector("i");
+                            if (icon) icon.className = "fa-solid fa-moon";
+                        }
+                    });
+
+                    neonThemeSelect.addEventListener("click", () => {
+                        document.documentElement.setAttribute("data-theme", "neon");
+                        localStorage.setItem("aura-theme", "neon");
+                        neonThemeSelect.classList.add("active");
+                        normalThemeSelect.classList.remove("active");
+                        const mainToggle = document.getElementById("theme-toggle");
+                        if (mainToggle) {
+                            const icon = mainToggle.querySelector("i");
+                            if (icon) icon.className = "fa-solid fa-sun";
+                        }
+                    });
+                }
+
+                if (sidebarAdminBtn) {
+                    sidebarAdminBtn.addEventListener("click", () => {
+                        closeSidebar();
+                        if (localStorage.getItem("aura-admin-logged-in") === "true") {
+                            window.location.href = "admin.html";
+                        } else {
+                            window.location.href = "customer-login.html";
+                        }
+                    });
+                }
+            }
+        });
+    </script>
+</body>
+</html>

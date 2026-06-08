@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="normal">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ROBOART | Transformer Range</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Space+Grotesk:wght@300..700&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Main Style Sheet -->
+    <!-- Firebase Service Integration -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-check-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+    <script src="firebase-service.js"></script>
+    <script src="components.js"></script>
+  <link rel="stylesheet" crossorigin href="/assets/style-Bg7YTivN.css">
+</head>
+<body>
+
+    <!-- Web Component Header -->
+    <aura-header active="systems"></aura-header>
+
+    <!-- ROBOART Hero Section -->
+    <section class="hero-section" style="padding: 100px 0 60px; background: linear-gradient(135deg, rgba(var(--primary-rgb), 0.1) 0%, rgba(var(--secondary-rgb), 0.05) 100%); text-align: center; border-bottom: 1px solid var(--card-border);">
+        <div class="container">
+            <h1 style="font-family: 'Space Grotesk', sans-serif; font-size: 48px; font-weight: 800; color: var(--primary); margin-bottom: 16px;">Transformer Range</h1>
+            <h3 style="font-size: 24px; color: var(--text-color); margin-bottom: 12px; font-weight: 600;">Reliable Power. Stronger Performance.</h3>
+            <p style="font-size: 16px; color: var(--text-muted); max-width: 600px; margin: 0 auto 30px;">Powering Automation. Empowering Industries. We make your ideas boost!</p>
+            <a href="#products" class="btn btn-primary" style="padding: 14px 32px; font-size: 16px; border-radius: 8px;"><i class="fa-solid fa-bolt"></i> Explore Transformers</a>
+        </div>
+    </section>
+
+    <!-- 1. Flipkart-style Search & Category Icon Shelf -->
+    <section class="ecom-header-shelf" style="margin-top: 64px;">
+        <div class="container">
+            <!-- Search Bar Row -->
+            <div class="ecom-search-row">
+                <div class="search-input-wrapper">
+                    <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                    <input type="text" id="ecom-search" placeholder="Search for Products, Categories and Tech Specs...">
+                </div>
+            </div>
+
+            <!-- Horizontal Category Icon Shelf -->
+            <div class="ecom-categories-shelf">
+                <div class="cat-shelf-item active" data-category="all">
+                    <div class="cat-icon-box"><i class="fa-solid fa-boxes-stacked"></i></div>
+                    <span>All Products</span>
+                </div>
+                <div class="cat-shelf-item" data-category="control">
+                    <div class="cat-icon-box"><i class="fa-solid fa-bolt"></i></div>
+                    <span>Control Transformers</span>
+                </div>
+                <div class="cat-shelf-item" data-category="stepdown">
+                    <div class="cat-icon-box"><i class="fa-solid fa-arrow-down-up-across-line"></i></div>
+                    <span>Step Down Transformers</span>
+                </div>
+                <div class="cat-shelf-item" data-category="isolation">
+                    <div class="cat-icon-box"><i class="fa-solid fa-shield-halved"></i></div>
+                    <span>Isolation Transformers</span>
+                </div>
+                <div class="cat-shelf-item" data-category="threephase">
+                    <div class="cat-icon-box"><i class="fa-solid fa-industry"></i></div>
+                    <span>Three Phase Transformers</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 2. Product Showcase Grid (The Catalog Shopfront) -->
+    <section id="products" class="products-section" style="padding-top: 40px; padding-bottom: 60px;">
+        <div class="container">
+            <div class="section-header" style="margin-bottom: 40px;">
+                <span class="section-tag">ROBOART Storefront</span>
+                <h2 class="section-title">Industrial Transformer Range</h2>
+                <p class="section-desc">Browse our high-efficiency transformers, custom built for maximum reliability and electrical safety.</p>
+            </div>
+
+            <!-- Products Grid -->
+            <div class="products-grid flipkart-shelf-grid" id="products-grid">
+                <!-- Loaded dynamically by script.js -->
+            </div>
+        </div>
+    </section>
+
+    <!-- 3. ROBOART Website Features Section -->
+    <section class="about-stats" style="padding: 60px 0; background: var(--section-white-bg); border-top: 1px solid var(--card-border); border-bottom: 1px solid var(--card-border); transition: background-color 0.3s ease;">
+        <div class="container">
+            <div class="section-header" style="margin-bottom: 40px;">
+                <span class="section-tag" style="color: var(--secondary);">Why Choose Roboart</span>
+                <h2 class="section-title">Built For Performance</h2>
+                <p class="section-desc">We deliver custom-built, highly efficient transformer systems tailored for every industrial requirement.</p>
+            </div>
+
+            <div class="admin-metrics-row" style="margin-bottom: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
+                <!-- Feature 1: High Efficiency -->
+                <div class="metric-card" style="flex-direction: column; align-items: flex-start; gap: 16px; padding: 24px; border: 1px solid var(--card-border);">
+                    <div class="metric-icon" style="background: rgba(40,116,240,0.06); color: var(--primary);"><i class="fa-solid fa-bolt"></i></div>
+                    <div class="metric-info" style="display: flex; flex-direction: column;">
+                        <span style="font-size: 16px; color: var(--text-color); font-weight: 700;">High Efficiency</span>
+                        <p style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Low Losses & High Performance.</p>
+                    </div>
+                </div>
+
+                <!-- Feature 2: Built To Last -->
+                <div class="metric-card" style="flex-direction: column; align-items: flex-start; gap: 16px; padding: 24px; border: 1px solid var(--card-border);">
+                    <div class="metric-icon" style="background: rgba(16,185,129,0.06); color: #10b981;"><i class="fa-solid fa-shield-halved"></i></div>
+                    <div class="metric-info" style="display: flex; flex-direction: column;">
+                        <span style="font-size: 16px; color: var(--text-color); font-weight: 700;">Built To Last</span>
+                        <p style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Premium Materials & Reliable Design.</p>
+                    </div>
+                </div>
+
+                <!-- Feature 3: Electrical Safety -->
+                <div class="metric-card" style="flex-direction: column; align-items: flex-start; gap: 16px; padding: 24px; border: 1px solid var(--card-border);">
+                    <div class="metric-icon" style="background: rgba(251,100,27,0.06); color: var(--secondary);"><i class="fa-solid fa-plug-circle-check"></i></div>
+                    <div class="metric-info" style="display: flex; flex-direction: column;">
+                        <span style="font-size: 16px; color: var(--text-color); font-weight: 700;">Electrical Safety</span>
+                        <p style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Isolation Driven Design.</p>
+                    </div>
+                </div>
+
+                <!-- Feature 4: Custom Solutions -->
+                <div class="metric-card" onclick="window.location.href='customize.html'" style="cursor: pointer; flex-direction: column; align-items: flex-start; gap: 16px; padding: 24px; border: 1px solid var(--card-border); transition: all 0.2s ease;">
+                    <div class="metric-icon" style="background: rgba(139,92,246,0.06); color: #8b5cf6;"><i class="fa-solid fa-sliders"></i></div>
+                    <div class="metric-info" style="display: flex; flex-direction: column;">
+                        <span style="font-size: 16px; color: var(--text-color); font-weight: 700;">Custom Solutions</span>
+                        <p style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Tailored Design For Every Requirement.</p>
+                        <a href="customize.html" style="font-size: 11px; font-weight: bold; color: #8b5cf6; text-decoration: none; margin-top: 12px; display: inline-flex; align-items: center; gap: 4px;">
+                            <span>Request Custom Build</span> <i class="fa-solid fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Web Component Footer -->
+    <aura-footer></aura-footer>
+
+    <!-- Web Component Chat Widget -->
+    <aura-chat></aura-chat>
+
+    <!-- Web Component Sidebar -->
+    <aura-sidebar></aura-sidebar>
+
+    <!-- Main JavaScript File -->
+    <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="normal">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ROBOART | Transformer Repair & Maintenance Center</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Space+Grotesk:wght@300..700&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Main Style Sheet -->
+    <!-- Firebase Service Integration -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-check-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+    <script src="firebase-service.js"></script>
+    <script src="components.js"></script>
+  <link rel="stylesheet" crossorigin href="/assets/style-Bg7YTivN.css">
+</head>
+<body>
+
+    <!-- Web Component Header -->
+    <aura-header active="repair"></aura-header>
+
+    <!-- Repair Ticket Workspace -->
+    <section class="repair-section" style="margin-top: 64px; padding: 60px 0; background: var(--bg-color); min-height: 80vh; transition: background-color 0.3s ease;">
+        <div class="container">
+            <div class="section-header" style="margin-bottom: 40px;">
+                <span class="section-tag">Diagnostics & Servicing</span>
+                <h2 class="section-title">Transformer Diagnostics & Repair Center</h2>
+                <p class="section-desc">Submit details of your broken, offline, or faulty transformer systems. A certified Roboart power engineer will be dispatched for local site audits.</p>
+            </div>
+
+            <div class="calc-wrapper glass border" style="grid-template-columns: 1.3fr 1fr;">
+                <!-- Left Input Form -->
+                <form id="repair-ticket-form" class="calc-inputs" style="gap: 16px;">
+                    <div class="facility-grid" style="grid-template-columns: repeat(2, 1fr); gap: 12px;">
+                        <div class="form-group">
+                            <label for="rep-brand">Transformer Brand</label>
+                            <select id="rep-brand" class="mult-input" style="margin-top: 4px; padding: 12px; background: var(--bg-color); color: var(--text-color); border: 1px solid var(--card-border); border-radius: 4px;">
+                                <option value="Roboart Transformers">Roboart Transformers</option>
+                                <option value="Siemens">Siemens</option>
+                                <option value="ABB">ABB</option>
+                                <option value="Schneider Electric">Schneider Electric</option>
+                                <option value="CG Power">CG Power</option>
+                                <option value="Voltamp">Voltamp</option>
+                                <option value="Other Brand">Other / Custom Brand</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="rep-model">Model Name / Number</label>
+                            <input type="text" id="rep-model" required placeholder="e.g. 10kVA Control Transformer" style="width:100%; background: var(--bg-color); color: var(--text-color); border: 1px solid var(--card-border); padding: 12px; border-radius: 4px; font-size: 13px;">
+                        </div>
+                    </div>
+
+                    <div class="calc-group">
+                        <label class="calc-label"><i class="fa-solid fa-shield-virus"></i> Primary Fault Observed</label>
+                        <select id="rep-fault" class="mult-input" style="margin-top: 0; padding: 12px; background: var(--bg-color); color: var(--text-color); border: 1px solid var(--card-border); border-radius: 4px;">
+                            <option value="Overheating / High Temp">Overheating / Extremely High Temperature</option>
+                            <option value="Voltage Output Low">Low Voltage Output / No Regulation</option>
+                            <option value="Buzzing Noise / Vibration">Loud Buzzing Noise / Mechanical Vibration</option>
+                            <option value="Burnt Windings / Smoke">Burnt Windings / Visible Smoke or Sparking</option>
+                            <option value="Routine preventative AMC service">Routine Preventive Maintenance / AMC Check</option>
+                        </select>
+                    </div>
+
+                    <div class="calc-group">
+                        <label class="calc-label"><i class="fa-solid fa-bolt-lightning"></i> Sizing Capacity Bracket</label>
+                        <div class="facility-grid" style="grid-template-columns: repeat(2, 1fr); gap: 10px;">
+                            <button type="button" class="facility-btn active" data-capacity="Less than 5 kVA">
+                                <i class="fa-solid fa-laptop"></i>
+                                <span>&lt; 5 kVA (Home/Office)</span>
+                            </button>
+                            <button type="button" class="facility-btn" data-capacity="5 kVA - 20 kVA">
+                                <i class="fa-solid fa-server"></i>
+                                <span>5 - 20 kVA (Commercial)</span>
+                            </button>
+                            <button type="button" class="facility-btn" data-capacity="20 kVA - 100 kVA">
+                                <i class="fa-solid fa-industry"></i>
+                                <span>20 - 100 kVA (Industrial)</span>
+                            </button>
+                            <button type="button" class="facility-btn" data-capacity="More than 100 kVA">
+                                <i class="fa-solid fa-network-wired"></i>
+                                <span>&gt; 100 kVA (Datacenter)</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="rep-desc">Detailed Fault Symptoms / Custom Demands</label>
+                        <textarea id="rep-desc" required placeholder="Describe what happens. (e.g. Loud buzzing when machine starts, smoke observed near coils...)" style="width: 100%; height: 100px; background: var(--bg-color); color: var(--text-color); border: 1px solid var(--card-border); padding: 12px; border-radius: 4px; font-family: inherit; font-size: 13px; resize: none; outline: none;"></textarea>
+                    </div>
+
+                    <div class="facility-grid" style="grid-template-columns: repeat(2, 1fr); gap: 12px;">
+                        <div class="form-group">
+                            <label for="rep-client-name">Company Name / Contact Person</label>
+                            <input type="text" id="rep-client-name" required placeholder="e.g. Apex Hospital Ltd." style="width: 100%; background: var(--bg-color); color: var(--text-color); border: 1px solid var(--card-border); padding: 12px; border-radius: 4px; font-size: 13px;">
+                        </div>
+                        <div class="form-group">
+                            <label for="rep-address">Repair Site Location Address</label>
+                            <input type="text" id="rep-address" required placeholder="e.g. Sector-62, Noida, India" style="width: 100%; background: var(--bg-color); color: var(--text-color); border: 1px solid var(--card-border); padding: 12px; border-radius: 4px; font-size: 13px;">
+                        </div>
+                    </div>
+                </form>
+
+                <!-- Right Side Card -->
+                <div class="calc-output-card" style="justify-content: flex-start; gap: 20px;">
+                    <h3>Servicing Request Summary</h3>
+
+                    <div class="rec-product-box">
+                        <div class="rec-icon" style="color: var(--secondary); background: rgba(251,100,27,0.08);"><i class="fa-solid fa-toolbox"></i></div>
+                        <div>
+                            <h4 id="rep-summary-brand">Roboart Transformers</h4>
+                            <p id="rep-summary-model" class="prod-category">10kVA Control</p>
+                        </div>
+                    </div>
+
+                    <div class="rec-metrics">
+                        <div class="metric-row">
+                            <span>Capacity Rating</span>
+                            <strong id="rep-summary-cap">Less than 5 kVA</strong>
+                        </div>
+                        <div class="metric-row">
+                            <span>Reported Bug Profile</span>
+                            <strong id="rep-summary-fault" style="color:#ef4444;">Overheating / High Temp</strong>
+                        </div>
+                        <div class="metric-row">
+                            <span>SLA Dispatch Response</span>
+                            <strong>Under 4 Hours Guarantee</strong>
+                        </div>
+                    </div>
+
+                    <div class="rec-gauge-container">
+                        <div class="rec-gauge-label">
+                            <span>Emergency Engineer Mobilization</span>
+                            <span>High Urgency</span>
+                        </div>
+                        <div class="rec-gauge-bar">
+                            <div class="rec-gauge-fill" style="width: 100%; background: #ef4444;"></div>
+                        </div>
+                    </div>
+
+                    <button type="button" id="rep-submit-btn" class="btn btn-primary w-full" style="margin-top: auto; background-color: var(--secondary);">
+                        <span>Submit Transformer for Repair / Service</span>
+                        <i class="fa-solid fa-circle-check"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Web Component Footer -->
+    <aura-footer></aura-footer>
+
+    <!-- Web Component Sidebar -->
+    <aura-sidebar></aura-sidebar>
+
+    <!-- Interactive script triggers -->
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            document.getElementById("year").textContent = new Date().getFullYear();
+
+            // Form bindings
+            const brandSelect = document.getElementById("rep-brand");
+            const modelInput = document.getElementById("rep-model");
+            const faultSelect = document.getElementById("rep-fault");
+            const capacityButtons = document.querySelectorAll(".facility-btn");
+
+            const sumBrand = document.getElementById("rep-summary-brand");
+            const sumModel = document.getElementById("rep-summary-model");
+            const sumCap = document.getElementById("rep-summary-cap");
+            const sumFault = document.getElementById("rep-summary-fault");
+
+            let selectedCapacity = "Less than 5 kVA";
+
+            brandSelect.addEventListener("change", (e) => {
+                sumBrand.textContent = e.target.value;
+            });
+
+            modelInput.addEventListener("input", (e) => {
+                sumModel.textContent = e.target.value || "Enter Model name";
+            });
+
+            faultSelect.addEventListener("change", (e) => {
+                sumFault.textContent = e.target.value;
+            });
+
+            capacityButtons.forEach(btn => {
+                btn.addEventListener("click", () => {
+                    capacityButtons.forEach(b => b.classList.remove("active"));
+                    btn.classList.add("active");
+                    selectedCapacity = btn.getAttribute("data-capacity");
+                    sumCap.textContent = selectedCapacity;
+                });
+            });
+
+            // Save repair ticket
+            document.getElementById("rep-submit-btn").addEventListener("click", async () => {
+                // Real Appwrite session verification
+                const isAuthenticated = await requireAuth("repair.html");
+                if (!isAuthenticated) return;
+
+                const brand = brandSelect.value;
+                const model = modelInput.value.trim();
+                const fault = faultSelect.value;
+                const desc = document.getElementById("rep-desc").value.trim();
+                const name = document.getElementById("rep-client-name").value.trim();
+                const address = document.getElementById("rep-address").value.trim();
+
+                if (!model || !desc || !name || !address) {
+                    alert("Please fill out all the required fields!");
+                    return;
+                }
+
+                // Push Ticket under "aura-user-repairs"
+                const ticketId = "REP-" + Date.now().toString().slice(-6);
+
+                const ticket = {
+                    id: ticketId,
+                    brand: brand,
+                    model: model,
+                    capacity: selectedCapacity,
+                    fault: fault,
+                    desc: desc,
+                    name: name,
+                    address: address,
+                    status: "Technician Dispatched",
+                    timestamp: new Date().toLocaleDateString()
+                };
+
+                if (typeof FirebaseService !== "undefined") {
+                    await FirebaseService.saveRepair(ticket);
+                } else {
+                    let repairs = JSON.parse(localStorage.getItem("aura-user-repairs")) || [];
+                    repairs.unshift(ticket);
+                    localStorage.setItem("aura-user-repairs", JSON.stringify(repairs));
+                }
+
+                // Save Lead in admin leads panel for real-time leads logs compatibility
+                let leads = JSON.parse(localStorage.getItem("aura-whatsapp-leads")) || [];
+                leads.unshift({
+                    name: name,
+                    system: `Broken Transformer: ${brand} (${model})`,
+                    capacity: selectedCapacity,
+                    timestamp: "Just now"
+                });
+                localStorage.setItem("aura-whatsapp-leads", JSON.stringify(leads));
+
+                // WhatsApp message composition
+                const message = `Hello Aura Power Systems!\n\nI want to log a *UPS Repair / Servicing Ticket*:\n*Client/Company:* ${name}\n*Faulty UPS:* ${brand} (${model}) [${selectedCapacity}]\n*Primary issue:* ${fault}\n*Symptoms:* ${desc}\n*Service Address:* ${address}\n\nPlease dispatch an engineer. Ticket reference ID: ${ticketId}`;
+                window.open(`https://wa.me/917463053829?text=${encodeURIComponent(message)}`, "_blank");
+
+                // Redirect to orders
+                window.location.href = "orders.html";
+            });
+
+            // Theme Switcher Sync
+            const htmlElement = document.documentElement;
+            const themeToggle = document.getElementById("theme-toggle");
+            
+            const savedTheme = localStorage.getItem("aura-theme") || "normal";
+            htmlElement.setAttribute("data-theme", savedTheme);
+            updateThemeIcon(savedTheme);
+
+            themeToggle.addEventListener("click", () => {
+                const currentTheme = htmlElement.getAttribute("data-theme");
+                const newTheme = currentTheme === "normal" ? "neon" : "normal";
+                
+                htmlElement.setAttribute("data-theme", newTheme);
+                localStorage.setItem("aura-theme", newTheme);
+                updateThemeIcon(newTheme);
+            });
+
+            function updateThemeIcon(theme) {
+                const icon = themeToggle.querySelector("i");
+                if (theme === "neon") {
+                    icon.className = "fa-solid fa-sun";
+                } else {
+                    icon.className = "fa-solid fa-moon";
+                }
+            }
+
+            // Admin Routing Check
+            const adminTriggerBtn = document.getElementById("admin-trigger-btn");
+            const isAdminLoggedIn = localStorage.getItem("aura-admin-logged-in") === "true";
+            
+            if (adminTriggerBtn) {
+                if (isAdminLoggedIn) {
+                    adminTriggerBtn.classList.add("logged-in");
+                    
+                    // Add logout
+                    const logoutBtn = document.createElement("button");
+                    logoutBtn.className = "theme-btn logout-trigger";
+                    logoutBtn.setAttribute("title", "Logout Securely");
+                    logoutBtn.innerHTML = '<i class="fa-solid fa-power-off"></i>';
+                    adminTriggerBtn.parentNode.insertBefore(logoutBtn, adminTriggerBtn.nextSibling);
+                    
+                    logoutBtn.addEventListener("click", () => {
+                        if (confirm("Are you sure you want to sign out from the Admin Portal?")) {
+                            localStorage.removeItem("aura-admin-logged-in");
+                            window.location.reload();
+                        }
+                    });
+                }
+
+                adminTriggerBtn.addEventListener("click", () => {
+                    if (localStorage.getItem("aura-admin-logged-in") === "true") {
+                        window.location.href = "admin.html";
+                    } else {
+                        window.location.href = "customer-login.html";
+                    }
+                });
+            }
+
+            // Customer Portal Routing
+            const userLoginBtn = document.getElementById("user-login-btn");
+            const isUserLoggedIn = localStorage.getItem("aura-user-logged-in") === "true";
+
+            if (isUserLoggedIn) {
+                userLoginBtn.classList.add("logged-in");
+                userLoginBtn.setAttribute("title", `Logged in as Customer (Click to Logout)`);
+                
+                userLoginBtn.addEventListener("click", () => {
+                    if (confirm("Are you sure you want to log out from the Customer Portal?")) {
+                        localStorage.removeItem("aura-user-logged-in");
+                        localStorage.removeItem("aura-user-email");
+                        window.location.reload();
+                    }
+                });
+            } else {
+                userLoginBtn.addEventListener("click", () => {
+                    window.location.href = "customer-login.html";
+                });
+            }
+
+            // ==========================================
+            // SLIDING SETTINGS SIDEBAR EVENT HANDLERS
+            // ==========================================
+            const leftTrigger = document.getElementById("left-settings-trigger");
+            const settingsSidebar = document.getElementById("settings-sidebar");
+            const sidebarCloseBtn = document.getElementById("sidebar-close-btn");
+            const sidebarOverlay = document.getElementById("sidebar-overlay");
+            const sidebarAdminBtn = document.getElementById("sidebar-admin-btn");
+
+            if (leftTrigger && settingsSidebar && sidebarCloseBtn && sidebarOverlay) {
+                leftTrigger.addEventListener("click", () => {
+                    settingsSidebar.classList.add("open");
+                    sidebarOverlay.classList.add("open");
+                });
+
+                const closeSidebar = () => {
+                    settingsSidebar.classList.remove("open");
+                    sidebarOverlay.classList.remove("open");
+                };
+
+                sidebarCloseBtn.addEventListener("click", closeSidebar);
+                sidebarOverlay.addEventListener("click", closeSidebar);
+
+                const normalThemeSelect = document.getElementById("theme-normal-select");
+                const neonThemeSelect = document.getElementById("theme-neon-select");
+
+                if (normalThemeSelect && neonThemeSelect) {
+                    const currentTheme = document.documentElement.getAttribute("data-theme") || "normal";
+                    if (currentTheme === "neon") {
+                        normalThemeSelect.classList.remove("active");
+                        neonThemeSelect.classList.add("active");
+                    } else {
+                        normalThemeSelect.classList.add("active");
+                        neonThemeSelect.classList.remove("active");
+                    }
+
+                    normalThemeSelect.addEventListener("click", () => {
+                        document.documentElement.setAttribute("data-theme", "normal");
+                        localStorage.setItem("aura-theme", "normal");
+                        normalThemeSelect.classList.add("active");
+                        neonThemeSelect.classList.remove("active");
+                        const mainToggle = document.getElementById("theme-toggle");
+                        if (mainToggle) {
+                            const icon = mainToggle.querySelector("i");
+                            if (icon) icon.className = "fa-solid fa-moon";
+                        }
+                    });
+
+                    neonThemeSelect.addEventListener("click", () => {
+                        document.documentElement.setAttribute("data-theme", "neon");
+                        localStorage.setItem("aura-theme", "neon");
+                        neonThemeSelect.classList.add("active");
+                        normalThemeSelect.classList.remove("active");
+                        const mainToggle = document.getElementById("theme-toggle");
+                        if (mainToggle) {
+                            const icon = mainToggle.querySelector("i");
+                            if (icon) icon.className = "fa-solid fa-sun";
+                        }
+                    });
+                }
+
+                if (sidebarAdminBtn) {
+                    sidebarAdminBtn.addEventListener("click", () => {
+                        closeSidebar();
+                        if (localStorage.getItem("aura-admin-logged-in") === "true") {
+                            window.location.href = "admin.html";
+                        } else {
+                            window.location.href = "customer-login.html";
+                        }
+                    });
+                }
+            }
+        });
+    </script>
+</body>
+</html>

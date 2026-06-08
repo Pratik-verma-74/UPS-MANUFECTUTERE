@@ -183,8 +183,12 @@
 
     <!-- Auth Guard (Secure URL protection) -->
     <script>
-        if (localStorage.getItem("aura-admin-logged-in") !== "true") {
-            window.location.href = "login.html";
+        const allowedAdmins = ["pratikverma025@gmail.com", "shivamsri639463@gmail.com"];
+        const adminEmail = localStorage.getItem("aura-admin-email");
+        if (localStorage.getItem("aura-admin-logged-in") !== "true" || !allowedAdmins.includes(adminEmail)) {
+            window.stop();
+            document.documentElement.innerHTML = "";
+            window.location.replace("customer-login.html");
         }
     </script>
 
@@ -342,10 +346,10 @@
         <!-- Mode selector: Tubular vs Lithium -->
         <div class="cms-mode-selector">
             <button type="button" class="cms-mode-btn active" id="btn-cms-tubular">
-                <i class="fa-solid fa-car-battery"></i> Traditional Tubular CMS
+                <i class="fa-solid fa-bolt"></i> Single Phase CMS
             </button>
             <button type="button" class="cms-mode-btn" id="btn-cms-lithium">
-                <i class="fa-solid fa-battery-three-quarters"></i> Next-Gen Lithium CMS
+                <i class="fa-solid fa-shield-halved"></i> Three Phase CMS
             </button>
         </div>
 
@@ -370,7 +374,7 @@
         document.addEventListener("DOMContentLoaded", () => {
             // Authentication Guard
             if (localStorage.getItem("aura-admin-logged-in") !== "true") {
-                window.location.href = "login.html";
+                window.location.href = "customer-login.html";
                 return;
             }
 
@@ -404,7 +408,7 @@
             document.getElementById("secure-logout-btn").addEventListener("click", () => {
                 if (confirm("Are you sure you want to log out from Secure Control Panel?")) {
                     localStorage.removeItem("aura-admin-logged-in");
-                    window.location.href = "login.html";
+                    window.location.href = "customer-login.html";
                 }
             });
 
@@ -423,30 +427,22 @@
             // Primary database templates (Tubular vs Lithium)
             const defaultDb = {
                 tubular: [
-                    { category: "Home UPS", title: "AURA EcoShield 1100VA Home UPS", desc: "Pure Sine wave standard domestic UPS built for stable household appliance backup.", badge: "Budget-Classic", icon: "fa-solid fa-house-chimney-window", autonomy: "4 Hours typical load", efficiency: "86% Standard", lifespan: "3 - 4 Years", price: 8499, image: "images/ups_online.png" },
-                    { category: "Inverter", title: "AURA EcoFlow 1500VA Inverter", desc: "High conversion copper-transformer inverter designed for heavier tubular racks.", badge: "Heavy Duty Domestic", icon: "fa-solid fa-arrows-spin", autonomy: "6 Hours backup", efficiency: "88% Power Factor", lifespan: "4 Years Max", price: 12999, image: "images/ups_online.png" },
-                    { category: "Gaming UPS", title: "AURA PlaySafe 1200VA Gaming UPS", desc: "Fast transfer pure sine wave output designed to protect gaming rigs and consoles.", badge: "Rig Safeguard", icon: "fa-solid fa-gamepad", autonomy: "45 Mins Full Load", efficiency: "90% Active", lifespan: "3 Years", price: 10800, image: "images/ups_online.png" },
-                    { category: "WiFi UPS", title: "AURA Nano Backup 12V Router UPS", desc: "Standard small-profile battery pack to keep your internet router running.", badge: "Router Shield", icon: "fa-solid fa-wifi", autonomy: "2 Hours continuous", efficiency: "92% Direct DC", lifespan: "2 Years", price: 1599, image: "images/ups_online.png" },
-                    { category: "Office UPS", title: "AURA OfficeCore 3000VA Tubular Cabinet", desc: "Heavy duty pure sine wave double cabinet office workstation protection system.", badge: "Workstation Pack", icon: "fa-solid fa-briefcase", autonomy: "3 Hours office backup", efficiency: "85% Rated", lifespan: "4 Years", price: 38500, image: "images/power_cabinet.png" },
-                    { category: "Battery systems", title: "AURA VoltGuard Tubular Battery 150Ah", desc: "Deep cycle tall tubular thick-grid battery for long, continuous outage schedules.", badge: "36-M Warranty", icon: "fa-solid fa-car-battery", autonomy: "150 Ah Sizing", efficiency: "89% Cycle Yield", lifespan: "1200 Cycles", price: 11200, image: "images/battery_bank.png" },
-                    { category: "Solar inverter", title: "AURA Helio PWM 1200VA Solar Inverter", desc: "PWM solar charging hybrid inverter, ideal for residential rooftop installs.", badge: "Solar Ready", icon: "fa-solid fa-solar-panel", autonomy: "Solar Direct + Batt", efficiency: "PWM Charge Logic", lifespan: "4 Years", price: 9990, image: "images/solar_inverter.png" },
-                    { category: "Smart backup systems", title: "AURA CloudLink Tubular Controller 2.5kVA", desc: "Standard inverter bundle equipped with WiFi IoT data logging dongles for live diagnostics.", badge: "Connected IoT", icon: "fa-solid fa-tower-broadcast", autonomy: "5 Hours backup", efficiency: "87% IoT Tracked", lifespan: "4 Years", price: 24800, image: "images/ups_modular.png" }
+                    { category: "Control Transformers", title: "ROBOART Control Auto Transformer 500VA", desc: "High efficiency control transformer tailored for automation panels and CNC machines.", badge: "Automation Core", icon: "fa-solid fa-bolt", autonomy: "500VA Rating", efficiency: "High Efficiency Copper", lifespan: "10+ Years", price: 5499, image: "images/ups_online.png" },
+                    { category: "Control Transformers", title: "ROBOART Control Auto Transformer 5KVA", desc: "Heavy duty control transformer for large scale industrial robotics and panel drives.", badge: "Heavy Duty Automation", icon: "fa-solid fa-robot", autonomy: "5KVA Rating", efficiency: "Low Temp Rise", lifespan: "10+ Years", price: 25999, image: "images/ups_online.png" },
+                    { category: "Step Down Transformers", title: "ROBOART Step Down 1KVA Single Phase", desc: "Compact voltage step-down transformer for imported machinery compatibility.", badge: "Voltage Reduction", icon: "fa-solid fa-arrow-down-up-across-line", autonomy: "1KVA Rating", efficiency: "90% Efficiency", lifespan: "15 Years", price: 10800, image: "images/power_cabinet.png" },
+                    { category: "Step Down Transformers", title: "ROBOART Step Down 50KVA Industrial", desc: "Massive scale step down transformer optimized for full factory line power conversion.", badge: "Industrial Step Down", icon: "fa-solid fa-industry", autonomy: "50KVA Rating", efficiency: "Aluminum Winding Option", lifespan: "15 Years", price: 115000, image: "images/power_cabinet.png" }
                 ],
                 lithium: [
-                    { category: "Home UPS", title: "AURA WallWall-Li 2kVA Smart UPS", desc: "High density integrated LiFePO4 wall-mount cabinet. Modern, compact, zero maintenance.", badge: "Smart LFP Tech", icon: "fa-solid fa-house-chimney-window", autonomy: "6 Hours smart load", efficiency: "96% Ultra-High", lifespan: "10 Years / 4000 Cycles", price: 29999, image: "images/ups_online.png" },
-                    { category: "Inverter", title: "AURA Li-Invert 2.5kVA EV-Ready", desc: "Compact lithium power inverter designed with high-surge capacities supporting fast EV charging.", badge: "Supercharge Li", icon: "fa-solid fa-arrows-spin", autonomy: "8 Hours backup", efficiency: "97% EV Sized", lifespan: "12 Years", price: 34500, image: "images/ups_online.png" },
-                    { category: "Gaming UPS", title: "AURA ZeroLag Gaming Lithium 2000VA", desc: "Zero-millisecond LFP power wall keeping high-end dual ray-traced PCs completely online.", badge: "0ms Latency ZeroLag", icon: "fa-solid fa-gamepad", autonomy: "2 Hours full gaming load", efficiency: "99% Pure Sine", lifespan: "10 Years Warranty", price: 21900, image: "images/ups_online.png" },
-                    { category: "WiFi UPS", title: "AURA SmartLink Li-Ion Router UPS", desc: "Integrated battery BMS router pack with selectable 5V, 9V, and 12V clean DC output lines.", badge: "Multi-Voltage LFP", icon: "fa-solid fa-wifi", autonomy: "5 Hours continuous", efficiency: "98% DC Regulated", lifespan: "6 Years", price: 2499, image: "images/ups_online.png" },
-                    { category: "Office UPS", title: "AURA PowerWall-Office 5kVA Premium", desc: "Sleek commercial server rack design featuring integrated LFP blocks and smart BMS load sharing.", badge: "Server Cluster", icon: "fa-solid fa-briefcase", autonomy: "6 Hours server backup", efficiency: "95% Enterprise Grade", lifespan: "10+ Years", price: 118000, image: "images/power_cabinet.png" },
-                    { category: "Battery systems", title: "AURA Smart-LFP 48V 100Ah Battery", desc: "Next-gen iron-phosphate module with active balancing smart Bluetooth monitoring systems.", badge: "6000+ Cycles LFP", icon: "fa-solid fa-car-battery", autonomy: "4800 Wh Total Capacity", efficiency: "Active Balance BMS", lifespan: "15 Years", price: 88000, image: "images/battery_bank.png" },
-                    { category: "Solar inverter", title: "AURA Helio-LFP 3kVA MPPT Solar", desc: "Dynamic solar tracking MPPT charger tailored for LiFePO4 high conversion rates.", badge: "MPPT Efficient solar", icon: "fa-solid fa-solar-panel", autonomy: "Full Solar Autonomy", efficiency: "98.5% MPPT Sizing", lifespan: "10 Years", price: 44500, image: "images/solar_inverter.png" },
-                    { category: "Smart backup systems", title: "AURA AI-PowerWall 10kVA Intelligent", desc: "Central home energy wall powered by AI load prediction algorithms and smart tariff battery charging.", badge: "AI Tariff Sentry", icon: "fa-solid fa-tower-broadcast", autonomy: "12 Hours Smart Backup", efficiency: "98% Cloud Managed", lifespan: "15 Years", price: 285000, image: "images/ups_modular.png" }
+                    { category: "Isolation Transformers", title: "ROBOART Medical Grade Isolation 3KVA", desc: "Absolute electrical isolation tailored for hospital equipment and sensitive medical devices.", badge: "Medical Safety", icon: "fa-solid fa-heart-pulse", autonomy: "3KVA Pure Isolation", efficiency: "Zero Electrical Noise", lifespan: "20 Years", price: 32999, image: "images/ups_modular.png" },
+                    { category: "Isolation Transformers", title: "ROBOART Industrial Isolation 20KVA", desc: "Eliminates neutral interference and ground loops in heavy machinery networks.", badge: "CNC Safeguard", icon: "fa-solid fa-shield-halved", autonomy: "20KVA Rating", efficiency: "High Load Safety", lifespan: "20 Years", price: 84500, image: "images/ups_modular.png" },
+                    { category: "Three Phase Transformers", title: "ROBOART Three Phase Dry Type 100KVA", desc: "Robust three phase distribution transformer for commercial buildings and factories.", badge: "Power Distribution", icon: "fa-solid fa-tower-broadcast", autonomy: "100KVA Rating", efficiency: "Low Loss Core", lifespan: "25 Years", price: 219000, image: "images/power_cabinet.png" },
+                    { category: "Three Phase Transformers", title: "ROBOART Custom High Capacity 500KVA", desc: "Fully custom built three phase power plant designed to exact site specifications.", badge: "Custom Engineering", icon: "fa-solid fa-plug-circle-check", autonomy: "500KVA Rating", efficiency: "Precision Windings", lifespan: "25+ Years", price: 850000, image: "images/power_cabinet.png" }
                 ]
             };
 
             // Initialize B2C Database from LocalStorage with cache checking overrides
             let currentDb = JSON.parse(localStorage.getItem("aura-b2c-products"));
-            if (!currentDb || !currentDb.tubular[0].image) {
+            if (!currentDb || !currentDb.tubular[0] || currentDb.tubular[0].title.includes("AURA")) {
                 currentDb = defaultDb;
                 localStorage.setItem("aura-b2c-products", JSON.stringify(defaultDb));
             }

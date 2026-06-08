@@ -12,44 +12,18 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Main Style Sheet -->
     <link rel="stylesheet" href="style.css">
+    <!-- Firebase Service Integration -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-check-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+    <script src="firebase-service.js"></script>
+    <script src="components.js"></script>
 </head>
 <body>
 
-    <!-- Professional Sleek Header -->
-    <header class="header">
-        <div class="header-left-group" style="display: flex; align-items: center; gap: 16px;">
-            <button id="left-settings-trigger" class="theme-btn" title="Settings & Admin Control" style="margin-right: 4px;">
-                <i class="fa-solid fa-bars"></i>
-            </button>
-            <div class="logo" onclick="window.location.href='index.html'">
-                <i class="fa-solid fa-bolt logo-icon"></i>
-                <span>AURA</span>
-            </div>
-        </div>
-        <nav class="nav">
-            <a href="index.html" class="nav-link">Systems</a>
-            <a href="b2c-store.html" class="nav-link">B2C Products</a>
-            <a href="calculator.html" class="nav-link active">Calculator</a>
-            <a href="customize.html" class="nav-link">Customize</a>
-            <a href="repair.html" class="nav-link">Repair Service</a>
-            <a href="orders.html" class="nav-link">My Orders</a>
-        </nav>
-        <div class="header-actions">
-            <button id="theme-toggle" class="theme-btn" title="Toggle Light/Dark Theme">
-                <i class="fa-solid fa-moon"></i>
-            </button>
-            <button id="admin-trigger-btn" class="theme-btn admin-btn" title="Open Admin Control Panel">
-                <i class="fa-solid fa-user-gear"></i>
-            </button>
-            <button id="user-login-btn" class="theme-btn user-btn" title="Customer Portal Login">
-                <i class="fa-solid fa-user"></i>
-            </button>
-            <a href="https://wa.me/917463053829?text=Hello%20Aura%20Power,%20I%20want%20to%20request%20a%20quote." target="_blank" class="btn btn-primary btn-quote">
-                <span>Get B2B Pricing</span>
-                <i class="fa-brands fa-whatsapp"></i>
-            </a>
-        </div>
-    </header>
+    <!-- Web Component Header -->
+    <aura-header active="calculator"></aura-header>
 
     <!-- Standalone Calculator Section -->
     <section class="calculator-section" style="margin-top: 64px; padding: 80px 0; background: var(--bg-color); min-height: 80vh; transition: background-color 0.3s ease;">
@@ -157,64 +131,11 @@
         </div>
     </section>
 
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="container footer-container">
-            <div class="footer-logo">
-                <i class="fa-solid fa-bolt"></i>
-                <span>AURA</span>
-            </div>
-            <p class="footer-copy">© <span id="year"></span> Aura Power Solutions. Engineered for Excellence.</p>
-        </div>
-        <!-- Secure Console Gateway Link -->
-        <div style="border-top: 1px solid rgba(255,255,255,0.06); margin-top: 16px; padding-top: 16px; text-align: center; font-size: 11px;">
-            <a href="login.html" style="color: rgba(255,255,255,0.3); text-decoration: none; display: inline-flex; align-items: center; gap: 6px; letter-spacing: 1px; text-transform: uppercase; transition: all 0.3s ease;" onmouseover="this.style.color='#00e5ff'" onmouseout="this.style.color='rgba(255,255,255,0.3)'">
-                <i class="fa-solid fa-user-shield"></i>
-                <span>Login as Admin / Secure Console</span>
-            </a>
-        </div>
-    </footer>
+    <!-- Web Component Footer -->
+    <aura-footer></aura-footer>
 
-    <!-- Sliding Settings Sidebar -->
-    <div id="settings-sidebar" class="sidebar-panel">
-        <div class="sidebar-header">
-            <h3><i class="fa-solid fa-gears"></i> Settings Panel</h3>
-            <button id="sidebar-close-btn" class="close-btn">&times;</button>
-        </div>
-        <div class="sidebar-body">
-            <!-- Theme Preference -->
-            <div class="settings-group">
-                <label><i class="fa-solid fa-circle-half-stroke"></i> Select Theme</label>
-                <div class="theme-select-grid">
-                    <button id="theme-normal-select" class="theme-select-btn active">Light Mode</button>
-                    <button id="theme-neon-select" class="theme-select-btn">Dark Mode</button>
-                </div>
-            </div>
-
-            <!-- Admin Access Gate -->
-            <div class="settings-group admin-gate-group">
-                <label><i class="fa-solid fa-user-shield"></i> Administration</label>
-                <p class="settings-desc">Access factory scaling multipliers, WhatsApp leads trackers, and catalog upload desks.</p>
-                <button id="sidebar-admin-btn" class="btn btn-secondary w-full">
-                    <span>Admin Portal Access</span>
-                    <i class="fa-solid fa-right-to-bracket"></i>
-                </button>
-            </div>
-            
-            <!-- Quick Portal links -->
-            <div class="settings-group">
-                <label><i class="fa-solid fa-link"></i> Quick Navigation</label>
-                <ul class="settings-nav-links">
-                    <li><a href="index.html"><i class="fa-solid fa-house"></i> Home Systems</a></li>
-                    <li><a href="calculator.html"><i class="fa-solid fa-calculator"></i> Capacity Sizer</a></li>
-                    <li><a href="customize.html"><i class="fa-solid fa-sliders"></i> Custom Plant Designer</a></li>
-                    <li><a href="repair.html"><i class="fa-solid fa-wrench"></i> Repair Dispatch</a></li>
-                    <li><a href="orders.html"><i class="fa-solid fa-cart-flatbed"></i> My Orders Registry</a></li>
-                </ul>
-            </div>
-        </div>
-    </div>
-    <div id="sidebar-overlay" class="sidebar-overlay"></div>
+    <!-- Web Component Sidebar -->
+    <aura-sidebar></aura-sidebar>
 
     <!-- Interactive script triggers -->
     <script>
@@ -297,14 +218,10 @@
             calculateCapacity();
 
             // Sizer purchase integration
-            document.getElementById("calc-quote-btn").addEventListener("click", () => {
-                const isUserLoggedIn = localStorage.getItem("aura-user-logged-in") === "true";
-                if (!isUserLoggedIn) {
-                    alert("AURA Security Protocols: Please sign in as a Customer to place orders or request factory quotes!");
-                    localStorage.setItem("aura-auth-redirect", "calculator.html");
-                    window.location.href = "customer-login.html";
-                    return;
-                }
+            document.getElementById("calc-quote-btn").addEventListener("click", async () => {
+                // Real Appwrite session verification
+                const isAuthenticated = await requireAuth("calculator.html");
+                if (!isAuthenticated) return;
 
                 const baseLoad = loadSlider.value;
                 const recUpsSize = document.getElementById("rec-ups-size").textContent;
@@ -313,7 +230,6 @@
 
                 const orderId = "ORD-" + Date.now().toString().slice(-6);
 
-                let orders = JSON.parse(localStorage.getItem("aura-user-orders")) || [];
                 const newOrder = {
                     id: orderId,
                     title: recProduct,
@@ -322,8 +238,14 @@
                     status: "Pending Audit",
                     timestamp: new Date().toLocaleDateString()
                 };
-                orders.unshift(newOrder);
-                localStorage.setItem("aura-user-orders", JSON.stringify(orders));
+
+                if (typeof FirebaseService !== "undefined") {
+                    await FirebaseService.saveOrder(newOrder);
+                } else {
+                    let orders = JSON.parse(localStorage.getItem("aura-user-orders")) || [];
+                    orders.unshift(newOrder);
+                    localStorage.setItem("aura-user-orders", JSON.stringify(orders));
+                }
 
                 // Push lead
                 let leads = JSON.parse(localStorage.getItem("aura-whatsapp-leads")) || [];
@@ -371,31 +293,33 @@
             const adminTriggerBtn = document.getElementById("admin-trigger-btn");
             const isAdminLoggedIn = localStorage.getItem("aura-admin-logged-in") === "true";
             
-            if (isAdminLoggedIn) {
-                adminTriggerBtn.classList.add("logged-in");
-                
-                // Add logout
-                const logoutBtn = document.createElement("button");
-                logoutBtn.className = "theme-btn logout-trigger";
-                logoutBtn.setAttribute("title", "Logout Securely");
-                logoutBtn.innerHTML = '<i class="fa-solid fa-power-off"></i>';
-                adminTriggerBtn.parentNode.insertBefore(logoutBtn, adminTriggerBtn.nextSibling);
-                
-                logoutBtn.addEventListener("click", () => {
-                    if (confirm("Are you sure you want to sign out from the Admin Portal?")) {
-                        localStorage.removeItem("aura-admin-logged-in");
-                        window.location.reload();
+            if (adminTriggerBtn) {
+                if (isAdminLoggedIn) {
+                    adminTriggerBtn.classList.add("logged-in");
+                    
+                    // Add logout
+                    const logoutBtn = document.createElement("button");
+                    logoutBtn.className = "theme-btn logout-trigger";
+                    logoutBtn.setAttribute("title", "Logout Securely");
+                    logoutBtn.innerHTML = '<i class="fa-solid fa-power-off"></i>';
+                    adminTriggerBtn.parentNode.insertBefore(logoutBtn, adminTriggerBtn.nextSibling);
+                    
+                    logoutBtn.addEventListener("click", () => {
+                        if (confirm("Are you sure you want to sign out from the Admin Portal?")) {
+                            localStorage.removeItem("aura-admin-logged-in");
+                            window.location.reload();
+                        }
+                    });
+                }
+
+                adminTriggerBtn.addEventListener("click", () => {
+                    if (localStorage.getItem("aura-admin-logged-in") === "true") {
+                        window.location.href = "admin.html";
+                    } else {
+                        window.location.href = "customer-login.html";
                     }
                 });
             }
-
-            adminTriggerBtn.addEventListener("click", () => {
-                if (localStorage.getItem("aura-admin-logged-in") === "true") {
-                    window.location.href = "admin.html";
-                } else {
-                    window.location.href = "login.html";
-                }
-            });
 
             // Customer Portal Routing
             const userLoginBtn = document.getElementById("user-login-btn");
@@ -485,7 +409,7 @@
                         if (localStorage.getItem("aura-admin-logged-in") === "true") {
                             window.location.href = "admin.html";
                         } else {
-                            window.location.href = "login.html";
+                            window.location.href = "customer-login.html";
                         }
                     });
                 }

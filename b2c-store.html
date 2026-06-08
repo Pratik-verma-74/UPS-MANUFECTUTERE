@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AURA | B2C Smart Store & Product Catalog</title>
+    <title>ROBOART | B2C Smart Store & Product Catalog</title>
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -12,7 +12,13 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Main Style Sheet -->
     <link rel="stylesheet" href="style.css">
-    
+    <!-- Firebase Service Integration -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-check-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+    <script src="firebase-service.js"></script>
+    <script src="components.js"></script>
     <style>
         /* B2C Dynamic Segment Control Selector */
         .b2c-selector-container {
@@ -245,64 +251,30 @@
 </head>
 <body class="ecom-body">
 
-    <!-- Transparent Fixed Header -->
-    <header class="header">
-        <div class="header-left-group" style="display: flex; align-items: center; gap: 16px;">
-            <button id="left-settings-trigger" class="theme-btn" title="Settings & Admin Control" style="margin-right: 4px;">
-                <i class="fa-solid fa-bars"></i>
-            </button>
-            <div class="logo" onclick="window.location.href='index.html'">
-                <i class="fa-solid fa-bolt logo-icon"></i>
-                <span>AURA</span>
-            </div>
-        </div>
-        <nav class="nav">
-            <a href="index.html" class="nav-link">Systems</a>
-            <a href="b2c-store.html" class="nav-link active">B2C Products</a>
-            <a href="calculator.html" class="nav-link">Calculator</a>
-            <a href="customize.html" class="nav-link">Customize</a>
-            <a href="repair.html" class="nav-link">Repair Service</a>
-            <a href="orders.html" class="nav-link">My Orders</a>
-        </nav>
-        <div class="header-actions">
-            <!-- Theme Toggle Button -->
-            <button id="theme-toggle" class="theme-btn" title="Toggle Light/Dark Theme">
-                <i class="fa-solid fa-moon"></i>
-            </button>
-            <button id="admin-trigger-btn" class="theme-btn admin-btn" title="Open Admin Control Panel">
-                <i class="fa-solid fa-user-gear"></i>
-            </button>
-            <button id="user-login-btn" class="theme-btn user-btn" title="Customer Portal Login">
-                <i class="fa-solid fa-user"></i>
-            </button>
-            <a href="contact.html" class="btn btn-primary btn-quote">
-                <span>Get B2B Pricing</span>
-                <i class="fa-brands fa-whatsapp"></i>
-            </a>
-        </div>
-    </header>
+    <!-- Web Component Header -->
+    <aura-header active="b2c-store"></aura-header>
 
     <div class="container" style="margin-top: 100px; padding-bottom: 60px;">
         
         <!-- Welcome intro section -->
         <div class="b2c-selector-container">
-            <span class="section-tag" style="background: rgba(var(--primary-rgb), 0.1); color: var(--primary); padding: 4px 12px; border-radius: 50px; font-size: 11px; font-weight: bold; text-transform: uppercase;">Retail Consumer Store</span>
-            <h2 class="section-title" style="margin-top: 10px; font-size: 32px; font-family: 'Space Grotesk', sans-serif;">Dynamic B2C Product Store</h2>
-            <p class="section-desc" style="max-width: 600px; font-size: 14px; color: var(--text-muted); margin-top: 8px;">Switch between our premium battery technologies to dynamically explore matching backup systems across all 8 consumer categories.</p>
+            <span class="section-tag" style="background: rgba(var(--primary-rgb), 0.1); color: var(--primary); padding: 4px 12px; border-radius: 50px; font-size: 11px; font-weight: bold; text-transform: uppercase;">Industrial Transformer Store</span>
+            <h2 class="section-title" style="margin-top: 10px; font-size: 32px; font-family: 'Space Grotesk', sans-serif;">Dynamic Transformer Catalog</h2>
+            <p class="section-desc" style="max-width: 600px; font-size: 14px; color: var(--text-muted); margin-top: 8px;">Explore our premium transformer technologies designed for reliable performance and electrical isolation.</p>
             
             <!-- The Two Option Toggle Switchers at the top -->
             <div class="b2c-option-toggle">
                 <button type="button" class="b2c-toggle-btn active" id="btn-opt-tubular">
-                    <i class="fa-solid fa-car-battery"></i> Traditional Backup
+                    <i class="fa-solid fa-bolt"></i> Control & Step Down
                 </button>
                 <button type="button" class="b2c-toggle-btn" id="btn-opt-lithium">
-                    <i class="fa-solid fa-battery-three-quarters"></i> Next-Gen Smart Power
+                    <i class="fa-solid fa-shield-halved"></i> Isolation & Three Phase
                 </button>
             </div>
             
             <!-- Description that updates dynamically -->
             <div class="b2c-option-desc" id="toggle-desc-label">
-                Traditional tubular deep cycle systems. Highly affordable, reliable heavy duty, and widely standard.
+                Control and Step Down transformers built for automation, CNC machines, and standard industrial reduction.
             </div>
         </div>
 
@@ -313,23 +285,8 @@
 
     </div>
 
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="container footer-container">
-            <div class="footer-logo">
-                <i class="fa-solid fa-bolt"></i>
-                <span>AURA</span>
-            </div>
-            <p class="footer-copy">© 2026 Aura Power Solutions. Engineered for Excellence.</p>
-        </div>
-        <!-- Secure Console Gateway Link -->
-        <div style="border-top: 1px solid rgba(255,255,255,0.06); margin-top: 16px; padding-top: 16px; text-align: center; font-size: 11px;">
-            <a href="login.html" style="color: rgba(255,255,255,0.3); text-decoration: none; display: inline-flex; align-items: center; gap: 6px; letter-spacing: 1px; text-transform: uppercase; transition: all 0.3s ease;" onmouseover="this.style.color='#00e5ff'" onmouseout="this.style.color='rgba(255,255,255,0.3)'">
-                <i class="fa-solid fa-user-shield"></i>
-                <span>Login as Admin / Secure Console</span>
-            </a>
-        </div>
-    </footer>
+    <!-- Web Component Footer -->
+    <aura-footer></aura-footer>
 
     <!-- Scripts for dynamic catalog render -->
     <script>
@@ -361,252 +318,135 @@
             }
 
             // Quick Sidebar / Admin navigation logic
-            document.getElementById("admin-trigger-btn").addEventListener("click", () => {
-                window.location.href = "admin.html";
-            });
-            document.getElementById("user-login-btn").addEventListener("click", () => {
-                window.location.href = "customer-login.html";
-            });
+            const adminTriggerBtn = document.getElementById("admin-trigger-btn");
+            if (adminTriggerBtn) {
+                adminTriggerBtn.addEventListener("click", () => {
+                    window.location.href = "admin.html";
+                });
+            }
+            const userLoginBtn = document.getElementById("user-login-btn");
+            if (userLoginBtn) {
+                userLoginBtn.addEventListener("click", () => {
+                    window.location.href = "customer-login.html";
+                });
+            }
 
-            // 8 Category database matching Option 1 (Traditional) vs Option 2 (Lithium Next-Gen)
+            // Transformer database matching Option 1 (Control/Step Down) vs Option 2 (Isolation/Three Phase)
             const defaultDb = {
                 tubular: [
                     {
-                        category: "Home UPS",
-                        title: "AURA EcoShield 1100VA Home UPS",
-                        desc: "Pure Sine wave standard domestic UPS built for stable household appliance backup.",
-                        badge: "Budget-Classic",
+                        category: "Control Transformers",
+                        title: "ROBOART Control Auto Transformer 500VA",
+                        desc: "High efficiency control transformer tailored for automation panels and CNC machines.",
+                        badge: "Automation Core",
                         badgeBg: "rgba(34, 197, 94, 0.1)",
                         badgeColor: "#22c55e",
-                        icon: "fa-solid fa-house-chimney-window",
-                        autonomy: "4 Hours typical load",
-                        efficiency: "86% Standard",
-                        lifespan: "3 - 4 Years",
-                        price: 8499
+                        icon: "fa-solid fa-bolt",
+                        autonomy: "500VA Rating",
+                        efficiency: "High Efficiency Copper",
+                        lifespan: "10+ Years",
+                        price: 5499
                     },
                     {
-                        category: "Inverter",
-                        title: "AURA EcoFlow 1500VA Inverter",
-                        desc: "High conversion copper-transformer inverter designed for heavier tubular racks.",
-                        badge: "Heavy Duty Domestic",
+                        category: "Control Transformers",
+                        title: "ROBOART Control Auto Transformer 5KVA",
+                        desc: "Heavy duty control transformer for large scale industrial robotics and panel drives.",
+                        badge: "Heavy Duty Automation",
                         badgeBg: "rgba(59, 130, 246, 0.1)",
                         badgeColor: "#3b82f6",
-                        icon: "fa-solid fa-arrows-spin",
-                        autonomy: "6 Hours backup",
-                        efficiency: "88% Power Factor",
-                        lifespan: "4 Years Max",
-                        price: 12999
+                        icon: "fa-solid fa-robot",
+                        autonomy: "5KVA Rating",
+                        efficiency: "Low Temp Rise",
+                        lifespan: "10+ Years",
+                        price: 25999
                     },
                     {
-                        category: "Gaming UPS",
-                        title: "AURA PlaySafe 1200VA Gaming UPS",
-                        desc: "Fast transfer pure sine wave output designed to protect gaming rigs and consoles.",
-                        badge: "Rig Safeguard",
+                        category: "Step Down Transformers",
+                        title: "ROBOART Step Down 1KVA Single Phase",
+                        desc: "Compact voltage step-down transformer for imported machinery compatibility.",
+                        badge: "Voltage Reduction",
                         badgeBg: "rgba(168, 85, 247, 0.1)",
                         badgeColor: "#a855f7",
-                        icon: "fa-solid fa-gamepad",
-                        autonomy: "45 Mins Full Load",
-                        efficiency: "90% Active",
-                        lifespan: "3 Years",
+                        icon: "fa-solid fa-arrow-down-up-across-line",
+                        autonomy: "1KVA Rating",
+                        efficiency: "90% Efficiency",
+                        lifespan: "15 Years",
                         price: 10800
                     },
                     {
-                        category: "WiFi UPS",
-                        title: "AURA Nano Backup 12V Router UPS",
-                        desc: "Standard small-profile battery pack to keep your internet router running.",
-                        badge: "Router Shield",
+                        category: "Step Down Transformers",
+                        title: "ROBOART Step Down 50KVA Industrial",
+                        desc: "Massive scale step down transformer optimized for full factory line power conversion.",
+                        badge: "Industrial Step Down",
                         badgeBg: "rgba(239, 68, 68, 0.1)",
                         badgeColor: "#ef4444",
-                        icon: "fa-solid fa-wifi",
-                        autonomy: "2 Hours continuous",
-                        efficiency: "92% Direct DC",
-                        lifespan: "2 Years",
-                        price: 1599
-                    },
-                    {
-                        category: "Office UPS",
-                        title: "AURA OfficeCore 3000VA Tubular Cabinet",
-                        desc: "Heavy duty pure sine wave double cabinet office workstation protection system.",
-                        badge: "Workstation Pack",
-                        badgeBg: "rgba(234, 179, 8, 0.1)",
-                        badgeColor: "#eab308",
-                        icon: "fa-solid fa-briefcase",
-                        autonomy: "3 Hours office backup",
-                        efficiency: "85% Rated",
-                        lifespan: "4 Years",
-                        price: 38500
-                    },
-                    {
-                        category: "Battery Systems",
-                        title: "AURA VoltGuard Tubular Battery 150Ah",
-                        desc: "Deep cycle tall tubular thick-grid battery for long, continuous outage schedules.",
-                        badge: "36-M Warranty",
-                        badgeBg: "rgba(20, 184, 166, 0.1)",
-                        badgeColor: "#14b8a6",
-                        icon: "fa-solid fa-car-battery",
-                        autonomy: "150 Ah Sizing",
-                        efficiency: "89% Cycle Yield",
-                        lifespan: "1200 Cycles",
-                        price: 11200
-                    },
-                    {
-                        category: "Solar Inverter",
-                        title: "AURA Helio PWM 1200VA Solar Inverter",
-                        desc: "PWM solar charging hybrid inverter, ideal for residential rooftop installs.",
-                        badge: "Solar Ready",
-                        badgeBg: "rgba(249, 115, 22, 0.1)",
-                        badgeColor: "#f97316",
-                        icon: "fa-solid fa-solar-panel",
-                        autonomy: "Solar Direct + Batt",
-                        efficiency: "PWM Charge Logic",
-                        lifespan: "4 Years",
-                        price: 9990
-                    },
-                    {
-                        category: "Smart Backup Systems",
-                        title: "AURA CloudLink Tubular Controller 2.5kVA",
-                        desc: "Standard inverter bundle equipped with WiFi IoT data logging dongles for live diagnostics.",
-                        badge: "Connected IoT",
-                        badgeBg: "rgba(79, 70, 229, 0.1)",
-                        badgeColor: "#4f46e5",
-                        icon: "fa-solid fa-tower-broadcast",
-                        autonomy: "5 Hours backup",
-                        efficiency: "87% IoT Tracked",
-                        lifespan: "4 Years",
-                        price: 24800
+                        icon: "fa-solid fa-industry",
+                        autonomy: "50KVA Rating",
+                        efficiency: "Aluminum Winding Option",
+                        lifespan: "15 Years",
+                        price: 115000
                     }
                 ],
                 lithium: [
                     {
-                        category: "Home UPS",
-                        title: "AURA WallWall-Li 2kVA Smart UPS",
-                        desc: "High density integrated LiFePO4 wall-mount cabinet. Modern, compact, zero maintenance.",
-                        badge: "Smart LFP Tech",
+                        category: "Isolation Transformers",
+                        title: "ROBOART Medical Grade Isolation 3KVA",
+                        desc: "Absolute electrical isolation tailored for hospital equipment and sensitive medical devices.",
+                        badge: "Medical Safety",
                         badgeBg: "rgba(34, 197, 94, 0.1)",
                         badgeColor: "#22c55e",
-                        icon: "fa-solid fa-house-chimney-window",
-                        autonomy: "6 Hours smart load",
-                        efficiency: "96% Ultra-High",
-                        lifespan: "10 Years / 4000 Cycles",
-                        price: 29999
+                        icon: "fa-solid fa-heart-pulse",
+                        autonomy: "3KVA Pure Isolation",
+                        efficiency: "Zero Electrical Noise",
+                        lifespan: "20 Years",
+                        price: 32999
                     },
                     {
-                        category: "Inverter",
-                        title: "AURA Li-Invert 2.5kVA EV-Ready",
-                        desc: "Compact lithium power inverter designed with high-surge capacities supporting fast EV charging.",
-                        badge: "Supercharge Li",
+                        category: "Isolation Transformers",
+                        title: "ROBOART Industrial Isolation 20KVA",
+                        desc: "Eliminates neutral interference and ground loops in heavy machinery networks.",
+                        badge: "CNC Safeguard",
                         badgeBg: "rgba(59, 130, 246, 0.1)",
                         badgeColor: "#3b82f6",
-                        icon: "fa-solid fa-arrows-spin",
-                        autonomy: "8 Hours backup",
-                        efficiency: "97% EV Sized",
-                        lifespan: "12 Years",
-                        price: 34500
+                        icon: "fa-solid fa-shield-halved",
+                        autonomy: "20KVA Rating",
+                        efficiency: "High Load Safety",
+                        lifespan: "20 Years",
+                        price: 84500
                     },
                     {
-                        category: "Gaming UPS",
-                        title: "AURA ZeroLag Gaming Lithium 2000VA",
-                        desc: "Zero-millisecond LFP power wall keeping high-end dual ray-traced PCs completely online.",
-                        badge: "0ms Latency ZeroLag",
+                        category: "Three Phase Transformers",
+                        title: "ROBOART Three Phase Dry Type 100KVA",
+                        desc: "Robust three phase distribution transformer for commercial buildings and factories.",
+                        badge: "Power Distribution",
                         badgeBg: "rgba(168, 85, 247, 0.1)",
                         badgeColor: "#a855f7",
-                        icon: "fa-solid fa-gamepad",
-                        autonomy: "2 Hours full gaming load",
-                        efficiency: "99% Pure Sine",
-                        lifespan: "10 Years Warranty",
-                        price: 21900
+                        icon: "fa-solid fa-tower-broadcast",
+                        autonomy: "100KVA Rating",
+                        efficiency: "Low Loss Core",
+                        lifespan: "25 Years",
+                        price: 219000
                     },
                     {
-                        category: "WiFi UPS",
-                        title: "AURA SmartLink Li-Ion Router UPS",
-                        desc: "Integrated battery BMS router pack with selectable 5V, 9V, and 12V clean DC output lines.",
-                        badge: "Multi-Voltage LFP",
+                        category: "Three Phase Transformers",
+                        title: "ROBOART Custom High Capacity 500KVA",
+                        desc: "Fully custom built three phase power plant designed to exact site specifications.",
+                        badge: "Custom Engineering",
                         badgeBg: "rgba(239, 68, 68, 0.1)",
                         badgeColor: "#ef4444",
-                        icon: "fa-solid fa-wifi",
-                        autonomy: "5 Hours continuous",
-                        efficiency: "98% DC Regulated",
-                        lifespan: "6 Years",
-                        price: 2499
-                    },
-                    {
-                        category: "Office UPS",
-                        title: "AURA PowerWall-Office 5kVA Premium",
-                        desc: "Sleek commercial server rack design featuring integrated LFP blocks and smart BMS load sharing.",
-                        badge: "Server Cluster",
-                        badgeBg: "rgba(234, 179, 8, 0.1)",
-                        badgeColor: "#eab308",
-                        icon: "fa-solid fa-briefcase",
-                        autonomy: "6 Hours server backup",
-                        efficiency: "95% Enterprise Grade",
-                        lifespan: "10+ Years",
-                        price: 118000
-                    },
-                    {
-                        category: "Battery Systems",
-                        title: "AURA Smart-LFP 48V 100Ah Battery",
-                        desc: "Next-gen iron-phosphate module with active balancing smart Bluetooth monitoring systems.",
-                        badge: "6000+ Cycles LFP",
-                        badgeBg: "rgba(20, 184, 166, 0.1)",
-                        badgeColor: "#14b8a6",
-                        icon: "fa-solid fa-car-battery",
-                        autonomy: "4800 Wh Total Capacity",
-                        efficiency: "Active Balance BMS",
-                        lifespan: "15 Years",
-                        price: 88000
-                    },
-                    {
-                        category: "Solar Inverter",
-                        title: "AURA Helio-LFP 3kVA MPPT Solar",
-                        desc: "Dynamic solar tracking MPPT charger tailored for LiFePO4 high conversion rates.",
-                        badge: "MPPT Efficient solar",
-                        badgeBg: "rgba(249, 115, 22, 0.1)",
-                        badgeColor: "#f97316",
-                        icon: "fa-solid fa-solar-panel",
-                        autonomy: "Full Solar Autonomy",
-                        efficiency: "98.5% MPPT Sizing",
-                        lifespan: "10 Years",
-                        price: 44500
-                    },
-                    {
-                        category: "Smart Backup Systems",
-                        title: "AURA AI-PowerWall 10kVA Intelligent",
-                        desc: "Central home energy wall powered by AI load prediction algorithms and smart tariff battery charging.",
-                        badge: "AI Tariff Sentry",
-                        badgeBg: "rgba(79, 70, 229, 0.1)",
-                        badgeColor: "#4f46e5",
-                        icon: "fa-solid fa-tower-broadcast",
-                        autonomy: "12 Hours Smart Backup",
-                        efficiency: "98% Cloud Managed",
-                        lifespan: "15 Years",
-                        price: 285000
+                        icon: "fa-solid fa-plug-circle-check",
+                        autonomy: "500KVA Rating",
+                        efficiency: "Precision Windings",
+                        lifespan: "25+ Years",
+                        price: 850000
                     }
                 ]
             };
 
             let productsDb = JSON.parse(localStorage.getItem("aura-b2c-products"));
-            if (!productsDb || !productsDb.tubular[0].image) {
+            // Force reset to new DB if old AURA data exists (check via title)
+            if (!productsDb || !productsDb.tubular[0] || productsDb.tubular[0].title.includes("AURA")) {
                 productsDb = defaultDb;
-                const imgMapping = {
-                    "Home UPS": "images/ups_online.png",
-                    "Inverter": "images/ups_online.png",
-                    "Gaming UPS": "images/ups_online.png",
-                    "WiFi UPS": "images/ups_online.png",
-                    "Office UPS": "images/power_cabinet.png",
-                    "Battery Systems": "images/battery_bank.png",
-                    "Battery systems": "images/battery_bank.png",
-                    "Solar Inverter": "images/solar_inverter.png",
-                    "Solar inverter": "images/solar_inverter.png",
-                    "Smart Backup Systems": "images/ups_modular.png",
-                    "Smart backup systems": "images/ups_modular.png"
-                };
-                ["tubular", "lithium"].forEach(key => {
-                    if (productsDb[key]) {
-                        productsDb[key].forEach(p => {
-                            p.image = imgMapping[p.category] || "images/ups_online.png";
-                        });
-                    }
-                });
                 localStorage.setItem("aura-b2c-products", JSON.stringify(productsDb));
             }
 
@@ -619,14 +459,14 @@
             tubularBtn.addEventListener("click", () => {
                 tubularBtn.classList.add("active");
                 lithiumBtn.classList.remove("active");
-                descLabel.textContent = "Traditional tubular deep cycle systems. Highly affordable, reliable heavy duty, and widely standard.";
+                descLabel.textContent = "Control and Step Down transformers built for automation, CNC machines, and standard industrial reduction.";
                 renderCatalog("tubular");
             });
 
             lithiumBtn.addEventListener("click", () => {
                 lithiumBtn.classList.add("active");
                 tubularBtn.classList.remove("active");
-                descLabel.textContent = "Integrated lithium iron phosphate (LiFePO4) systems. Zero maintenance, 10x life cycle, ultra compact, EV grade.";
+                descLabel.textContent = "Absolute electrical isolation and three phase distribution systems for heavy medical and commercial power grids.";
                 renderCatalog("lithium");
             });
 
@@ -685,8 +525,16 @@
             }
 
             // Global quick buy routing handler
-            window.handleQuickBuy = (title, price) => {
-                alert(`Redirecting to Secure checkout panel for Aura System:\n"${title}" (All-inclusive Price: ₹${price.toLocaleString('en-IN')})`);
+            window.handleQuickBuy = async (title, price) => {
+                const isUserLoggedIn = localStorage.getItem("aura-user-logged-in") === "true";
+                if (!isUserLoggedIn) {
+                    alert("ROBOART Security Protocols: Please sign in as a Customer to place orders or request factory quotes!");
+                    localStorage.setItem("aura-auth-redirect", "b2c-store.html");
+                    window.location.href = "customer-login.html";
+                    return;
+                }
+
+                window.location.href = `checkout.html?type=standard&item=${encodeURIComponent(title)}&price=${price}`;
             };
 
             // Render Default Option

@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="normal">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secure Checkout - Aura Power Systems</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        .checkout-grid {
+            display: grid;
+            grid-template-columns: 1.5fr 1fr;
+            gap: 40px;
+            margin-top: 40px;
+        }
+        @media (max-width: 900px) {
+            .checkout-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        .form-section {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 8px;
+            padding: 32px;
+            box-shadow: var(--shadow-sm);
+        }
+        .form-group {
+            margin-bottom: 24px;
+        }
+        .form-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text-color);
+            margin-bottom: 8px;
+        }
+        .form-control {
+            width: 100%;
+            padding: 14px 16px;
+            background: var(--bg-color);
+            border: 1px solid var(--card-border);
+            border-radius: 6px;
+            font-size: 14px;
+            color: var(--text-color);
+            font-family: inherit;
+            transition: all 0.2s ease;
+        }
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(var(--primary-rgb), 0.1);
+        }
+        .summary-card {
+            background: var(--bg-color);
+            border: 1px solid var(--card-border);
+            border-radius: 8px;
+            padding: 32px;
+            position: sticky;
+            top: 100px;
+        }
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 16px;
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+        .summary-total {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 24px;
+            padding-top: 24px;
+            border-top: 1px solid var(--card-border);
+            font-size: 20px;
+            font-weight: 800;
+            color: var(--text-color);
+            font-family: "Space Grotesk", sans-serif;
+        }
+    </style>
+  <link rel="stylesheet" crossorigin href="/assets/style-Bg7YTivN.css">
+</head>
+<body>
+    <aura-header active="orders"></aura-header>
+
+    <main style="padding: 140px 0 80px 0;">
+        <div class="container">
+            <div class="section-header text-center" style="margin-bottom: 40px;">
+                <span class="section-tag"><i class="fa-solid fa-lock"></i> Secure Checkout</span>
+                <h2 class="section-title">Complete Your Order</h2>
+            </div>
+
+            <div class="checkout-grid">
+                <!-- Address Form -->
+                <div class="form-section glass">
+                    <h3 style="font-size: 18px; margin-bottom: 24px; display: flex; align-items: center; gap: 12px;">
+                        <span style="background: rgba(var(--primary-rgb), 0.1); color: var(--primary); width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border-radius: 50%; font-size: 14px;">1</span>
+                        Delivery Address
+                    </h3>
+                    
+                    <form id="checkout-form">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                            <div class="form-group">
+                                <label>Full Name</label>
+                                <input type="text" id="chk-name" class="form-control" placeholder="Pratik Verma" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Mobile Number</label>
+                                <input type="tel" id="chk-phone" class="form-control" placeholder="+91 9876543210" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Complete Address (House No, Street, Landmark)</label>
+                            <textarea id="chk-address" class="form-control" rows="3" placeholder="Flat 402, Block B, Tech Park..." required></textarea>
+                        </div>
+
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                            <div class="form-group">
+                                <label>City</label>
+                                <input type="text" id="chk-city" class="form-control" placeholder="Patna" required>
+                            </div>
+                            <div class="form-group">
+                                <label>PIN Code</label>
+                                <input type="text" id="chk-pin" class="form-control" placeholder="800001" required>
+                            </div>
+                        </div>
+                    </form>
+
+                    <h3 style="font-size: 18px; margin-top: 40px; margin-bottom: 24px; display: flex; align-items: center; gap: 12px;">
+                        <span style="background: rgba(var(--primary-rgb), 0.1); color: var(--primary); width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border-radius: 50%; font-size: 14px;">2</span>
+                        Payment Method
+                    </h3>
+                    <div style="padding: 16px; border: 2px solid var(--primary); border-radius: 8px; background: rgba(var(--primary-rgb), 0.05); display: flex; align-items: center; gap: 16px;">
+                        <input type="radio" checked style="accent-color: var(--primary); width: 18px; height: 18px;">
+                        <div>
+                            <div style="font-weight: 700; color: var(--text-color);">Cash / Pay on Delivery</div>
+                            <div style="font-size: 12px; color: var(--text-muted);">Secure payment upon installation</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Order Summary -->
+                <div>
+                    <div class="summary-card glass">
+                        <h3 style="font-size: 18px; margin-bottom: 24px;">Order Summary</h3>
+                        
+                        <div style="display: flex; gap: 16px; margin-bottom: 32px;">
+                            <div style="width: 60px; height: 60px; background: var(--card-bg); border-radius: 8px; border: 1px solid var(--card-border); display: flex; align-items: center; justify-content: center;">
+                                <i class="fa-solid fa-server" style="font-size: 24px; color: var(--primary);"></i>
+                            </div>
+                            <div>
+                                <div id="summary-title" style="font-weight: 700; color: var(--text-color); font-size: 15px;">Loading Item...</div>
+                                <div id="summary-desc" style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">System Component</div>
+                            </div>
+                        </div>
+
+                        <div class="summary-item">
+                            <span>Item Total</span>
+                            <span id="summary-price">₹0</span>
+                        </div>
+                        <div class="summary-item">
+                            <span>Delivery & Installation</span>
+                            <span style="color: #10b981;">FREE</span>
+                        </div>
+                        <div class="summary-item">
+                            <span>GST (18%)</span>
+                            <span>Included</span>
+                        </div>
+
+                        <div class="summary-total">
+                            <span>Grand Total</span>
+                            <span id="summary-total-price">₹0</span>
+                        </div>
+
+                        <button id="btn-confirm-order" class="btn btn-primary" style="width: 100%; margin-top: 32px; padding: 18px; font-size: 16px;">
+                            Confirm Purchase <i class="fa-solid fa-arrow-right"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <aura-footer></aura-footer>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app-check.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    <script src="firebase-service.js"></script>
+    <script src="components.js"></script>
+    
+    <script>
+        document.addEventListener("DOMContentLoaded", async () => {
+            // Require Auth
+            if (typeof requireAuth !== "undefined") {
+                const isAuthed = await requireAuth("checkout.html" + window.location.search);
+                if (!isAuthed) return;
+            }
+
+            // Parse URL params
+            const urlParams = new URLSearchParams(window.location.search);
+            const itemType = urlParams.get('type') || 'standard'; // standard, custom
+            const itemTitle = urlParams.get('item') || 'Aura UPS System';
+            const itemPrice = parseInt(urlParams.get('price')) || 0;
+            // custom specific
+            const phase = urlParams.get('phase') || '';
+            const capacity = urlParams.get('capacity') || 'Standard System';
+            const battery = urlParams.get('battery') || '';
+            const specs = urlParams.get('specs') || '';
+
+            document.getElementById("summary-title").textContent = itemTitle;
+            document.getElementById("summary-price").textContent = "₹" + itemPrice.toLocaleString('en-IN');
+            document.getElementById("summary-total-price").textContent = "₹" + itemPrice.toLocaleString('en-IN');
+            
+            if (itemType === 'custom') {
+                document.getElementById("summary-desc").textContent = `Custom Build: ${capacity} (${phase})`;
+            }
+
+            // Pre-fill profile if available
+            if (typeof FirebaseService !== "undefined") {
+                const profile = await FirebaseService.getUserProfile();
+                if (profile) {
+                    document.getElementById("chk-name").value = profile.name || "";
+                    document.getElementById("chk-phone").value = profile.phone || "";
+                    document.getElementById("chk-address").value = profile.address || "";
+                    document.getElementById("chk-city").value = profile.city || "";
+                    document.getElementById("chk-pin").value = profile.pin || "";
+                }
+            }
+
+            // Handle Confirm
+            document.getElementById("btn-confirm-order").addEventListener("click", async () => {
+                const name = document.getElementById("chk-name").value;
+                const phone = document.getElementById("chk-phone").value;
+                const address = document.getElementById("chk-address").value;
+                const city = document.getElementById("chk-city").value;
+                const pin = document.getElementById("chk-pin").value;
+
+                if (!name || !phone || !address || !city || !pin) {
+                    alert("Please fill in all delivery address fields.");
+                    return;
+                }
+
+                const btn = document.getElementById("btn-confirm-order");
+                const originalText = btn.innerHTML;
+                btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Processing...`;
+                btn.disabled = true;
+
+                // Save Profile
+                const profileData = { name, phone, address, city, pin };
+                if (typeof FirebaseService !== "undefined") {
+                    await FirebaseService.saveUserProfile(profileData);
+                }
+
+                const shippingAddress = `${address}, ${city} - ${pin} (Ph: ${phone})`;
+                const orderId = "ORD-" + Date.now().toString().slice(-6);
+
+                let savedItem = null;
+
+                if (itemType === 'standard') {
+                    const newOrder = {
+                        id: orderId,
+                        title: itemTitle,
+                        capacity: "Standard System",
+                        price: itemPrice,
+                        status: "Order Placed & Confirmed",
+                        statusStep: 1,
+                        shippingAddress: shippingAddress,
+                        timestamp: new Date().toLocaleDateString()
+                    };
+                    savedItem = typeof FirebaseService !== "undefined" 
+                        ? await FirebaseService.saveOrder(newOrder) 
+                        : newOrder;
+                } else if (itemType === 'custom') {
+                    const customOrder = {
+                        id: orderId,
+                        name: itemTitle,
+                        capacity: capacity,
+                        phase: phase,
+                        battery: battery,
+                        specs: specs,
+                        status: "Order Placed & Confirmed",
+                        statusStep: 1,
+                        shippingAddress: shippingAddress,
+                        timestamp: new Date().toLocaleDateString()
+                    };
+                    savedItem = typeof FirebaseService !== "undefined" 
+                        ? await FirebaseService.saveCustomization(customOrder) 
+                        : customOrder;
+                }
+
+                // Push Admin Notification
+                if (typeof FirebaseService !== "undefined") {
+                    await FirebaseService.createNotification("admin", "New Order Received", `User ordered ${itemTitle}. Order ID: ${orderId}`);
+                }
+
+                // Redirect to Success
+                window.location.href = `success.html?id=${orderId}`;
+            });
+        });
+    </script>
+</body>
+</html>

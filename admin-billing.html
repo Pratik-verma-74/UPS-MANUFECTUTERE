@@ -209,8 +209,12 @@
 
     <!-- Auth Guard (Secure URL protection) -->
     <script>
-        if (localStorage.getItem("aura-admin-logged-in") !== "true") {
-            window.location.href = "login.html";
+        const allowedAdmins = ["pratikverma025@gmail.com", "shivamsri639463@gmail.com"];
+        const adminEmail = localStorage.getItem("aura-admin-email");
+        if (localStorage.getItem("aura-admin-logged-in") !== "true" || !allowedAdmins.includes(adminEmail)) {
+            window.stop();
+            document.documentElement.innerHTML = "";
+            window.location.replace("customer-login.html");
         }
     </script>
 
@@ -519,7 +523,7 @@
         document.addEventListener("DOMContentLoaded", () => {
             // Authentication Guard
             if (localStorage.getItem("aura-admin-logged-in") !== "true") {
-                window.location.href = "login.html";
+                window.location.href = "customer-login.html";
                 return;
             }
 
@@ -553,7 +557,7 @@
             document.getElementById("secure-logout-btn").addEventListener("click", () => {
                 if (confirm("Are you sure you want to log out from Secure Control Panel?")) {
                     localStorage.removeItem("aura-admin-logged-in");
-                    window.location.href = "login.html";
+                    window.location.href = "customer-login.html";
                 }
             });
 

@@ -1,0 +1,898 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="normal">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AURA | B2B Corporate Quotation Builder</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Space+Grotesk:wght@300..700&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Main Style Sheet -->
+    
+    <style>
+        /* Interactive Quotation Builder Layout */
+        .qtn-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin-top: 10px;
+            margin-bottom: 60px;
+        }
+        
+        @media (max-width: 1024px) {
+            .qtn-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .item-row-input {
+            display: grid;
+            grid-template-columns: 1.8fr 1fr 1fr 1fr auto;
+            gap: 10px;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .item-row-header {
+            display: grid;
+            grid-template-columns: 1.8fr 1fr 1fr 1fr auto;
+            gap: 10px;
+            font-size: 11px;
+            font-weight: bold;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+        }
+
+        .remove-row-btn {
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            border-radius: 4px;
+            height: 38px;
+            width: 38px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .remove-row-btn:hover {
+            background: #ef4444;
+            color: #fff;
+        }
+
+        /* Quotation Proposal Document (High fidelity B2B Letterhead) */
+        .qtn-proposal-sheet {
+            background: #ffffff;
+            color: #1e293b;
+            padding: 40px;
+            border-radius: 6px;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid #cbd5e1;
+            font-family: 'DM Sans', sans-serif;
+            position: sticky;
+            top: 80px;
+            transition: all 0.3s ease;
+            line-height: 1.5;
+        }
+
+        [data-theme="neon"] .qtn-proposal-sheet {
+            background: #ffffff; /* Keep letterhead clean white for client PDF exports */
+            color: #1e293b;
+            box-shadow: 0 12px 40px rgba(0, 229, 255, 0.12);
+        }
+
+        .qtn-letterhead {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 4px double var(--primary);
+            padding-bottom: 16px;
+            margin-bottom: 24px;
+        }
+
+        .qtn-brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #0f172a;
+        }
+
+        .qtn-brand i {
+            color: var(--primary);
+            font-size: 32px;
+        }
+
+        .qtn-brand span {
+            font-size: 28px;
+            font-weight: 900;
+            font-family: 'Space Grotesk', sans-serif;
+            letter-spacing: -0.5px;
+        }
+
+        .qtn-company-info {
+            font-size: 11px;
+            color: #475569;
+            text-align: right;
+        }
+
+        .qtn-doc-title {
+            text-align: center;
+            font-size: 20px;
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 24px;
+            color: #0f172a;
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 6px;
+        }
+
+        .qtn-meta-grid {
+            display: grid;
+            grid-template-columns: 1.2fr 0.8fr;
+            gap: 20px;
+            margin-bottom: 24px;
+            font-size: 13px;
+        }
+
+        .qtn-meta-column {
+            color: #334155;
+        }
+
+        .qtn-meta-column.right {
+            text-align: right;
+        }
+
+        .qtn-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 24px;
+        }
+
+        .qtn-table th {
+            background: #f1f5f9;
+            color: #1e293b;
+            font-size: 11px;
+            font-weight: bold;
+            text-transform: uppercase;
+            padding: 10px;
+            text-align: left;
+            border-top: 1px solid #cbd5e1;
+            border-bottom: 2px solid #cbd5e1;
+        }
+
+        .qtn-table td {
+            padding: 12px 10px;
+            border-bottom: 1px solid #e2e8f0;
+            font-size: 13px;
+            color: #334155;
+        }
+
+        .qtn-totals-container {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 24px;
+        }
+
+        .qtn-totals-table {
+            width: 280px;
+            font-size: 13px;
+        }
+
+        .qtn-totals-table td {
+            padding: 5px 0;
+            color: #475569;
+        }
+
+        .qtn-totals-table tr.grand-total td {
+            border-top: 2px solid #cbd5e1;
+            font-weight: bold;
+            font-size: 15px;
+            color: #0f172a;
+            padding-top: 8px;
+        }
+
+        .qtn-b2b-block {
+            display: grid;
+            grid-template-columns: 1.1fr 0.9fr;
+            gap: 20px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 4px;
+            padding: 16px;
+            margin-bottom: 24px;
+            font-size: 11px;
+            color: #475569;
+        }
+
+        .qtn-bank-details strong {
+            color: #0f172a;
+        }
+
+        .qtn-terms strong {
+            color: #0f172a;
+        }
+
+        /* Authorized Stamp & Signature Wrapper */
+        .qtn-sign-stamp-block {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-top: 30px;
+        }
+
+        .qtn-client-acceptance {
+            border-top: 1px dashed #cbd5e1;
+            width: 180px;
+            text-align: center;
+            font-size: 11px;
+            color: #64748b;
+            padding-top: 6px;
+        }
+
+        .qtn-authorized-signatory {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            width: 220px;
+        }
+
+        /* Dynamic CSS Rubber Stamp Graphic */
+        .rubber-stamp {
+            width: 86px;
+            height: 86px;
+            border: 3px double rgba(0, 102, 204, 0.7);
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: rgba(0, 102, 204, 0.7);
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 800;
+            font-size: 7px;
+            text-transform: uppercase;
+            text-align: center;
+            position: absolute;
+            top: -50px;
+            right: 15px;
+            transform: rotate(-12deg);
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(1px);
+            pointer-events: none;
+            line-height: 1.2;
+            box-shadow: 0 0 2px rgba(0, 102, 204, 0.1);
+        }
+
+        .rubber-stamp-inner {
+            border: 1px solid rgba(0, 102, 204, 0.7);
+            border-radius: 50%;
+            width: 72px;
+            height: 72px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .handwritten-signature {
+            font-family: 'Space Grotesk', sans-serif;
+            font-style: italic;
+            font-size: 18px;
+            font-weight: bold;
+            color: #0044cc;
+            opacity: 0.8;
+            margin-bottom: 2px;
+            letter-spacing: 0.5px;
+            transform: rotate(-3deg);
+        }
+
+        .qtn-footer-disclaimer {
+            margin-top: 30px;
+            border-top: 1px solid #e2e8f0;
+            padding-top: 12px;
+            font-size: 10px;
+            color: #94a3b8;
+            text-align: center;
+        }
+
+        /* Print Media optimization - Only letterhead card gets generated */
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+            .qtn-proposal-sheet, .qtn-proposal-sheet * {
+                visibility: visible;
+            }
+            .qtn-proposal-sheet {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                box-shadow: none;
+                border: none;
+                padding: 0;
+            }
+        }
+    </style>
+  <link rel="stylesheet" crossorigin href="/assets/style-Bg7YTivN.css">
+</head>
+<body class="admin-body">
+
+    <!-- Auth Guard (Secure URL protection) -->
+    <script>
+        const allowedAdmins = ["pratikverma025@gmail.com", "shivamsri639463@gmail.com"];
+        const adminEmail = localStorage.getItem("aura-admin-email");
+        if (localStorage.getItem("aura-admin-logged-in") !== "true" || !allowedAdmins.includes(adminEmail)) {
+            window.stop();
+            document.documentElement.innerHTML = "";
+            window.location.replace("customer-login.html");
+        }
+    </script>
+
+    <!-- Professional Sleek Header -->
+    <header class="header">
+        <div class="header-left-group" style="display: flex; align-items: center; gap: 16px;">
+            <div class="logo" onclick="window.location.href='index.html'">
+                <i class="fa-solid fa-bolt logo-icon"></i>
+                <span>AURA</span>
+            </div>
+            <span class="badge" style="background: rgba(0, 229, 255, 0.1); color: var(--primary); font-size: 10px; padding: 4px 10px; text-transform: uppercase; font-weight: 700; border: 1px solid rgba(0,229,255,0.2);">Admin Mode</span>
+        </div>
+        <nav class="nav">
+            <a href="index.html" class="nav-link">Systems</a>
+            <a href="calculator.html" class="nav-link">Calculator</a>
+            <a href="customize.html" class="nav-link">Customize</a>
+            <a href="repair.html" class="nav-link">Repair Service</a>
+            <a href="orders.html" class="nav-link">My Orders</a>
+        </nav>
+        <div class="header-actions">
+            <button id="theme-toggle" class="theme-btn" title="Toggle Light/Dark Theme">
+                <i class="fa-solid fa-moon"></i>
+            </button>
+            <button id="secure-logout-btn" class="theme-btn logout-trigger" title="Logout Securely">
+                <i class="fa-solid fa-power-off"></i>
+            </button>
+        </div>
+    </header>
+
+    <div class="container" style="padding-top: 20px;">
+        
+        <!-- Welcome Row & Admin Navigation Tabs -->
+        <div class="admin-welcome-row" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; margin-bottom: 24px;">
+            <div>
+                <h2>B2B Corporate Quotation Desk</h2>
+                <p style="font-size: 13px; color: var(--text-muted); margin-top: 4px;">Design dynamic system designs, configure B2B commercial terms, and print authentic letterhead proposals with rubber stamps.</p>
+            </div>
+            <div class="admin-nav-tabs" style="display: flex; gap: 10px; flex-wrap: wrap; width: 100%; align-items: center;">
+                <a href="admin.html" class="btn btn-secondary" style="font-size: 12px; padding: 10px 18px; border-radius: 6px; background: var(--card-bg); border: 1px solid var(--card-border); color: var(--text-color); box-shadow: var(--shadow-sm);">
+                    <i class="fa-solid fa-network-wired"></i> Workspace Control
+                </a>
+                <a href="admin-analytics.html" class="btn btn-secondary" style="font-size: 12px; padding: 10px 18px; border-radius: 6px; background: var(--card-bg); border: 1px solid var(--card-border); color: var(--text-color); box-shadow: var(--shadow-sm);">
+                    <i class="fa-solid fa-chart-line"></i> Smart Analytics
+                </a>
+                <a href="admin-bihar-trends.html" class="btn btn-secondary" style="font-size: 12px; padding: 10px 18px; border-radius: 6px; background: var(--card-bg); border: 1px solid var(--card-border); color: var(--text-color); box-shadow: var(--shadow-sm);">
+                    <i class="fa-solid fa-hospital-user"></i> Bihar Demand
+                </a>
+                <a href="admin-billing.html" class="btn btn-secondary" style="font-size: 12px; padding: 10px 18px; border-radius: 6px; background: var(--card-bg); border: 1px solid var(--card-border); color: var(--text-color); box-shadow: var(--shadow-sm);">
+                    <i class="fa-solid fa-file-invoice-dollar"></i> Billing Generator
+                </a>
+                <a href="admin-quotation.html" class="btn btn-primary" style="font-size: 12px; padding: 10px 18px; border-radius: 6px; box-shadow: var(--shadow-md);">
+                    <i class="fa-solid fa-file-signature"></i> Quotation Maker
+                </a>
+                <a href="admin-b2c.html" class="btn btn-secondary" style="font-size: 12px; padding: 10px 18px; border-radius: 6px; background: var(--card-bg); border: 1px solid var(--card-border); color: var(--text-color); box-shadow: var(--shadow-sm);">
+                    <i class="fa-solid fa-shop"></i> B2C Catalog CMS
+                </a>
+                <a href="index.html" class="btn btn-secondary" style="font-size: 12px; padding: 10px 18px; border-radius: 6px; background: rgba(34,197,94,0.1); border: 1px solid #22c55e; color: #22c55e; box-shadow: var(--shadow-sm); margin-left: auto;">
+                    <i class="fa-solid fa-globe"></i> Customer Storefront
+                </a>
+            </div>
+        </div>
+
+        <!-- Quotation Workspace grid -->
+        <div class="qtn-grid">
+            
+            <!-- Left Side: Quotation dynamic form builder -->
+            <div style="display: flex; flex-direction: column; gap: 24px;">
+                
+                <!-- 1. Client & Proposal Meta details -->
+                <div class="admin-card-section">
+                    <div class="card-section-header">
+                        <h3><i class="fa-solid fa-user-tie" style="margin-right: 6px;"></i>Client & Proposal Details</h3>
+                        <p>Fill out the target industrial client profile, proposal subject line, and quote ID.</p>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 16px;">
+                        <div class="form-group" style="grid-column: span 2;">
+                            <label>Proposal Subject / Project Design</label>
+                            <input type="text" id="qtn-subject" placeholder="e.g. Quotation for hospital UPS & backup systems" value="Quotation for B2B Healthcare UPS backup systems">
+                        </div>
+                        <div class="form-group">
+                            <label>Client Authorized Buyer</label>
+                            <input type="text" id="qtn-buyer" placeholder="e.g. Pratik Verma" value="Pratik Verma">
+                        </div>
+                        <div class="form-group">
+                            <label>Client Company Name</label>
+                            <input type="text" id="qtn-company" placeholder="e.g. Patna Med-City Hospital" value="Patna Med-City Hospital">
+                        </div>
+                        <div class="form-group">
+                            <label>Client Registered Email</label>
+                            <input type="email" id="qtn-email" placeholder="e.g. user@aura.com" value="user@aura.com">
+                        </div>
+                        <div class="form-group">
+                            <label>Client Phone Number (WhatsApp)</label>
+                            <input type="text" id="qtn-phone" placeholder="e.g. 7463053829" value="7463053829">
+                        </div>
+                        <div class="form-group" style="grid-column: span 2;">
+                            <label>Client B2B GSTIN (Optional)</label>
+                            <input type="text" id="qtn-gstin" placeholder="e.g. 10ABCDE1234F1Z5" value="10ABCDE1234F1Z5" style="text-transform: uppercase;">
+                        </div>
+                        <div class="form-group" style="grid-column: span 2;">
+                            <label>Project Site Delivery Address</label>
+                            <input type="text" id="qtn-address" placeholder="e.g. Bailey Road, Patna, Bihar" value="Bailey Road, Patna, Bihar - 800001">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. Dynamic Proposal Items Builder -->
+                <div class="admin-card-section">
+                    <div class="card-section-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                        <div>
+                            <h3><i class="fa-solid fa-list-ol" style="margin-right: 6px;"></i>Quotation Dynamic Items</h3>
+                            <p>Map out base components, backup modules, battery bays, and service warranties.</p>
+                        </div>
+                        <button type="button" id="qtn-add-row-btn" class="btn btn-secondary" style="font-size: 11px; padding: 6px 12px; height: auto;">
+                            <i class="fa-solid fa-plus"></i> Add Item Row
+                        </button>
+                    </div>
+
+                    <!-- Line Items Headers -->
+                    <div class="item-row-header">
+                        <span>Item Name / Model</span>
+                        <span>Rating</span>
+                        <span>Base Price (₹)</span>
+                        <span>Qty</span>
+                        <span></span>
+                    </div>
+
+                    <div id="qtn-rows-container">
+                        <!-- Default Line Item 1 -->
+                        <div class="item-row-input" data-row-id="1">
+                            <input type="text" class="item-title" placeholder="Aura High-Yield Online UPS" value="Aura ICU-Safe Industrial Online UPS">
+                            <input type="text" class="item-rating" placeholder="100 kVA" value="100 kVA">
+                            <input type="number" class="item-price" placeholder="480000" value="480000">
+                            <input type="number" class="item-qty" placeholder="1" value="2">
+                            <button type="button" class="remove-row-btn"><i class="fa-solid fa-trash"></i></button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3. B2B Commercial Terms Builder -->
+                <div class="admin-card-section">
+                    <div class="card-section-header">
+                        <h3><i class="fa-solid fa-gavel" style="margin-right: 6px;"></i>Quotation Legal & B2B Slabs</h3>
+                        <p>Configure commercial clauses, delivery timeline, onsite warranty parameters, and B2B taxes.</p>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 16px;">
+                        <div class="form-group">
+                            <label>GST Commercial Bracket</label>
+                            <select id="qtn-gst-rate" style="background: var(--bg-color); color: var(--text-color); border: 1px solid var(--card-border); padding: 10px; border-radius: 4px;">
+                                <option value="18">18% (Standard B2B UPS)</option>
+                                <option value="28">28% (Lithium Heavy Duty Slabs)</option>
+                                <option value="12">12% (Renewable Power grids)</option>
+                                <option value="0">0% (Exempted Sales)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Quote Proposal Validity</label>
+                            <input type="text" id="qtn-validity" placeholder="e.g. 15 Days from date" value="15 Days from Date of Issue">
+                        </div>
+                        <div class="form-group">
+                            <label>Delivery Timeline</label>
+                            <input type="text" id="qtn-delivery-term" placeholder="e.g. 7 Days from PO" value="7 Days from Purchase Order (PO)">
+                        </div>
+                        <div class="form-group">
+                            <label>Onsite Warranty Period</label>
+                            <input type="text" id="qtn-warranty-term" placeholder="e.g. 3 Years onsite" value="3 Years Comprehensive Onsite Warranty">
+                        </div>
+                        <div class="form-group" style="grid-column: span 2;">
+                            <label>Commercial Payment Structure</label>
+                            <input type="text" id="qtn-payment-term" placeholder="e.g. 50% advance, 50% post-delivery" value="50% Advance with Purchase Order, 50% upon successful delivery & test-run">
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Right Side: High Fidelity formal Proposal letterhead (Print Optimized) -->
+            <div style="display: flex; flex-direction: column; gap: 20px;">
+                
+                <!-- Formal Letterhead proposal Sheet -->
+                <div class="qtn-proposal-sheet" id="qtn-render-proposal">
+                    
+                    <!-- Letterhead Header -->
+                    <div class="qtn-letterhead">
+                        <div>
+                            <div class="qtn-brand">
+                                <i class="fa-solid fa-bolt"></i>
+                                <span>AURA</span>
+                            </div>
+                            <strong style="font-size: 12px; color: #0f172a; margin-top: 4px; display: block;">Aura Power Solutions Pvt. Ltd.</strong>
+                        </div>
+                        <div class="qtn-company-info">
+                            <span>Industrial Area Phase II, F-12, Patna, Bihar - 800013</span><br>
+                            <span>GSTIN: 10AAACA5534B1ZM | support@aurapower.com</span><br>
+                            <span>Phone: +91 612 2988301 | Corporate B2B Plant Desk</span>
+                        </div>
+                    </div>
+
+                    <div class="qtn-doc-title">Commercial Quotation Proposal</div>
+
+                    <div class="qtn-meta-grid">
+                        <div class="qtn-meta-column">
+                            <h4 style="font-size: 11px; text-transform: uppercase; color: #64748b; font-weight: bold; margin-bottom: 4px;">Prepared For:</h4>
+                            <strong style="color: #0f172a;" id="qtn-disp-company">Patna Med-City Hospital</strong><br>
+                            <span style="color: #334155;">Attn: </span><strong style="color: #334155;" id="qtn-disp-buyer">Pratik Verma</strong><br>
+                            <span style="color: #475569; display: block; margin-top: 2px;" id="qtn-disp-phone">Phone: 7463053829</span>
+                            <span style="color: #475569;" id="qtn-disp-address">Bailey Road, Patna, Bihar - 800001</span><br>
+                            <span style="font-size: 11px; color: #475569; font-weight: bold;" id="qtn-disp-gstin">GSTIN: 10ABCDE1234F1Z5</span>
+                        </div>
+                        <div class="qtn-meta-column right">
+                            <h4 style="font-size: 11px; text-transform: uppercase; color: #64748b; font-weight: bold; margin-bottom: 4px;">Quote specifications:</h4>
+                            <span style="color: #64748b;">Quote ID:</span> <strong style="color: #334155;" id="qtn-disp-id">AURA/QTN/2026/9934</strong><br>
+                            <span style="color: #64748b;">Date:</span> <strong style="color: #334155;" id="qtn-disp-date">19 May 2026</strong><br>
+                            <span style="color: #64748b;">Validity:</span> <strong style="color: #334155;" id="qtn-disp-validity">15 Days</strong><br>
+                            <span style="color: #64748b;">Technician SLA:</span> <strong style="color: #16a34a;">24-Hr Priority response</strong>
+                        </div>
+                    </div>
+
+                    <div style="font-size: 12px; color: #334155; margin-bottom: 16px; line-height: 1.4; border-left: 3px solid var(--primary); padding-left: 10px;" id="qtn-disp-subject">
+                        <strong>Subject:</strong> Quotation for B2B Healthcare UPS backup systems
+                    </div>
+
+                    <!-- Items table -->
+                    <table class="qtn-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 50%;">UPS System Specification</th>
+                                <th style="width: 15%; text-align: right;">Unit Price</th>
+                                <th style="width: 10%; text-align: center;">Qty</th>
+                                <th style="width: 25%; text-align: right;">Total Base (₹)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="qtn-items-table-body">
+                            <!-- Dynamically loaded quotation row contents -->
+                        </tbody>
+                    </table>
+
+                    <!-- Totals and GST calculations -->
+                    <div class="qtn-totals-container">
+                        <table class="qtn-totals-table">
+                            <tr>
+                                <td>Gross Taxable Value:</td>
+                                <td style="text-align: right; font-weight: bold;" id="qtn-calc-base">₹0.00</td>
+                            </tr>
+                            <tr>
+                                <td id="qtn-lbl-gst">GST Surcharge (18.0%):</td>
+                                <td style="text-align: right;" id="qtn-calc-gst">₹0.00</td>
+                            </tr>
+                            <tr class="grand-total">
+                                <td>Grand Total (Incl. Taxes):</td>
+                                <td style="text-align: right; color: #0044cc;" id="qtn-calc-grand-total">₹0.00</td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <!-- B2B Commercial and Bank Block -->
+                    <div class="qtn-b2b-block">
+                        <div class="qtn-bank-details">
+                            <strong style="text-transform: uppercase; font-size: 10px; display: block; border-bottom: 1px solid #cbd5e1; padding-bottom: 3px; margin-bottom: 6px; color: var(--primary);">RTGS / NEFT Remittance Details:</strong>
+                            <span>Bank Name: </span><strong>State Bank of India</strong><br>
+                            <span>Account Name: </span><strong>AURA Power Solutions Pvt Ltd</strong><br>
+                            <span>Account Number: </span><strong>39882201923</strong><br>
+                            <span>IFSC Code: </span><strong>SBIN0003423</strong> (Branch: Main Road Patna)
+                        </div>
+                        <div class="qtn-terms">
+                            <strong style="text-transform: uppercase; font-size: 10px; display: block; border-bottom: 1px solid #cbd5e1; padding-bottom: 3px; margin-bottom: 6px; color: var(--primary);">Commercial Terms & Conditions:</strong>
+                            <span>1. Warranty: </span><strong id="qtn-disp-warranty-term">3 Years onsite</strong><br>
+                            <span>2. Dispatch Timeline: </span><strong id="qtn-disp-delivery-term">7 Days from PO</strong><br>
+                            <span>3. Payments: </span><strong id="qtn-disp-payment-term">50% Advance</strong>
+                        </div>
+                    </div>
+
+                    <!-- Authorized circular Rubber stamp and signature signature graphic -->
+                    <div class="qtn-sign-stamp-block">
+                        <div class="qtn-client-acceptance">
+                            <span>B2B Buyer Acceptance Sign</span>
+                        </div>
+                        <div class="qtn-authorized-signatory">
+                            <!-- CS Rubber Stamp -->
+                            <div class="rubber-stamp">
+                                <div class="rubber-stamp-inner">
+                                    <span>Aura Power</span><br>
+                                    <strong style="font-size: 6px;">PATNA</strong><br>
+                                    <span>Authorized</span>
+                                </div>
+                            </div>
+                            <div class="handwritten-signature">A. K. Sharma</div>
+                            <strong style="font-size: 10px; color: #334155; border-top: 1px solid #cbd5e1; width: 100%; text-align: center; padding-top: 6px;">AURA Power Plant Director</strong>
+                        </div>
+                    </div>
+
+                    <div class="qtn-footer-disclaimer">
+                        <span>This commercial proposal is generated automatically under audited B2B standard pricing modules and is subject to Aura corporate plant approval conditions.</span>
+                    </div>
+
+                </div>
+
+                <!-- Quotation actions console -->
+                <div class="admin-card-section" style="background: rgba(var(--primary-rgb), 0.03); border-color: rgba(var(--primary-rgb), 0.2);">
+                    <div class="card-section-header">
+                        <h3><i class="fa-solid fa-gears"></i> B2B Dispatch Console</h3>
+                        <p>Generate clean PDF exports, push quotation records to local sales database, or send to WhatsApp channel.</p>
+                    </div>
+
+                    <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 16px;">
+                        <button type="button" id="btn-print-qtn" class="btn btn-primary w-full" style="height: 44px;">
+                            <span>Download Quotation PDF</span>
+                            <i class="fa-solid fa-download"></i>
+                        </button>
+                        
+                        <button type="button" id="btn-register-qtn" class="btn btn-secondary w-full" style="height: 44px; background: var(--card-bg); border: 1px solid var(--card-border); color: var(--text-color);">
+                            <span>Log Quotation into CRM Registry</span>
+                            <i class="fa-solid fa-cloud-arrow-up"></i>
+                        </button>
+                        
+                        <button type="button" id="btn-whatsapp-qtn" class="btn btn-secondary w-full" style="height: 44px; background: rgba(34, 197, 94, 0.1); border: 1px solid rgba(34, 197, 94, 0.2); color: #22c55e;">
+                            <span>Auto Share Quote via WhatsApp</span>
+                            <i class="fa-brands fa-whatsapp"></i>
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Scripts specifically for Quotation Logic -->
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            // Authentication Guard
+            if (localStorage.getItem("aura-admin-logged-in") !== "true") {
+                window.location.href = "customer-login.html";
+                return;
+            }
+
+            // Theme Sync
+            const htmlElement = document.documentElement;
+            const themeToggle = document.getElementById("theme-toggle");
+            
+            const savedTheme = localStorage.getItem("aura-theme") || "normal";
+            htmlElement.setAttribute("data-theme", savedTheme);
+            updateThemeIcon(savedTheme);
+
+            themeToggle.addEventListener("click", () => {
+                const currentTheme = htmlElement.getAttribute("data-theme");
+                const newTheme = currentTheme === "normal" ? "neon" : "normal";
+                
+                htmlElement.setAttribute("data-theme", newTheme);
+                localStorage.setItem("aura-theme", newTheme);
+                updateThemeIcon(newTheme);
+            });
+
+            function updateThemeIcon(theme) {
+                const icon = themeToggle.querySelector("i");
+                if (theme === "neon") {
+                    icon.className = "fa-solid fa-sun";
+                } else {
+                    icon.className = "fa-solid fa-moon";
+                }
+            }
+
+            // Secure Logout
+            document.getElementById("secure-logout-btn").addEventListener("click", () => {
+                if (confirm("Are you sure you want to log out from Secure Control Panel?")) {
+                    localStorage.removeItem("aura-admin-logged-in");
+                    window.location.href = "customer-login.html";
+                }
+            });
+
+            // Dynamic Rows logic
+            const container = document.getElementById("qtn-rows-container");
+            const addRowBtn = document.getElementById("qtn-add-row-btn");
+            let rowCounter = 1;
+
+            // Update display date
+            document.getElementById("qtn-disp-date").textContent = new Date().toLocaleDateString('en-GB', {
+                day: 'numeric',
+                month: 'short',
+                year: 'numeric'
+            });
+
+            // Dynamic Quote Number
+            const dateStr = new Date().getFullYear();
+            const randomSuffix = Math.floor(1000 + Math.random() * 9000);
+            const generatedQuoteId = `AURA/QTN/${dateStr}/${randomSuffix}`;
+            document.getElementById("qtn-disp-id").textContent = generatedQuoteId;
+
+            addRowBtn.addEventListener("click", () => {
+                rowCounter++;
+                const newRow = document.createElement("div");
+                newRow.className = "item-row-input";
+                newRow.setAttribute("data-row-id", rowCounter);
+                newRow.innerHTML = `
+                    <input type="text" class="item-title" placeholder="Aura High-Yield Online UPS" value="Aura Lithium-Force Battery Bank">
+                    <input type="text" class="item-rating" placeholder="100 kVA" value="200 Ah Modules">
+                    <input type="number" class="item-price" placeholder="480000" value="125000">
+                    <input type="number" class="item-qty" placeholder="1" value="2">
+                    <button type="button" class="remove-row-btn"><i class="fa-solid fa-trash"></i></button>
+                `;
+                container.appendChild(newRow);
+                hookRowListeners(newRow);
+                recalculateQuotation();
+            });
+
+            function hookRowListeners(row) {
+                const inputs = row.querySelectorAll("input");
+                inputs.forEach(input => {
+                    input.addEventListener("input", recalculateQuotation);
+                });
+
+                row.querySelector(".remove-row-btn").addEventListener("click", () => {
+                    row.remove();
+                    recalculateQuotation();
+                });
+            }
+
+            // Hook initial row listeners
+            const initialRow = container.querySelector(".item-row-input");
+            hookRowListeners(initialRow);
+
+            // Hook form inputs listeners
+            const formElements = [
+                "qtn-subject", "qtn-buyer", "qtn-company", "qtn-email", "qtn-phone", "qtn-gstin", "qtn-address",
+                "qtn-gst-rate", "qtn-validity", "qtn-delivery-term", "qtn-warranty-term", "qtn-payment-term"
+            ];
+            
+            formElements.forEach(id => {
+                document.getElementById(id).addEventListener("input", recalculateQuotation);
+            });
+
+            // Recalculation Engine
+            function recalculateQuotation() {
+                // Update Meta details on preview
+                document.getElementById("qtn-disp-subject").innerHTML = `<strong>Subject:</strong> ${document.getElementById("qtn-subject").value || "Quotation for B2B online systems"}`;
+                document.getElementById("qtn-disp-buyer").textContent = document.getElementById("qtn-buyer").value || "Pratik Verma";
+                document.getElementById("qtn-disp-phone").textContent = `Phone: ${document.getElementById("qtn-phone").value || "7463053829"}`;
+                document.getElementById("qtn-disp-company").textContent = document.getElementById("qtn-company").value || "Patna Med-City Hospital";
+                document.getElementById("qtn-disp-address").textContent = document.getElementById("qtn-address").value || "Bailey Road, Patna, Bihar";
+                
+                const clientGstin = document.getElementById("qtn-gstin").value.toUpperCase();
+                document.getElementById("qtn-disp-gstin").textContent = clientGstin ? `GSTIN: ${clientGstin}` : "GSTIN: Unregistered Consumer";
+                
+                document.getElementById("qtn-disp-validity").textContent = document.getElementById("qtn-validity").value || "15 Days";
+                document.getElementById("qtn-disp-warranty-term").textContent = document.getElementById("qtn-warranty-term").value || "3 Years onsite";
+                document.getElementById("qtn-disp-delivery-term").textContent = document.getElementById("qtn-delivery-term").value || "7 Days from PO";
+                document.getElementById("qtn-disp-payment-term").textContent = document.getElementById("qtn-payment-term").value || "50% Advance";
+
+                // Calculations
+                let baseSubtotal = 0;
+                const rows = container.querySelectorAll(".item-row-input");
+                const tbody = document.getElementById("qtn-items-table-body");
+                tbody.innerHTML = ""; // reset table preview
+
+                rows.forEach(row => {
+                    const title = row.querySelector(".item-title").value || "Industrial Component Pack";
+                    const rating = row.querySelector(".item-rating").value || "";
+                    const price = parseFloat(row.querySelector(".item-price").value) || 0;
+                    const qty = parseFloat(row.querySelector(".item-qty").value) || 0;
+                    
+                    const rowTotal = price * qty;
+                    baseSubtotal += rowTotal;
+
+                    // Append row to preview table
+                    const tr = document.createElement("tr");
+                    tr.innerHTML = `
+                        <td>
+                            <strong>${title}</strong><br>
+                            <span style="font-size: 11px; color: #64748b;">Module Spec: ${rating}</span>
+                        </td>
+                        <td style="text-align: right;">₹${price.toLocaleString('en-IN', {minimumFractionDigits: 2})}</td>
+                        <td style="text-align: center;">${qty}</td>
+                        <td style="text-align: right; font-weight: bold;">₹${rowTotal.toLocaleString('en-IN', {minimumFractionDigits: 2})}</td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+
+                // Taxes
+                const gstRatePct = parseFloat(document.getElementById("qtn-gst-rate").value) || 0;
+                const totalGst = (baseSubtotal * gstRatePct) / 100;
+                const grandTotal = baseSubtotal + totalGst;
+
+                // Update display
+                document.getElementById("qtn-calc-base").textContent = `₹${baseSubtotal.toLocaleString('en-IN', {minimumFractionDigits: 2})}`;
+                document.getElementById("qtn-lbl-gst").textContent = `GST Surcharge (${gstRatePct.toFixed(1)}%):`;
+                document.getElementById("qtn-calc-gst").textContent = `₹${totalGst.toLocaleString('en-IN', {minimumFractionDigits: 2})}`;
+                document.getElementById("qtn-calc-grand-total").textContent = `₹${grandTotal.toLocaleString('en-IN', {minimumFractionDigits: 2})}`;
+            }
+
+            // Run initial calculation
+            recalculateQuotation();
+
+            // Download Quotation PDF Action
+            document.getElementById("btn-print-qtn").addEventListener("click", () => {
+                window.print();
+            });
+
+            // Register into CRM Registry Action
+            document.getElementById("btn-register-qtn").addEventListener("click", () => {
+                const buyer = document.getElementById("qtn-buyer").value.trim();
+                const company = document.getElementById("qtn-company").value.trim();
+                const subject = document.getElementById("qtn-subject").value.trim();
+                const grandTotal = document.getElementById("qtn-calc-grand-total").textContent;
+
+                let crmLeads = JSON.parse(localStorage.getItem("aura-whatsapp-leads")) || [];
+                crmLeads.unshift({
+                    name: company,
+                    system: `Formal Quotation Generated: ${subject}`,
+                    capacity: `Grand Total: ${grandTotal}`,
+                    timestamp: "Proposal Generated"
+                });
+
+                localStorage.setItem("aura-whatsapp-leads", JSON.stringify(crmLeads));
+                alert(`Commercial CRM Success! Formal Proposal ${generatedQuoteId} logged into Sales Funnel database!`);
+            });
+
+            // Send to WhatsApp B2B Channel Action
+            document.getElementById("btn-whatsapp-qtn").addEventListener("click", () => {
+                const buyer = document.getElementById("qtn-buyer").value.trim();
+                const company = document.getElementById("qtn-company").value.trim();
+                const subject = document.getElementById("qtn-subject").value.trim();
+                const phone = document.getElementById("qtn-phone").value.trim();
+                const clientGstin = document.getElementById("qtn-gstin").value.toUpperCase() || "Unregistered B2C";
+                const validity = document.getElementById("qtn-validity").value || "15 Days";
+                const warranty = document.getElementById("qtn-warranty-term").value || "3 Years";
+                const delivery = document.getElementById("qtn-delivery-term").value || "7 Days";
+                const payment = document.getElementById("qtn-payment-term").value || "50% Advance";
+                
+                const baseSubtotal = document.getElementById("qtn-calc-base").textContent;
+                const totalGst = document.getElementById("qtn-calc-gst").textContent;
+                const grandTotal = document.getElementById("qtn-calc-grand-total").textContent;
+                const gstRatePct = parseFloat(document.getElementById("qtn-gst-rate").value) || 0;
+
+                const rows = container.querySelectorAll(".item-row-input");
+                let itemsList = "";
+                rows.forEach((row, index) => {
+                    const title = row.querySelector(".item-title").value || "Industrial Component Pack";
+                    const rating = row.querySelector(".item-rating").value || "";
+                    const qty = row.querySelector(".item-qty").value || 1;
+                    itemsList += `   ${index + 1}. *${title}* (${rating}) - Qty: ${qty}\n`;
+                });
+
+                const currentDate = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+
+                const message = `⚡️ *AURA POWER SOLUTIONS PVT. LTD.* ⚡️\n_Corporate B2B Dispatch Office, Patna, Bihar_\n--------------------------------------------------\n\n*OFFICIAL COMMERCIAL QUOTATION PROPOSAL*\n📄 *Quote Reference:* ${generatedQuoteId}\n📅 *Proposal Date:* ${currentDate}\n🤝 *Prepared For:* ${buyer} | ${company}\n\n--------------------------------------------------\n*PROJECT DESIGN SPECIFICATION*:\n📋 *Subject:* ${subject}\n📦 *UPS Systems & Sizing Modules*:\n${itemsList}\n--------------------------------------------------\n*COMMERCIAL VALUATION & TAX SUMMARY*:\n💰 *Gross Taxable Subtotal:* ${baseSubtotal}\n📊 *GST Surcharge (${gstRatePct.toFixed(1)}%):* ${totalGst}\n💎 *Grand Total (All-Inclusive):* ${grandTotal}\n\n--------------------------------------------------\n*B2B COMMERCIAL CONTRACT TERMS*:\n🛡 *Onsite Warranty:* ${warranty}\n🚚 *Dispatch Timeline:* ${delivery}\n💳 *NEFT/RTGS Terms:* ${payment}\n\n⚠️ *Quote Validity:* ${validity}\n📧 *CRM Portal Support:* support@aurapower.com\n--------------------------------------------------\n_This is an audited official B2B digital quotation. Please review and reply with your Purchase Order (PO)._`;
+                
+                let cleanPhone = phone.replace(/[^0-9]/g,"");
+                if (cleanPhone.length === 10) {
+                    cleanPhone = "91" + cleanPhone;
+                }
+                
+                window.open(`https://wa.me/${cleanPhone}?text=${encodeURIComponent(message)}`, "_blank");
+            });
+
+        });
+    </script>
+</body>
+</html>

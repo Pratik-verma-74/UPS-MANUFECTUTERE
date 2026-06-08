@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="normal">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AURA | B2C Catalog Management Desk</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Space+Grotesk:wght@300..700&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Main Style Sheet -->
+    
+    <style>
+        /* Collapsible B2C Creator styling */
+        .creator-collapsible {
+            background: var(--card-bg);
+            border: 1px solid var(--primary);
+            border-radius: 10px;
+            padding: 24px;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow-md);
+            transition: all 0.3s ease;
+        }
+
+        .creator-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 18px;
+            font-weight: 800;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .creator-form-content {
+            margin-top: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            transition: max-height 0.3s ease-out;
+        }
+
+        /* Dynamic image preview slot */
+        .image-preview-slot {
+            width: 100px;
+            height: 100px;
+            border: 1px dashed var(--card-border);
+            border-radius: 8px;
+            background: var(--bg-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .image-preview-slot img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .image-preview-slot i {
+            font-size: 32px;
+            color: var(--text-muted);
+        }
+
+        /* Sleek Segment Selector in Admin Panel */
+        .cms-mode-selector {
+            display: flex;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            padding: 5px;
+            border-radius: 8px;
+            margin-bottom: 24px;
+            max-width: 500px;
+        }
+
+        .cms-mode-btn {
+            flex: 1;
+            padding: 12px 18px;
+            border: none;
+            background: transparent;
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+            font-size: 13px;
+            color: var(--text-muted);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .cms-mode-btn.active {
+            background: var(--primary);
+            color: #ffffff !important;
+            box-shadow: var(--shadow-md);
+        }
+
+        [data-theme="neon"] .cms-mode-btn.active {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            box-shadow: 0 0 15px rgba(0, 229, 255, 0.3);
+        }
+
+        /* 8 Category CMS Grid Forms */
+        .cms-forms-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin-bottom: 50px;
+        }
+
+        @media (max-width: 900px) {
+            .cms-forms-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .category-cms-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: var(--shadow-sm);
+            position: relative;
+            transition: border-color 0.2s ease;
+        }
+
+        .category-cms-card:hover {
+            border-color: rgba(var(--primary-rgb), 0.3);
+        }
+
+        .category-cms-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--card-border);
+            padding-bottom: 12px;
+            margin-bottom: 16px;
+        }
+
+        .category-cms-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 16px;
+            font-weight: 800;
+            color: var(--secondary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .category-cms-title i {
+            color: var(--primary);
+        }
+
+        /* Floating Sync Action Alert Banner */
+        .cms-floating-action {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: var(--card-bg);
+            border: 1px solid var(--primary);
+            padding: 12px 24px;
+            border-radius: 50px;
+            box-shadow: var(--shadow-lg);
+            backdrop-filter: blur(8px);
+        }
+    </style>
+  <link rel="stylesheet" crossorigin href="/assets/style-Bg7YTivN.css">
+</head>
+<body class="admin-body">
+
+    <!-- Auth Guard (Secure URL protection) -->
+    <script>
+        const allowedAdmins = ["pratikverma025@gmail.com", "shivamsri639463@gmail.com"];
+        const adminEmail = localStorage.getItem("aura-admin-email");
+        if (localStorage.getItem("aura-admin-logged-in") !== "true" || !allowedAdmins.includes(adminEmail)) {
+            window.stop();
+            document.documentElement.innerHTML = "";
+            window.location.replace("customer-login.html");
+        }
+    </script>
+
+    <!-- Professional Sleek Header -->
+    <header class="header">
+        <div class="header-left-group" style="display: flex; align-items: center; gap: 16px;">
+            <button id="left-settings-trigger" class="theme-btn" title="Settings & Admin Control" style="margin-right: 4px;">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+            <div class="logo" onclick="window.location.href='index.html'">
+                <i class="fa-solid fa-bolt logo-icon"></i>
+                <span>AURA</span>
+            </div>
+            <span class="badge" style="background: rgba(0, 229, 255, 0.1); color: var(--primary); font-size: 10px; padding: 4px 10px; text-transform: uppercase; font-weight: 700; border: 1px solid rgba(0,229,255,0.2);">Admin Mode</span>
+        </div>
+        <nav class="nav">
+            <a href="index.html" class="nav-link">Systems</a>
+            <a href="calculator.html" class="nav-link">Calculator</a>
+            <a href="customize.html" class="nav-link">Customize</a>
+            <a href="repair.html" class="nav-link">Repair Service</a>
+            <a href="orders.html" class="nav-link">My Orders</a>
+        </nav>
+        <div class="header-actions">
+            <button id="theme-toggle" class="theme-btn" title="Toggle Light/Dark Theme">
+                <i class="fa-solid fa-moon"></i>
+            </button>
+            <button id="secure-logout-btn" class="theme-btn logout-trigger" title="Logout Securely">
+                <i class="fa-solid fa-power-off"></i>
+            </button>
+        </div>
+    </header>
+
+    <div class="container" style="padding-top: 20px;">
+        
+        <!-- Welcome Row & Admin Navigation Tabs -->
+        <div class="admin-welcome-row" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; margin-bottom: 24px;">
+            <div>
+                <h2>B2C Storefront CMS Desk</h2>
+                <p style="font-size: 13px; color: var(--text-muted); margin-top: 4px;">Add new catalog items with base64 pictures, customize details, or delete stale models instantly synced to B2C storefront.</p>
+            </div>
+            <div class="admin-nav-tabs" style="display: flex; gap: 10px; flex-wrap: wrap; width: 100%; align-items: center;">
+                <a href="admin.html" class="btn btn-secondary" style="font-size: 12px; padding: 10px 18px; border-radius: 6px; background: var(--card-bg); border: 1px solid var(--card-border); color: var(--text-color); box-shadow: var(--shadow-sm);">
+                    <i class="fa-solid fa-network-wired"></i> Workspace Control
+                </a>
+                <a href="admin-analytics.html" class="btn btn-secondary" style="font-size: 12px; padding: 10px 18px; border-radius: 6px; background: var(--card-bg); border: 1px solid var(--card-border); color: var(--text-color); box-shadow: var(--shadow-sm);">
+                    <i class="fa-solid fa-chart-line"></i> Smart Analytics
+                </a>
+                <a href="admin-bihar-trends.html" class="btn btn-secondary" style="font-size: 12px; padding: 10px 18px; border-radius: 6px; background: var(--card-bg); border: 1px solid var(--card-border); color: var(--text-color); box-shadow: var(--shadow-sm);">
+                    <i class="fa-solid fa-hospital-user"></i> Bihar Demand
+                </a>
+                <a href="admin-billing.html" class="btn btn-secondary" style="font-size: 12px; padding: 10px 18px; border-radius: 6px; background: var(--card-bg); border: 1px solid var(--card-border); color: var(--text-color); box-shadow: var(--shadow-sm);">
+                    <i class="fa-solid fa-file-invoice-dollar"></i> Billing Generator
+                </a>
+                <a href="admin-quotation.html" class="btn btn-secondary" style="font-size: 12px; padding: 10px 18px; border-radius: 6px; background: var(--card-bg); border: 1px solid var(--card-border); color: var(--text-color); box-shadow: var(--shadow-sm);">
+                    <i class="fa-solid fa-file-signature"></i> Quotation Maker
+                </a>
+                <a href="admin-b2c.html" class="btn btn-primary" style="font-size: 12px; padding: 10px 18px; border-radius: 6px; box-shadow: var(--shadow-md);">
+                    <i class="fa-solid fa-shop"></i> B2C Catalog CMS
+                </a>
+                <a href="index.html" class="btn btn-secondary" style="font-size: 12px; padding: 10px 18px; border-radius: 6px; background: rgba(34,197,94,0.1); border: 1px solid #22c55e; color: #22c55e; box-shadow: var(--shadow-sm); margin-left: auto;">
+                    <i class="fa-solid fa-globe"></i> Customer Storefront
+                </a>
+            </div>
+        </div>
+
+        <!-- Add New Product Interactive Collapsible Panel -->
+        <div class="creator-collapsible">
+            <div class="creator-title" id="toggle-creator-btn">
+                <span><i class="fa-solid fa-plus-circle" style="margin-right: 8px;"></i> Create New Catalog Product</span>
+                <i class="fa-solid fa-chevron-down" id="creator-chevron"></i>
+            </div>
+            
+            <form id="new-product-form" class="creator-form-content" style="display: none;">
+                <div class="grid-2-col">
+                    <div class="form-group">
+                        <label>Select Category Sizing Slot</label>
+                        <select id="new-prod-category" required style="background: var(--bg-color); color: var(--text-color); border: 1px solid var(--card-border); padding: 10px; border-radius: 6px; width: 100%;">
+                            <option value="Home UPS">Home UPS</option>
+                            <option value="Inverter">Inverter</option>
+                            <option value="Gaming UPS">Gaming UPS</option>
+                            <option value="WiFi UPS">WiFi UPS</option>
+                            <option value="Office UPS">Office UPS</option>
+                            <option value="Battery systems">Battery systems</option>
+                            <option value="Solar inverter">Solar inverter</option>
+                            <option value="Smart backup systems">Smart backup systems</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Select Technology Type</label>
+                        <select id="new-prod-tech" required style="background: var(--bg-color); color: var(--text-color); border: 1px solid var(--card-border); padding: 10px; border-radius: 6px; width: 100%;">
+                            <option value="tubular">Traditional tubular deep cycle</option>
+                            <option value="lithium">Next-Gen Lithium smart power</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="grid-2-3-split">
+                    <div class="form-group">
+                        <label>Product Sizing Model Title</label>
+                        <input type="text" id="new-prod-title" placeholder="e.g. AURA HyperVolt 2000VA smart pack" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Catalog Retail Price (₹)</label>
+                        <input type="number" id="new-prod-price" placeholder="e.g. 18500" required>
+                    </div>
+                </div>
+
+                <div class="grid-3-col">
+                    <div class="form-group">
+                        <label>Sizing Badge</label>
+                        <input type="text" id="new-prod-badge" placeholder="e.g. Smart-Choice" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Est. Autonomy</label>
+                        <input type="text" id="new-prod-autonomy" placeholder="e.g. 5 Hours load" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Cell Lifespan</label>
+                        <input type="text" id="new-prod-lifespan" placeholder="e.g. 8 Years Life" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Catalog Summary Description</label>
+                    <textarea id="new-prod-desc" placeholder="Write a gorgeous sales-ready retail catalog description..." required style="background: var(--bg-color); color: var(--text-color); border: 1px solid var(--card-border); padding: 10px; border-radius: 6px; resize: vertical; height: 80px;"></textarea>
+                </div>
+
+                <div style="display: flex; align-items: center; gap: 20px; background: rgba(var(--primary-rgb), 0.02); padding: 14px; border-radius: 6px; border: 1px solid var(--card-border);">
+                    <div class="image-preview-slot" id="new-img-preview" style="width: 80px; height: 80px; border-radius: 6px; border: 1px dashed var(--card-border); display: flex; align-items: center; justify-content: center; overflow: hidden; background: var(--bg-color);">
+                        <i class="fa-solid fa-image" style="font-size: 24px; color: var(--text-muted);"></i>
+                    </div>
+                    <div class="form-group" style="flex: 1; margin-bottom: 0;">
+                        <label>Product Catalog Media</label>
+                        <div style="display: flex; gap: 10px; align-items: center; margin-top: 6px;">
+                            <input type="file" id="new-prod-file" accept="image/*" style="display: none;">
+                            <label for="new-prod-file" class="btn btn-secondary" style="font-size: 11px; padding: 10px 16px; height: auto; cursor: pointer; background: var(--card-bg); border: 1px solid var(--card-border); color: var(--text-color); border-radius: 6px;">
+                                <i class="fa-solid fa-file-image" style="margin-right: 4px;"></i> Browse Local
+                            </label>
+                            <button type="button" id="btn-use-ai-mockup" class="btn btn-secondary" style="font-size: 11px; padding: 10px 16px; height: auto; background: rgba(0, 229, 255, 0.1); border: 1px solid rgba(0, 229, 255, 0.2); color: var(--primary); border-radius: 6px;">
+                                <i class="fa-solid fa-wand-magic-sparkles" style="margin-right: 4px;"></i> Use Premium AI Render
+                            </button>
+                        </div>
+                        <span style="font-size: 10px; color: var(--text-muted); display: block; margin-top: 6px;">Choose a custom file, or click "Use Premium AI Render" to automatically apply our ultra-high fidelity generated mockup.</span>
+                    </div>
+                </div>
+
+                <div style="display: flex; justify-content: flex-end; margin-top: 8px;">
+                    <button type="submit" class="btn btn-primary" style="padding: 12px 24px;">
+                        <i class="fa-solid fa-circle-check"></i> Add Product to Active Catalog
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Mode selector: Tubular vs Lithium -->
+        <div class="cms-mode-selector">
+            <button type="button" class="cms-mode-btn active" id="btn-cms-tubular">
+                <i class="fa-solid fa-bolt"></i> Single Phase CMS
+            </button>
+            <button type="button" class="cms-mode-btn" id="btn-cms-lithium">
+                <i class="fa-solid fa-shield-halved"></i> Three Phase CMS
+            </button>
+        </div>
+
+        <!-- Forms Grid for the 8 Categories -->
+        <div class="cms-forms-grid" id="cms-forms-grid">
+            <!-- Dynamically generated forms render here -->
+        </div>
+
+    </div>
+
+    <!-- Floating Sync Action Bar -->
+    <div class="cms-floating-action">
+        <span style="font-size: 12px; color: var(--text-muted);"><i class="fa-solid fa-wifi" style="color: #22c55e; margin-right: 6px;"></i>Live connection to Retail Portal active</span>
+        <button type="button" id="btn-save-cms" class="btn btn-primary" style="height: 38px; font-size: 11px; padding: 0 16px;">
+            <span>Save & Publish Storefront</span>
+            <i class="fa-solid fa-cloud-arrow-up"></i>
+        </button>
+    </div>
+
+    <!-- Scripts specifically for CMS engine -->
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            // Authentication Guard
+            if (localStorage.getItem("aura-admin-logged-in") !== "true") {
+                window.location.href = "customer-login.html";
+                return;
+            }
+
+            // Theme Sync
+            const htmlElement = document.documentElement;
+            const themeToggle = document.getElementById("theme-toggle");
+            
+            const savedTheme = localStorage.getItem("aura-theme") || "normal";
+            htmlElement.setAttribute("data-theme", savedTheme);
+            updateThemeIcon(savedTheme);
+
+            themeToggle.addEventListener("click", () => {
+                const currentTheme = htmlElement.getAttribute("data-theme");
+                const newTheme = currentTheme === "normal" ? "neon" : "normal";
+                
+                htmlElement.setAttribute("data-theme", newTheme);
+                localStorage.setItem("aura-theme", newTheme);
+                updateThemeIcon(newTheme);
+            });
+
+            function updateThemeIcon(theme) {
+                const icon = themeToggle.querySelector("i");
+                if (theme === "neon") {
+                    icon.className = "fa-solid fa-sun";
+                } else {
+                    icon.className = "fa-solid fa-moon";
+                }
+            }
+
+            // Secure Logout
+            document.getElementById("secure-logout-btn").addEventListener("click", () => {
+                if (confirm("Are you sure you want to log out from Secure Control Panel?")) {
+                    localStorage.removeItem("aura-admin-logged-in");
+                    window.location.href = "customer-login.html";
+                }
+            });
+
+            // Default categories mapping
+            const categories = [
+                { key: "home", name: "Home UPS", icon: "fa-solid fa-house-chimney-window" },
+                { key: "inverter", name: "Inverter", icon: "fa-solid fa-arrows-spin" },
+                { key: "gaming", name: "Gaming UPS", icon: "fa-solid fa-gamepad" },
+                { key: "wifi", name: "WiFi UPS", icon: "fa-solid fa-wifi" },
+                { key: "office", name: "Office UPS", icon: "fa-solid fa-briefcase" },
+                { key: "battery", name: "Battery systems", icon: "fa-solid fa-car-battery" },
+                { key: "solar", name: "Solar inverter", icon: "fa-solid fa-solar-panel" },
+                { key: "smart", name: "Smart backup systems", icon: "fa-solid fa-tower-broadcast" }
+            ];
+
+            // Primary database templates (Tubular vs Lithium)
+            const defaultDb = {
+                tubular: [
+                    { category: "Control Transformers", title: "ROBOART Control Auto Transformer 500VA", desc: "High efficiency control transformer tailored for automation panels and CNC machines.", badge: "Automation Core", icon: "fa-solid fa-bolt", autonomy: "500VA Rating", efficiency: "High Efficiency Copper", lifespan: "10+ Years", price: 5499, image: "images/ups_online.png" },
+                    { category: "Control Transformers", title: "ROBOART Control Auto Transformer 5KVA", desc: "Heavy duty control transformer for large scale industrial robotics and panel drives.", badge: "Heavy Duty Automation", icon: "fa-solid fa-robot", autonomy: "5KVA Rating", efficiency: "Low Temp Rise", lifespan: "10+ Years", price: 25999, image: "images/ups_online.png" },
+                    { category: "Step Down Transformers", title: "ROBOART Step Down 1KVA Single Phase", desc: "Compact voltage step-down transformer for imported machinery compatibility.", badge: "Voltage Reduction", icon: "fa-solid fa-arrow-down-up-across-line", autonomy: "1KVA Rating", efficiency: "90% Efficiency", lifespan: "15 Years", price: 10800, image: "images/power_cabinet.png" },
+                    { category: "Step Down Transformers", title: "ROBOART Step Down 50KVA Industrial", desc: "Massive scale step down transformer optimized for full factory line power conversion.", badge: "Industrial Step Down", icon: "fa-solid fa-industry", autonomy: "50KVA Rating", efficiency: "Aluminum Winding Option", lifespan: "15 Years", price: 115000, image: "images/power_cabinet.png" }
+                ],
+                lithium: [
+                    { category: "Isolation Transformers", title: "ROBOART Medical Grade Isolation 3KVA", desc: "Absolute electrical isolation tailored for hospital equipment and sensitive medical devices.", badge: "Medical Safety", icon: "fa-solid fa-heart-pulse", autonomy: "3KVA Pure Isolation", efficiency: "Zero Electrical Noise", lifespan: "20 Years", price: 32999, image: "images/ups_modular.png" },
+                    { category: "Isolation Transformers", title: "ROBOART Industrial Isolation 20KVA", desc: "Eliminates neutral interference and ground loops in heavy machinery networks.", badge: "CNC Safeguard", icon: "fa-solid fa-shield-halved", autonomy: "20KVA Rating", efficiency: "High Load Safety", lifespan: "20 Years", price: 84500, image: "images/ups_modular.png" },
+                    { category: "Three Phase Transformers", title: "ROBOART Three Phase Dry Type 100KVA", desc: "Robust three phase distribution transformer for commercial buildings and factories.", badge: "Power Distribution", icon: "fa-solid fa-tower-broadcast", autonomy: "100KVA Rating", efficiency: "Low Loss Core", lifespan: "25 Years", price: 219000, image: "images/power_cabinet.png" },
+                    { category: "Three Phase Transformers", title: "ROBOART Custom High Capacity 500KVA", desc: "Fully custom built three phase power plant designed to exact site specifications.", badge: "Custom Engineering", icon: "fa-solid fa-plug-circle-check", autonomy: "500KVA Rating", efficiency: "Precision Windings", lifespan: "25+ Years", price: 850000, image: "images/power_cabinet.png" }
+                ]
+            };
+
+            // Initialize B2C Database from LocalStorage with cache checking overrides
+            let currentDb = JSON.parse(localStorage.getItem("aura-b2c-products"));
+            if (!currentDb || !currentDb.tubular[0] || currentDb.tubular[0].title.includes("AURA")) {
+                currentDb = defaultDb;
+                localStorage.setItem("aura-b2c-products", JSON.stringify(defaultDb));
+            }
+
+            let activeTabKey = "tubular"; // Tubular default editor
+
+            const btnTubular = document.getElementById("btn-cms-tubular");
+            const btnLithium = document.getElementById("btn-cms-lithium");
+            const formsContainer = document.getElementById("cms-forms-grid");
+
+            // Collapsible panel toggle
+            const toggleCreatorBtn = document.getElementById("toggle-creator-btn");
+            const newProductForm = document.getElementById("new-product-form");
+            const creatorChevron = document.getElementById("creator-chevron");
+
+            toggleCreatorBtn.addEventListener("click", () => {
+                if (newProductForm.style.display === "none") {
+                    newProductForm.style.display = "flex";
+                    creatorChevron.className = "fa-solid fa-chevron-up";
+                } else {
+                    newProductForm.style.display = "none";
+                    creatorChevron.className = "fa-solid fa-chevron-down";
+                }
+            });
+
+            // Base64 converter for Add New Product Image
+            let newProductBase64 = "";
+            const newProdFile = document.getElementById("new-prod-file");
+            const newImgPreview = document.getElementById("new-img-preview");
+            const btnUseAiMockup = document.getElementById("btn-use-ai-mockup");
+
+            btnUseAiMockup.addEventListener("click", () => {
+                newProductBase64 = "images/ai_product.jpg";
+                newImgPreview.innerHTML = `<img src="images/ai_product.jpg" style="width: 100%; height: 100%; object-fit: cover;">`;
+            });
+
+            newProdFile.addEventListener("change", (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(evt) {
+                        newProductBase64 = evt.target.result;
+                        newImgPreview.innerHTML = `<img src="${newProductBase64}" style="width: 100%; height: 100%; object-fit: cover;">`;
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+
+            // Form Submit for Adding New Product
+            newProductForm.addEventListener("submit", (e) => {
+                e.preventDefault();
+
+                const category = document.getElementById("new-prod-category").value;
+                const techKey = document.getElementById("new-prod-tech").value;
+                const title = document.getElementById("new-prod-title").value.trim();
+                const price = parseFloat(document.getElementById("new-prod-price").value) || 0;
+                const badge = document.getElementById("new-prod-badge").value.trim();
+                const autonomy = document.getElementById("new-prod-autonomy").value.trim();
+                const lifespan = document.getElementById("new-prod-lifespan").value.trim();
+                const desc = document.getElementById("new-prod-desc").value.trim();
+
+                const matchedCat = categories.find(c => c.name === category) || { icon: "fa-solid fa-box" };
+
+                const newObj = {
+                    category,
+                    title,
+                    desc,
+                    badge,
+                    icon: matchedCat.icon,
+                    autonomy,
+                    efficiency: "95% Smart Optimized",
+                    lifespan,
+                    price,
+                    image: newProductBase64
+                };
+
+                // Add to active database
+                currentDb[techKey].push(newObj);
+                localStorage.setItem("aura-b2c-products", JSON.stringify(currentDb));
+
+                alert(`Product Added! New model "${title}" successfully inserted into B2C ${techKey.toUpperCase()} active storefront.`);
+
+                // Reset Form
+                newProductForm.reset();
+                newProductBase64 = "";
+                newImgPreview.innerHTML = `<i class="fa-solid fa-image" style="font-size: 24px; color: var(--text-muted);"></i>`;
+                newProductForm.style.display = "none";
+                creatorChevron.className = "fa-solid fa-chevron-down";
+
+                // Trigger UI reload
+                renderCmsForms();
+            });
+
+            // Segment change listeners
+            btnTubular.addEventListener("click", () => {
+                btnTubular.classList.add("active");
+                btnLithium.classList.remove("active");
+                activeTabKey = "tubular";
+                renderCmsForms();
+            });
+
+            btnLithium.addEventListener("click", () => {
+                btnLithium.classList.add("active");
+                btnTubular.classList.remove("active");
+                activeTabKey = "lithium";
+                renderCmsForms();
+            });
+
+            // Delete product handler
+            window.deleteProduct = (idx) => {
+                if (confirm(`Are you absolutely sure you want to delete this sizing model from the live B2C storefront?`)) {
+                    currentDb[activeTabKey].splice(idx, 1);
+                    localStorage.setItem("aura-b2c-products", JSON.stringify(currentDb));
+                    renderCmsForms();
+                }
+            };
+
+            // Dynamic Image replacement on existing card
+            window.handleCmsImageChange = (fileInput, idx) => {
+                const file = fileInput.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(evt) {
+                        currentDb[activeTabKey][idx].image = evt.target.result;
+                        // update visual preview immediately
+                        const imgBox = fileInput.closest(".category-cms-card").querySelector(".cms-img-preview-box");
+                        imgBox.innerHTML = `<img src="${evt.target.result}" style="width: 100%; height: 100%; object-fit: contain;">`;
+                    };
+                    reader.readAsDataURL(file);
+                }
+            };
+
+            // Render CMS forms grid
+            function renderCmsForms() {
+                formsContainer.innerHTML = "";
+                const products = currentDb[activeTabKey];
+
+                if (products.length === 0) {
+                    formsContainer.innerHTML = `
+                        <div style="grid-column: span 2; text-align: center; padding: 40px; background: var(--card-bg); border: 1px dashed var(--card-border); border-radius: 8px;">
+                            <i class="fa-solid fa-box-open" style="font-size: 48px; color: var(--text-muted); margin-bottom: 12px;"></i>
+                            <h4 style="font-weight: 700;">No Products in Active Category</h4>
+                            <p style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Click 'Create New Catalog Product' above to expand the model builder and publish your first item.</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                products.forEach((prod, index) => {
+                    const matchedCat = categories.find(c => c.name === prod.category) || { key: "generic", icon: "fa-solid fa-box" };
+                    const card = document.createElement("div");
+                    card.className = "category-cms-card";
+                    card.innerHTML = `
+                        <div class="category-cms-header">
+                            <span class="category-cms-title">
+                                <i class="${matchedCat.icon}"></i>
+                                ${prod.category} CMS Desk
+                            </span>
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <span class="badge" style="font-size: 9px; background: rgba(var(--secondary-rgb), 0.1); color: var(--secondary);">${activeTabKey.toUpperCase()}</span>
+                                <button type="button" class="btn" onclick="deleteProduct(${index})" style="background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.2); color: #ef4444; font-size: 11px; padding: 4px 10px; border-radius: 4px; display: inline-flex; align-items: center; gap: 4px; cursor: pointer;">
+                                    <i class="fa-solid fa-trash-can"></i> Delete
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div style="display: flex; flex-direction: column; gap: 12px;">
+                            
+                            <!-- Picture update block -->
+                            <div style="display: flex; align-items: center; gap: 14px; background: var(--bg-color); padding: 10px; border-radius: 6px; border: 1px solid var(--card-border);">
+                                <div class="cms-img-preview-box" style="width: 50px; height: 50px; border: 1px solid var(--card-border); border-radius: 4px; display: flex; align-items: center; justify-content: center; overflow: hidden; background: var(--card-bg);">
+                                    ${prod.image ? `<img src="${prod.image}" style="width:100%; height:100%; object-fit:contain;">` : `<i class="${prod.icon}" style="font-size: 20px; color: var(--primary);"></i>`}
+                                </div>
+                                <div style="flex: 1;">
+                                    <label style="font-size: 10px; display: block; margin-bottom: 2px;">Change Picture</label>
+                                    <input type="file" class="cms-input-file" accept="image/*" onchange="handleCmsImageChange(this, ${index})" style="font-size: 10px; border: none; padding: 0; background: transparent;">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label style="font-size: 11px;">Product Sizing Model Title</label>
+                                <input type="text" class="cms-input-title" data-idx="${index}" value="${prod.title}">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label style="font-size: 11px;">Retail Catalog Summary Description</label>
+                                <textarea class="cms-input-desc" data-idx="${index}" style="background: var(--bg-color); color: var(--text-color); border: 1px solid var(--card-border); padding: 8px; border-radius: 4px; font-size: 12px; resize: vertical; height: 60px;">${prod.desc}</textarea>
+                            </div>
+
+                            <div class="grid-2-col" style="gap: 10px;">
+                                <div class="form-group">
+                                    <label style="font-size: 11px;">Sizing Badge</label>
+                                    <input type="text" class="cms-input-badge" data-idx="${index}" value="${prod.badge}">
+                                </div>
+                                <div class="form-group">
+                                    <label style="font-size: 11px;">Catalog Price (₹)</label>
+                                    <input type="number" class="cms-input-price" data-idx="${index}" value="${prod.price}">
+                                </div>
+                            </div>
+
+                            <div class="grid-2-col" style="gap: 10px;">
+                                <div class="form-group">
+                                    <label style="font-size: 11px;">Est. Autonomy</label>
+                                    <input type="text" class="cms-input-autonomy" data-idx="${index}" value="${prod.autonomy}">
+                                </div>
+                                <div class="form-group">
+                                    <label style="font-size: 11px;">Lifespan Capacity</label>
+                                    <input type="text" class="cms-input-lifespan" data-idx="${index}" value="${prod.lifespan}">
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    formsContainer.appendChild(card);
+                });
+            }
+
+            // Save and Sync back to localStorage & storefront
+            document.getElementById("btn-save-cms").addEventListener("click", () => {
+                const titleInputs = formsContainer.querySelectorAll(".cms-input-title");
+                const descInputs = formsContainer.querySelectorAll(".cms-input-desc");
+                const badgeInputs = formsContainer.querySelectorAll(".cms-input-badge");
+                const priceInputs = formsContainer.querySelectorAll(".cms-input-price");
+                const autonomyInputs = formsContainer.querySelectorAll(".cms-input-autonomy");
+                const lifespanInputs = formsContainer.querySelectorAll(".cms-input-lifespan");
+
+                titleInputs.forEach(input => {
+                    const idx = parseInt(input.getAttribute("data-idx"));
+                    if(currentDb[activeTabKey][idx]) {
+                        currentDb[activeTabKey][idx].title = input.value.trim();
+                    }
+                });
+
+                descInputs.forEach(input => {
+                    const idx = parseInt(input.getAttribute("data-idx"));
+                    if(currentDb[activeTabKey][idx]) {
+                        currentDb[activeTabKey][idx].desc = input.value.trim();
+                    }
+                });
+
+                badgeInputs.forEach(input => {
+                    const idx = parseInt(input.getAttribute("data-idx"));
+                    if(currentDb[activeTabKey][idx]) {
+                        currentDb[activeTabKey][idx].badge = input.value.trim();
+                    }
+                });
+
+                priceInputs.forEach(input => {
+                    const idx = parseInt(input.getAttribute("data-idx"));
+                    if(currentDb[activeTabKey][idx]) {
+                        currentDb[activeTabKey][idx].price = parseFloat(input.value) || 0;
+                    }
+                });
+
+                autonomyInputs.forEach(input => {
+                    const idx = parseInt(input.getAttribute("data-idx"));
+                    if(currentDb[activeTabKey][idx]) {
+                        currentDb[activeTabKey][idx].autonomy = input.value.trim();
+                    }
+                });
+
+                lifespanInputs.forEach(input => {
+                    const idx = parseInt(input.getAttribute("data-idx"));
+                    if(currentDb[activeTabKey][idx]) {
+                        currentDb[activeTabKey][idx].lifespan = input.value.trim();
+                    }
+                });
+
+                // Update localStorage
+                localStorage.setItem("aura-b2c-products", JSON.stringify(currentDb));
+                alert(`Storefront Synced! B2C Catalog changes for ${activeTabKey.toUpperCase()} successfully saved to the active consumer shop.`);
+            });
+
+            // ==========================================
+            // SLIDING SETTINGS SIDEBAR EVENT HANDLERS
+            // ==========================================
+            const leftTrigger = document.getElementById("left-settings-trigger");
+            const settingsSidebar = document.getElementById("settings-sidebar");
+            const sidebarCloseBtn = document.getElementById("sidebar-close-btn");
+            const sidebarOverlay = document.getElementById("sidebar-overlay");
+            const sidebarAdminBtn = document.getElementById("sidebar-admin-btn");
+
+            if (leftTrigger && settingsSidebar && sidebarCloseBtn && sidebarOverlay) {
+                leftTrigger.addEventListener("click", () => {
+                    settingsSidebar.classList.add("open");
+                    sidebarOverlay.classList.add("open");
+                });
+
+                const closeSidebar = () => {
+                    settingsSidebar.classList.remove("open");
+                    sidebarOverlay.classList.remove("open");
+                };
+
+                sidebarCloseBtn.addEventListener("click", closeSidebar);
+                sidebarOverlay.addEventListener("click", closeSidebar);
+
+                const normalThemeSelect = document.getElementById("theme-normal-select");
+                const neonThemeSelect = document.getElementById("theme-neon-select");
+
+                if (normalThemeSelect && neonThemeSelect) {
+                    const currentTheme = document.documentElement.getAttribute("data-theme") || "normal";
+                    if (currentTheme === "neon") {
+                        normalThemeSelect.classList.remove("active");
+                        neonThemeSelect.classList.add("active");
+                    } else {
+                        normalThemeSelect.classList.add("active");
+                        neonThemeSelect.classList.remove("active");
+                    }
+
+                    normalThemeSelect.addEventListener("click", () => {
+                        document.documentElement.setAttribute("data-theme", "normal");
+                        localStorage.setItem("aura-theme", "normal");
+                        normalThemeSelect.classList.add("active");
+                        neonThemeSelect.classList.remove("active");
+                        const mainToggle = document.getElementById("theme-toggle");
+                        if (mainToggle) {
+                            const icon = mainToggle.querySelector("i");
+                            if (icon) icon.className = "fa-solid fa-moon";
+                        }
+                    });
+
+                    neonThemeSelect.addEventListener("click", () => {
+                        document.documentElement.setAttribute("data-theme", "neon");
+                        localStorage.setItem("aura-theme", "neon");
+                        neonThemeSelect.classList.add("active");
+                        normalThemeSelect.classList.remove("active");
+                        const mainToggle = document.getElementById("theme-toggle");
+                        if (mainToggle) {
+                            const icon = mainToggle.querySelector("i");
+                            if (icon) icon.className = "fa-solid fa-sun";
+                        }
+                    });
+                }
+
+                if (sidebarAdminBtn) {
+                    sidebarAdminBtn.addEventListener("click", () => {
+                        closeSidebar();
+                        window.location.href = "admin.html";
+                    });
+                }
+            }
+
+            // Initial render
+            renderCmsForms();
+        });
+    </script>
+
+    <!-- Sliding Settings Sidebar HTML -->
+    <div id="settings-sidebar" class="sidebar-panel">
+        <div class="sidebar-header">
+            <h3><i class="fa-solid fa-gears"></i> Settings Panel</h3>
+            <button id="sidebar-close-btn" class="close-btn">&times;</button>
+        </div>
+        <div class="sidebar-body">
+            <!-- Theme Preference -->
+            <div class="settings-group">
+                <label><i class="fa-solid fa-circle-half-stroke"></i> Select Theme</label>
+                <div class="theme-select-grid">
+                    <button id="theme-normal-select" class="theme-select-btn active">Light Mode</button>
+                    <button id="theme-neon-select" class="theme-select-btn">Dark Mode</button>
+                </div>
+            </div>
+
+            <!-- Admin Access Gate -->
+            <div class="settings-group admin-gate-group">
+                <label><i class="fa-solid fa-user-shield"></i> Administration</label>
+                <p class="settings-desc">Access factory scaling multipliers, WhatsApp leads trackers, and catalog upload desks.</p>
+                <button id="sidebar-admin-btn" class="btn btn-secondary w-full">
+                    <span>Admin Workspace Active</span>
+                    <i class="fa-solid fa-check-circle"></i>
+                </button>
+            </div>
+            
+            <!-- Quick Portal links -->
+            <div class="settings-group">
+                <label><i class="fa-solid fa-link"></i> Quick Navigation</label>
+                <ul class="settings-nav-links">
+                    <li><a href="index.html"><i class="fa-solid fa-house"></i> Home Systems</a></li>
+                    <li><a href="calculator.html"><i class="fa-solid fa-calculator"></i> Capacity Sizer</a></li>
+                    <li><a href="customize.html"><i class="fa-solid fa-sliders"></i> Custom Plant Designer</a></li>
+                    <li><a href="repair.html"><i class="fa-solid fa-wrench"></i> Repair Dispatch</a></li>
+                    <li><a href="orders.html"><i class="fa-solid fa-cart-flatbed"></i> My Orders Registry</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div id="sidebar-overlay" class="sidebar-overlay"></div>
+</body>
+</html>

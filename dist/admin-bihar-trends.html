@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="normal">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AURA | Bihar Healthcare Demand Trend Center</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Space+Grotesk:wght@300..700&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Main Style Sheet -->
+    <!-- Custom Page Styles -->
+    <style>
+        .bihar-grid {
+            display: grid;
+            grid-template-columns: 1.6fr 1fr;
+            gap: 24px;
+            margin-bottom: 60px;
+        }
+        .division-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 8px;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.25s ease;
+        }
+        .division-card:hover {
+            border-color: var(--secondary);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+        .division-info {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        .division-avatar {
+            width: 44px;
+            height: 44px;
+            border-radius: 8px;
+            background: rgba(251,100,27,0.06);
+            color: var(--secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        .division-title h4 {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text-color);
+        }
+        .division-title p {
+            font-size: 11.5px;
+            color: var(--text-muted);
+            margin-top: 3px;
+        }
+        .division-stats {
+            text-align: right;
+        }
+        .division-load {
+            font-size: 16px;
+            font-weight: bold;
+            color: var(--primary);
+            font-family: 'Space Grotesk', sans-serif;
+        }
+        .division-trend {
+            font-size: 11px;
+            font-weight: bold;
+            color: var(--accent);
+            margin-top: 3px;
+        }
+        .allocation-action-box {
+            background: var(--bg-color);
+            border: 1px solid var(--card-border);
+            border-radius: 6px;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 15px;
+        }
+        .allocation-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 12px;
+            padding-bottom: 8px;
+            border-bottom: 1px dashed var(--card-border);
+        }
+        .allocation-row:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+        .alloc-btn {
+            font-size: 11px;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .action-log-panel {
+            background: #0b142c;
+            color: #10b981;
+            font-family: monospace;
+            padding: 12px;
+            border-radius: 6px;
+            font-size: 11px;
+            height: 100px;
+            overflow-y: auto;
+            margin-top: 15px;
+            border: 1px solid rgba(16,185,129,0.25);
+        }
+        .bi-banner-details {
+            background: linear-gradient(135deg, rgba(251,100,27,0.08) 0%, rgba(40,116,240,0.08) 100%);
+            border: 1px solid var(--secondary);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 28px;
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+        .bi-banner-icon {
+            font-size: 40px;
+            color: var(--secondary);
+            animation: pulse-ring 2s infinite alternate;
+        }
+        @keyframes pulse-ring {
+            0% { transform: scale(0.95); opacity: 0.8; }
+            100% { transform: scale(1.05); opacity: 1.2; }
+        }
+        @media (max-width: 992px) {
+            .bihar-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+  <link rel="stylesheet" crossorigin href="/assets/style-Bg7YTivN.css">
+</head>
+<body class="admin-dashboard-body">
+
+    <!-- Auth Guard (Secure URL protection) -->
+    <script>
+        const allowedAdmins = ["pratikverma025@gmail.com", "shivamsri639463@gmail.com"];
+        const adminEmail = localStorage.getItem("aura-admin-email");
+        if (localStorage.getItem("aura-admin-logged-in") !== "true" || !allowedAdmins.includes(adminEmail)) {
+            window.stop();
+            document.documentElement.innerHTML = "";
+            window.location.replace("customer-login.html");
+        }
+    </script>
+
+    <!-- Professional Sleek Header -->
+    <header class="header">
+        <div class="logo" onclick="window.location.href='index.html'">
+            <i class="fa-solid fa-bolt logo-icon"></i>
+            <span>AURA</span>
+        </div>
+        <nav class="nav">
+            <a href="index.html" class="nav-link">Systems</a>
+            <a href="calculator.html" class="nav-link">Calculator</a>
+            <a href="customize.html" class="nav-link">Customize</a>
+            <a href="repair.html" class="nav-link">Repair Service</a>
+            <a href="orders.html" class="nav-link">My Orders</a>
+        </nav>
+        <div class="header-actions">
+            <button id="theme-toggle" class="theme-btn" title="Toggle Light/Dark Theme">
+                <i class="fa-solid fa-moon"></i>
+            </button>
+            <button id="secure-logout-btn" class="theme-btn logout-trigger" title="Logout Securely">
+                <i class="fa-solid fa-power-off"></i>
+            </button>
+        </div>
+    </header>
+
+    <div class="container" style="padding-top: 20px;">
+        
+        <!-- Welcome Row & Admin Navigation Tabs -->
+        <div class="admin-welcome-row" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; margin-bottom: 24px;">
+            <div>
+                <h2 style="display: flex; align-items: center; gap: 8px;">
+                    <i class="fa-solid fa-hospital-user" style="color: var(--secondary);"></i>
+                    Bihar Healthcare Demand Trend Center
+                </h2>
+                <p style="font-size: 13px; color: var(--text-muted); margin-top: 4px;">Analytical telemetry and supply chain routing mapping surgical and ICU B2B procurement spikes across Bihar.</p>
+            </div>
+            <div class="admin-nav-tabs" style="display: flex; gap: 10px; flex-wrap: wrap; width: 100%; align-items: center;">
+                <a href="admin.html" class="btn btn-secondary" style="font-size: 12px; padding: 10px 18px; border-radius: 6px; background: var(--card-bg); border: 1px solid var(--card-border); color: var(--text-color); box-shadow: var(--shadow-sm);">
+                    <i class="fa-solid fa-network-wired"></i> Workspace Control
+                </a>
+                <a href="admin-analytics.html" class="btn btn-secondary" style="font-size: 12px; padding: 10px 18px; border-radius: 6px; background: var(--card-bg); border: 1px solid var(--card-border); color: var(--text-color); box-shadow: var(--shadow-sm);">
+                    <i class="fa-solid fa-chart-line"></i> Smart Analytics
+                </a>
+                <a href="admin-bihar-trends.html" class="btn btn-primary" style="font-size: 12px; padding: 10px 18px; border-radius: 6px; box-shadow: var(--shadow-md);">
+                    <i class="fa-solid fa-hospital-user"></i> Bihar Demand
+                </a>
+                <a href="admin-billing.html" class="btn btn-secondary" style="font-size: 12px; padding: 10px 18px; border-radius: 6px; background: var(--card-bg); border: 1px solid var(--card-border); color: var(--text-color); box-shadow: var(--shadow-sm);">
+                    <i class="fa-solid fa-file-invoice-dollar"></i> Billing Generator
+                </a>
+                <a href="admin-quotation.html" class="btn btn-secondary" style="font-size: 12px; padding: 10px 18px; border-radius: 6px; background: var(--card-bg); border: 1px solid var(--card-border); color: var(--text-color); box-shadow: var(--shadow-sm);">
+                    <i class="fa-solid fa-file-signature"></i> Quotation Maker
+                </a>
+                <a href="admin-b2c.html" class="btn btn-secondary" style="font-size: 12px; padding: 10px 18px; border-radius: 6px; background: var(--card-bg); border: 1px solid var(--card-border); color: var(--text-color); box-shadow: var(--shadow-sm);">
+                    <i class="fa-solid fa-shop"></i> B2C Catalog CMS
+                </a>
+                <a href="index.html" class="btn btn-secondary" style="font-size: 12px; padding: 10px 18px; border-radius: 6px; background: rgba(34,197,94,0.1); border: 1px solid #22c55e; color: #22c55e; box-shadow: var(--shadow-sm); margin-left: auto;">
+                    <i class="fa-solid fa-globe"></i> Customer Storefront
+                </a>
+            </div>
+        </div>
+
+        <!-- Trend Feature Banner -->
+        <div class="bi-banner-details">
+            <div class="bi-banner-icon">
+                <i class="fa-solid fa-chart-line"></i>
+            </div>
+            <div>
+                <h3 style="font-size:16px; color:var(--text-color);">🔥 Sourced Insight: statewide PHC Grid Modernizations</h3>
+                <p style="font-size:13px; color:var(--text-muted); margin-top: 6px; line-height: 1.5;">
+                    The Government of Bihar has launched comprehensive healthcare electricity upgrades targeting <strong>524 Primary Health Centres (PHCs)</strong> and divisional state hospitals. The core engineering mandate specifies double-conversion online systems (20kVA to 80kVA) featuring 1.8x medical safety multipliers to protect surgical theatres, life-support ICU beds, and vaccine cold chains.
+                </p>
+            </div>
+        </div>
+
+        <!-- Bihar Grid Workspace -->
+        <div class="bihar-grid">
+            
+            <!-- Left Side: Divisional Demand Breakdowns -->
+            <div style="display: flex; flex-direction: column; gap: 20px;">
+                
+                <div class="admin-card-section">
+                    <div class="card-section-header">
+                        <h3>Divisional Hospital Demand Breakdowns</h3>
+                        <p>Track load capacity queries, WhatsApp leads, and conversion telemetry by regional Bihar healthcare divisions.</p>
+                    </div>
+
+                    <div style="display: flex; flex-direction: column; gap: 12px; margin-top: 15px;">
+                        
+                        <!-- Patna Division -->
+                        <div class="division-card">
+                            <div class="division-info">
+                                <div class="division-avatar" style="background: rgba(40,116,240,0.06); color: var(--primary);">PN</div>
+                                <div class="division-title">
+                                    <h4>Patna Division (PMCH / IGIMS / PMR)</h4>
+                                    <p>12 ICU wings, 24 emergency double conversion sizing briefs logged.</p>
+                                </div>
+                            </div>
+                            <div class="division-stats">
+                                <div class="division-load">120 kVA Sizer</div>
+                                <div class="division-trend"><i class="fa-solid fa-arrow-trend-up"></i> +42% Demand Spike</div>
+                            </div>
+                        </div>
+
+                        <!-- Muzaffarpur Division -->
+                        <div class="division-card">
+                            <div class="division-info">
+                                <div class="division-avatar">MZ</div>
+                                <div class="division-title">
+                                    <h4>Muzaffarpur Division (SKMCH & local PHCs)</h4>
+                                    <p>8 local surgeries centers, bypass switch specifications needed.</p>
+                                </div>
+                            </div>
+                            <div class="division-stats">
+                                <div class="division-load">60 kVA Sizer</div>
+                                <div class="division-trend"><i class="fa-solid fa-arrow-trend-up"></i> +28% Sizing Leads</div>
+                            </div>
+                        </div>
+
+                        <!-- Gaya Division -->
+                        <div class="division-card">
+                            <div class="division-info">
+                                <div class="division-avatar" style="background: rgba(16,185,129,0.06); color: #10b981;">GY</div>
+                                <div class="division-title">
+                                    <h4>Gaya Division (ANMMCH & divisional grid)</h4>
+                                    <p>5 surgical theaters, active lithium bank battery specifications.</p>
+                                </div>
+                            </div>
+                            <div class="division-stats">
+                                <div class="division-load">40 kVA Sizer</div>
+                                <div class="division-trend"><i class="fa-solid fa-arrow-trend-up"></i> +15% Queries</div>
+                            </div>
+                        </div>
+
+                        <!-- Bhagalpur Division -->
+                        <div class="division-card">
+                            <div class="division-info">
+                                <div class="division-avatar" style="background: rgba(168,85,247,0.06); color: #a855f7;">BP</div>
+                                <div class="division-title">
+                                    <h4>Bhagalpur Division (JLNMCH state tenders)</h4>
+                                    <p>Isolation transformers and input voltage sync requirements.</p>
+                                </div>
+                            </div>
+                            <div class="division-stats">
+                                <div class="division-load">30 kVA Sizer</div>
+                                <div class="division-trend" style="color:var(--primary);"><i class="fa-solid fa-minus"></i> Stable / Target</div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- supply and routing options -->
+                <div class="admin-card-section" style="border-color: rgba(16,185,129,0.25);">
+                    <div class="card-section-header">
+                        <h3 style="color:#10b981;"><i class="fa-solid fa-truck-ramp-box" style="margin-right: 6px;"></i>Active Inventory Routing Console</h3>
+                        <p>Direct supply line allocation and dispatch commands to redirect assembly queue standard units into Bihar depots.</p>
+                    </div>
+
+                    <div class="allocation-action-box">
+                        <div class="allocation-row">
+                            <div>
+                                <strong style="color:var(--text-color);">Patna Health Depot Sizing Override:</strong>
+                                <p style="font-size:11px; color:var(--text-muted); margin-top:2px;">Redirect 5x Double Conversion standard units currently in assembly.</p>
+                            </div>
+                            <button class="btn btn-primary alloc-btn" id="btn-route-patna" style="background: var(--primary); color:white; border:none;">Allocate Now</button>
+                        </div>
+
+                        <div class="allocation-row">
+                            <div>
+                                <strong style="color:var(--text-color);">Lithium Smart Banks Reserve:</strong>
+                                <p style="font-size:11px; color:var(--text-muted); margin-top:2px;">Lock 10x high-capacity LiFePO4 packs for emergency ICU surgical bids.</p>
+                            </div>
+                            <button class="btn btn-secondary alloc-btn" id="btn-route-battery" style="background: var(--secondary); color:white; border:none;">Lock Battery Stock</button>
+                        </div>
+
+                        <div class="allocation-row">
+                            <div>
+                                <strong style="color:var(--text-color);">1.8x Medical Multiplier Safety lock:</strong>
+                                <p style="font-size:11px; color:var(--text-muted); margin-top:2px;">Lock medical calculator coefficient safety overrides statewide in Bihar.</p>
+                            </div>
+                            <button class="btn btn-primary alloc-btn" id="btn-route-multiplier" style="background: #10b981; color:white; border:none;">Lock Safety Ratio</button>
+                        </div>
+                    </div>
+
+                    <div class="action-log-panel" id="console-log-box">
+                        [SYSTEM LOG ACTIVE] awaiting administrator inventory routing parameters...
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Right Side: Business Playbook & AI Sizer Action Items -->
+            <div style="display: flex; flex-direction: column; gap: 20px;">
+                
+                <div class="admin-card-section">
+                    <div class="card-section-header">
+                        <h3><i class="fa-solid fa-shield-halved" style="color: var(--primary); margin-right: 6px;"></i>Aura Hospital Sizing Spec Sheet</h3>
+                        <p>Core system layout guidelines for PMCH hospital-grade bids.</p>
+                    </div>
+
+                    <div style="margin-top: 15px; font-size:12px; display:flex; flex-direction:column; gap:14px; line-height: 1.5;">
+                        <div style="background:var(--bg-color); border:1px solid var(--card-border); padding:12px; border-radius:6px;">
+                            <strong style="color:var(--primary);">ICU & Surgical Double-Conversion Sizer:</strong>
+                            <p style="color:var(--text-muted); font-size:11px; margin-top:4px;">Double conversion online topology is mandatory. Sizer must isolate grid noise, neutral currents, and guarantee 0ms bypass transfer SLA.</p>
+                        </div>
+                        <div style="background:var(--bg-color); border:1px solid var(--card-border); padding:12px; border-radius:6px;">
+                            <strong style="color:var(--secondary);">Isolation Transformer:</strong>
+                            <p style="color:var(--text-muted); font-size:11px; margin-top:4px;">Neutral isolated wiring must be integrated to prevent surgical laser current feedback from burning the inverter modules.</p>
+                        </div>
+                        <div style="background:var(--bg-color); border:1px solid var(--card-border); padding:12px; border-radius:6px;">
+                            <strong style="color:#10b981;">Battery Backups:</strong>
+                            <p style="color:var(--text-muted); font-size:11px; margin-top:4px;">Standard high-temperature Lithium LiFePO4 chemistry with double ventilation racks is required to withstand summer climate grids.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="admin-card-section" style="border-color: rgba(251,100,27,0.25);">
+                    <div class="card-section-header">
+                        <h3 style="color: var(--secondary);"><i class="fa-solid fa-chess-knight" style="margin-right: 6px;"></i>State tender Playbook</h3>
+                        <p>Step-by-step roadmap to dominate local Bihar hospital B2B procurement bids.</p>
+                    </div>
+
+                    <div style="margin-top: 15px; font-size: 12.5px; display: flex; flex-direction: column; gap: 14px; line-height: 1.5;">
+                        <div style="display: flex; gap: 10px; align-items: flex-start;">
+                            <span style="font-weight:bold; color:var(--secondary); background:rgba(251,100,27,0.06); width:24px; height:24px; border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0;">1</span>
+                            <div>
+                                <strong>Patna Liaison office:</strong>
+                                <p style="font-size:11px; color:var(--text-muted); margin-top:2px;">Establish a priority SLA response team in Patna. Provide local hospital admins with engineering drawings inside 4 hours.</p>
+                            </div>
+                        </div>
+                        <div style="display: flex; gap: 10px; align-items: flex-start;">
+                            <span style="font-weight:bold; color:var(--secondary); background:rgba(251,100,27,0.06); width:24px; height:24px; border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0;">2</span>
+                            <div>
+                                <strong>Safety multiplier lock:</strong>
+                                <p style="font-size:11px; color:var(--text-muted); margin-top:2px;">Activate the 1.8x medical multiplier in the user-facing calculator to protect sensitive equipment and lock in standard B2B invoice margins.</p>
+                            </div>
+                        </div>
+                        <div style="display: flex; gap: 10px; align-items: flex-start;">
+                            <span style="font-weight:bold; color:var(--secondary); background:rgba(251,100,27,0.06); width:24px; height:24px; border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0;">3</span>
+                            <div>
+                                <strong>Local assembly lines:</strong>
+                                <p style="font-size:11px; color:var(--text-muted); margin-top:2px;">Queue 10kVA - 60kVA online cabinet modular systems directly in standard B2B production lines to cut down dispatch times to Gaya and Muzaffarpur.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container footer-container">
+            <div class="footer-logo">
+                <i class="fa-solid fa-bolt"></i>
+                <span>AURA</span>
+            </div>
+            <p class="footer-copy">© <span id="year"></span> Aura Power Solutions. Engineered for Excellence.</p>
+        </div>
+    </footer>
+
+    <!-- Interactive script for supply chain overrides and logs -->
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            // Authentication Guard
+            if (localStorage.getItem("aura-admin-logged-in") !== "true") {
+                window.location.href = "customer-login.html";
+                return;
+            }
+
+            document.getElementById("year").textContent = new Date().getFullYear();
+
+            // Theme setup
+            const htmlElement = document.documentElement;
+            const themeToggle = document.getElementById("theme-toggle");
+            const savedTheme = localStorage.getItem("aura-theme") || "normal";
+            htmlElement.setAttribute("data-theme", savedTheme);
+            
+            themeToggle.addEventListener("click", () => {
+                const currentTheme = htmlElement.getAttribute("data-theme");
+                const newTheme = currentTheme === "normal" ? "neon" : "normal";
+                htmlElement.setAttribute("data-theme", newTheme);
+                localStorage.setItem("aura-theme", newTheme);
+                updateThemeIcon(newTheme);
+            });
+            function updateThemeIcon(theme) {
+                const icon = themeToggle.querySelector("i");
+                if (theme === "neon") {
+                    icon.className = "fa-solid fa-sun";
+                } else {
+                    icon.className = "fa-solid fa-moon";
+                }
+            }
+            updateThemeIcon(savedTheme);
+
+            // Secure Logout
+            document.getElementById("secure-logout-btn").addEventListener("click", () => {
+                if (confirm("Are you sure you want to sign out from the Admin Panel?")) {
+                    localStorage.removeItem("aura-admin-logged-in");
+                    window.location.href = "customer-login.html";
+                }
+            });
+
+            // Local Storage and metrics
+            function safeParseLocalStorage(key, defaultValue) {
+                try {
+                    const val = localStorage.getItem(key);
+                    if (!val) return defaultValue;
+                    return JSON.parse(val);
+                } catch (e) {
+                    return defaultValue;
+                }
+            }
+
+            const consoleBox = document.getElementById("console-log-box");
+            function addLog(text, isError = false) {
+                const timestamp = new Date().toLocaleTimeString();
+                const log = document.createElement("div");
+                log.style.color = isError ? "#ef4444" : "#10b981";
+                log.innerHTML = `[${timestamp}] ${text}`;
+                consoleBox.appendChild(log);
+                consoleBox.scrollTop = consoleBox.scrollHeight;
+            }
+
+            // Route Patna action sizer
+            document.getElementById("btn-route-patna").addEventListener("click", () => {
+                let products = safeParseLocalStorage("aura-flipkart-products", []);
+                let mutated = false;
+                
+                products = products.map(prod => {
+                    if (prod.id === "fk-quantum-tx") {
+                        prod.stockCount = Math.max(0, prod.stockCount - 5);
+                        prod.stockStatus = prod.stockCount === 0 ? "Under Production" : prod.stockStatus;
+                        mutated = true;
+                    }
+                    return prod;
+                });
+
+                if (mutated) {
+                    localStorage.setItem("aura-flipkart-products", JSON.stringify(products));
+                    addLog("SUCCESS: Redirected 5x Quantum TX systems to Patna Healthcare Depot.");
+                    addLog("STATUS: Stock subtracted from Central Catalog Inventory.");
+                } else {
+                    addLog("ERROR: Sourced catalog item 'fk-quantum-tx' not found. Restoring default...", true);
+                }
+            });
+
+            // Route Battery action sizer
+            document.getElementById("btn-route-battery").addEventListener("click", () => {
+                let products = safeParseLocalStorage("aura-flipkart-products", []);
+                let mutated = false;
+
+                products = products.map(prod => {
+                    if (prod.id === "fk-life-pack") {
+                        prod.stockCount = Math.max(0, prod.stockCount - 10);
+                        prod.stockStatus = prod.stockCount === 0 ? "Under Production" : prod.stockStatus;
+                        mutated = true;
+                    }
+                    return prod;
+                });
+
+                if (mutated) {
+                    localStorage.setItem("aura-flipkart-products", JSON.stringify(products));
+                    addLog("SUCCESS: Reserved 10x LiFePO4 Smart Battery packs for emergency hospital vaccine cold chains.");
+                    addLog("STATUS: Localized stock routing parameters logged.");
+                } else {
+                    addLog("ERROR: Battery bank catalog asset not found.", true);
+                }
+            });
+
+            // Lock safety multiplier coefficient override
+            document.getElementById("btn-route-multiplier").addEventListener("click", () => {
+                const multipliers = {
+                    datacenter: 1.5,
+                    medical: 1.8,  // Overridden B2B medical safety factor
+                    industrial: 1.4,
+                    office: 1.2
+                };
+                localStorage.setItem("aura-sizing-multipliers", JSON.stringify(multipliers));
+                addLog("SUCCESS: Locked medical safety multiplier multiplier to 1.8x for ICU grids.");
+                addLog("STATUS: Customer capacity sizer safety multiplier locked to 1.8x.");
+            });
+        });
+    </script>
+</body>
+</html>

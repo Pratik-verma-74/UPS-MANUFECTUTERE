@@ -1,0 +1,55 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+  
+    function isAdmin() {
+      return request.auth != null && (
+        request.auth.token.email == "pratikverma025@gmail.com" || 
+        request.auth.token.email == "shivamsri639463@gmail.com"
+      );
+    }
+
+    function isOwner(userEmail) {
+      return request.auth != null && request.auth.token.email == userEmail;
+    }
+
+    match /orders/{orderId} {
+      allow read: if isAdmin() || isOwner(resource.data.userEmail);
+      allow create: if isAdmin() || isOwner(request.resource.data.userEmail);
+      allow update, delete: if isAdmin();
+    }
+
+    match /customizations/{customId} {
+      allow read: if isAdmin() || isOwner(resource.data.userEmail);
+      allow create: if isAdmin() || isOwner(request.resource.data.userEmail);
+      allow update, delete: if isAdmin();
+    }
+
+    match /repairs/{ticketId} {
+      allow read: if isAdmin() || isOwner(resource.data.userEmail);
+      allow create: if isAdmin() || isOwner(request.resource.data.userEmail);
+      allow update, delete: if isAdmin();
+    }
+
+    match /userProfiles/{emailId} {
+      allow read, write: if isAdmin() || isOwner(emailId);
+    }
+    
+    match /notifications/{notifId} {
+      allow read: if isAdmin() || (request.auth != null && resource.data.targetEmail == request.auth.token.email);
+      allow write: if isAdmin() || (request.auth != null && request.resource.data.targetEmail == request.auth.token.email);
+    }
+
+    // ==========================================
+    // COLLECTION: AUDIT LOGS (Only Admins can read/write)
+    // ==========================================
+    match /audit_logs/{logId} {
+      allow read, write: if isAdmin();
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

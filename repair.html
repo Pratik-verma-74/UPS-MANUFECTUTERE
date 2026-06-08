@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AURA | UPS Repair & Maintenance Center</title>
+    <title>ROBOART | Transformer Repair & Maintenance Center</title>
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -12,52 +12,26 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Main Style Sheet -->
     <link rel="stylesheet" href="style.css">
+    <!-- Firebase Service Integration -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-check-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+    <script src="firebase-service.js"></script>
+    <script src="components.js"></script>
 </head>
 <body>
 
-    <!-- Professional Sleek Header -->
-    <header class="header">
-        <div class="header-left-group" style="display: flex; align-items: center; gap: 16px;">
-            <button id="left-settings-trigger" class="theme-btn" title="Settings & Admin Control" style="margin-right: 4px;">
-                <i class="fa-solid fa-bars"></i>
-            </button>
-            <div class="logo" onclick="window.location.href='index.html'">
-                <i class="fa-solid fa-bolt logo-icon"></i>
-                <span>AURA</span>
-            </div>
-        </div>
-        <nav class="nav">
-            <a href="index.html" class="nav-link">Systems</a>
-            <a href="b2c-store.html" class="nav-link">B2C Products</a>
-            <a href="calculator.html" class="nav-link">Calculator</a>
-            <a href="customize.html" class="nav-link">Customize</a>
-            <a href="repair.html" class="nav-link active">Repair Service</a>
-            <a href="orders.html" class="nav-link">My Orders</a>
-        </nav>
-        <div class="header-actions">
-            <button id="theme-toggle" class="theme-btn" title="Toggle Light/Dark Theme">
-                <i class="fa-solid fa-moon"></i>
-            </button>
-            <button id="admin-trigger-btn" class="theme-btn admin-btn" title="Open Admin Control Panel">
-                <i class="fa-solid fa-user-gear"></i>
-            </button>
-            <button id="user-login-btn" class="theme-btn user-btn" title="Customer Portal Login">
-                <i class="fa-solid fa-user"></i>
-            </button>
-            <a href="https://wa.me/917463053829?text=Hello%20Aura%20Power,%20I%20want%20to%20request%20a%20quote." target="_blank" class="btn btn-primary btn-quote">
-                <span>Get B2B Pricing</span>
-                <i class="fa-brands fa-whatsapp"></i>
-            </a>
-        </div>
-    </header>
+    <!-- Web Component Header -->
+    <aura-header active="repair"></aura-header>
 
     <!-- Repair Ticket Workspace -->
     <section class="repair-section" style="margin-top: 64px; padding: 60px 0; background: var(--bg-color); min-height: 80vh; transition: background-color 0.3s ease;">
         <div class="container">
             <div class="section-header" style="margin-bottom: 40px;">
                 <span class="section-tag">Diagnostics & Servicing</span>
-                <h2 class="section-title">UPS Diagnostics & Repair Center</h2>
-                <p class="section-desc">Submit details of your broken, offline, or faulty UPS systems. A certified Aura power engineer will be dispatched within 4 hours for local site audits.</p>
+                <h2 class="section-title">Transformer Diagnostics & Repair Center</h2>
+                <p class="section-desc">Submit details of your broken, offline, or faulty transformer systems. A certified Roboart power engineer will be dispatched for local site audits.</p>
             </div>
 
             <div class="calc-wrapper glass border" style="grid-template-columns: 1.3fr 1fr;">
@@ -65,31 +39,30 @@
                 <form id="repair-ticket-form" class="calc-inputs" style="gap: 16px;">
                     <div class="facility-grid" style="grid-template-columns: repeat(2, 1fr); gap: 12px;">
                         <div class="form-group">
-                            <label for="rep-brand">UPS Brand</label>
+                            <label for="rep-brand">Transformer Brand</label>
                             <select id="rep-brand" class="mult-input" style="margin-top: 4px; padding: 12px; background: var(--bg-color); color: var(--text-color); border: 1px solid var(--card-border); border-radius: 4px;">
-                                <option value="APC by Schneider">APC by Schneider</option>
-                                <option value="Microtek">Microtek</option>
-                                <option value="Luminous">Luminous</option>
-                                <option value="Delta Systems">Delta Systems</option>
-                                <option value="Vertiv / Emerson">Vertiv / Emerson</option>
-                                <option value="Consul Neowatt">Consul Neowatt</option>
-                                <option value="Aura Power UPS">Aura Power UPS</option>
+                                <option value="Roboart Transformers">Roboart Transformers</option>
+                                <option value="Siemens">Siemens</option>
+                                <option value="ABB">ABB</option>
+                                <option value="Schneider Electric">Schneider Electric</option>
+                                <option value="CG Power">CG Power</option>
+                                <option value="Voltamp">Voltamp</option>
                                 <option value="Other Brand">Other / Custom Brand</option>
                             </select>
                         </div>
                         <div class="form-group">
                             <label for="rep-model">Model Name / Number</label>
-                            <input type="text" id="rep-model" required placeholder="e.g. Smart-UPS 10kVA" style="width:100%; background: var(--bg-color); color: var(--text-color); border: 1px solid var(--card-border); padding: 12px; border-radius: 4px; font-size: 13px;">
+                            <input type="text" id="rep-model" required placeholder="e.g. 10kVA Control Transformer" style="width:100%; background: var(--bg-color); color: var(--text-color); border: 1px solid var(--card-border); padding: 12px; border-radius: 4px; font-size: 13px;">
                         </div>
                     </div>
 
                     <div class="calc-group">
                         <label class="calc-label"><i class="fa-solid fa-shield-virus"></i> Primary Fault Observed</label>
                         <select id="rep-fault" class="mult-input" style="margin-top: 0; padding: 12px; background: var(--bg-color); color: var(--text-color); border: 1px solid var(--card-border); border-radius: 4px;">
-                            <option value="Battery Dead / Low Runtime">Battery Dead / Extremely Low Runtime backup</option>
-                            <option value="UPS Not Turning On / Power Fault">UPS Not Turning On / Total Power Loss</option>
-                            <option value="Overload Trip / Screaming Alarm">Overload Trip / Screaming Continuous Alarm</option>
-                            <option value="Bypass switch fault / Burnt PCB">Bypass switch fault / Burnt circuit board smells</option>
+                            <option value="Overheating / High Temp">Overheating / Extremely High Temperature</option>
+                            <option value="Voltage Output Low">Low Voltage Output / No Regulation</option>
+                            <option value="Buzzing Noise / Vibration">Loud Buzzing Noise / Mechanical Vibration</option>
+                            <option value="Burnt Windings / Smoke">Burnt Windings / Visible Smoke or Sparking</option>
                             <option value="Routine preventative AMC service">Routine Preventive Maintenance / AMC Check</option>
                         </select>
                     </div>
@@ -118,7 +91,7 @@
 
                     <div class="form-group">
                         <label for="rep-desc">Detailed Fault Symptoms / Custom Demands</label>
-                        <textarea id="rep-desc" required placeholder="Describe what happens. (e.g. Red fault led glows continuously, screams alarm when utility drops, batteries swelling...)" style="width: 100%; height: 100px; background: var(--bg-color); color: var(--text-color); border: 1px solid var(--card-border); padding: 12px; border-radius: 4px; font-family: inherit; font-size: 13px; resize: none; outline: none;"></textarea>
+                        <textarea id="rep-desc" required placeholder="Describe what happens. (e.g. Loud buzzing when machine starts, smoke observed near coils...)" style="width: 100%; height: 100px; background: var(--bg-color); color: var(--text-color); border: 1px solid var(--card-border); padding: 12px; border-radius: 4px; font-family: inherit; font-size: 13px; resize: none; outline: none;"></textarea>
                     </div>
 
                     <div class="facility-grid" style="grid-template-columns: repeat(2, 1fr); gap: 12px;">
@@ -140,8 +113,8 @@
                     <div class="rec-product-box">
                         <div class="rec-icon" style="color: var(--secondary); background: rgba(251,100,27,0.08);"><i class="fa-solid fa-toolbox"></i></div>
                         <div>
-                            <h4 id="rep-summary-brand">APC by Schneider</h4>
-                            <p id="rep-summary-model" class="prod-category">Smart-UPS 10kVA</p>
+                            <h4 id="rep-summary-brand">Roboart Transformers</h4>
+                            <p id="rep-summary-model" class="prod-category">10kVA Control</p>
                         </div>
                     </div>
 
@@ -152,7 +125,7 @@
                         </div>
                         <div class="metric-row">
                             <span>Reported Bug Profile</span>
-                            <strong id="rep-summary-fault" style="color:#ef4444;">Battery Dead / Low Runtime</strong>
+                            <strong id="rep-summary-fault" style="color:#ef4444;">Overheating / High Temp</strong>
                         </div>
                         <div class="metric-row">
                             <span>SLA Dispatch Response</span>
@@ -171,7 +144,7 @@
                     </div>
 
                     <button type="button" id="rep-submit-btn" class="btn btn-primary w-full" style="margin-top: auto; background-color: var(--secondary);">
-                        <span>Submit UPS for Repair / Service</span>
+                        <span>Submit Transformer for Repair / Service</span>
                         <i class="fa-solid fa-circle-check"></i>
                     </button>
                 </div>
@@ -179,64 +152,11 @@
         </div>
     </section>
 
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="container footer-container">
-            <div class="footer-logo">
-                <i class="fa-solid fa-bolt"></i>
-                <span>AURA</span>
-            </div>
-            <p class="footer-copy">© <span id="year"></span> Aura Power Solutions. Engineered for Excellence.</p>
-        </div>
-        <!-- Secure Console Gateway Link -->
-        <div style="border-top: 1px solid rgba(255,255,255,0.06); margin-top: 16px; padding-top: 16px; text-align: center; font-size: 11px;">
-            <a href="login.html" style="color: rgba(255,255,255,0.3); text-decoration: none; display: inline-flex; align-items: center; gap: 6px; letter-spacing: 1px; text-transform: uppercase; transition: all 0.3s ease;" onmouseover="this.style.color='#00e5ff'" onmouseout="this.style.color='rgba(255,255,255,0.3)'">
-                <i class="fa-solid fa-user-shield"></i>
-                <span>Login as Admin / Secure Console</span>
-            </a>
-        </div>
-    </footer>
+    <!-- Web Component Footer -->
+    <aura-footer></aura-footer>
 
-    <!-- Sliding Settings Sidebar -->
-    <div id="settings-sidebar" class="sidebar-panel">
-        <div class="sidebar-header">
-            <h3><i class="fa-solid fa-gears"></i> Settings Panel</h3>
-            <button id="sidebar-close-btn" class="close-btn">&times;</button>
-        </div>
-        <div class="sidebar-body">
-            <!-- Theme Preference -->
-            <div class="settings-group">
-                <label><i class="fa-solid fa-circle-half-stroke"></i> Select Theme</label>
-                <div class="theme-select-grid">
-                    <button id="theme-normal-select" class="theme-select-btn active">Light Mode</button>
-                    <button id="theme-neon-select" class="theme-select-btn">Dark Mode</button>
-                </div>
-            </div>
-
-            <!-- Admin Access Gate -->
-            <div class="settings-group admin-gate-group">
-                <label><i class="fa-solid fa-user-shield"></i> Administration</label>
-                <p class="settings-desc">Access factory scaling multipliers, WhatsApp leads trackers, and catalog upload desks.</p>
-                <button id="sidebar-admin-btn" class="btn btn-secondary w-full">
-                    <span>Admin Portal Access</span>
-                    <i class="fa-solid fa-right-to-bracket"></i>
-                </button>
-            </div>
-            
-            <!-- Quick Portal links -->
-            <div class="settings-group">
-                <label><i class="fa-solid fa-link"></i> Quick Navigation</label>
-                <ul class="settings-nav-links">
-                    <li><a href="index.html"><i class="fa-solid fa-house"></i> Home Systems</a></li>
-                    <li><a href="calculator.html"><i class="fa-solid fa-calculator"></i> Capacity Sizer</a></li>
-                    <li><a href="customize.html"><i class="fa-solid fa-sliders"></i> Custom Plant Designer</a></li>
-                    <li><a href="repair.html"><i class="fa-solid fa-wrench"></i> Repair Dispatch</a></li>
-                    <li><a href="orders.html"><i class="fa-solid fa-cart-flatbed"></i> My Orders Registry</a></li>
-                </ul>
-            </div>
-        </div>
-    </div>
-    <div id="sidebar-overlay" class="sidebar-overlay"></div>
+    <!-- Web Component Sidebar -->
+    <aura-sidebar></aura-sidebar>
 
     <!-- Interactive script triggers -->
     <script>
@@ -278,14 +198,10 @@
             });
 
             // Save repair ticket
-            document.getElementById("rep-submit-btn").addEventListener("click", () => {
-                const isUserLoggedIn = localStorage.getItem("aura-user-logged-in") === "true";
-                if (!isUserLoggedIn) {
-                    alert("AURA Security Protocols: Please sign in as a Customer to submit broken UPS systems for maintenance dispatches!");
-                    localStorage.setItem("aura-auth-redirect", "repair.html");
-                    window.location.href = "customer-login.html";
-                    return;
-                }
+            document.getElementById("rep-submit-btn").addEventListener("click", async () => {
+                // Real Appwrite session verification
+                const isAuthenticated = await requireAuth("repair.html");
+                if (!isAuthenticated) return;
 
                 const brand = brandSelect.value;
                 const model = modelInput.value.trim();
@@ -300,7 +216,6 @@
                 }
 
                 // Push Ticket under "aura-user-repairs"
-                let repairs = JSON.parse(localStorage.getItem("aura-user-repairs")) || [];
                 const ticketId = "REP-" + Date.now().toString().slice(-6);
 
                 const ticket = {
@@ -315,14 +230,20 @@
                     status: "Technician Dispatched",
                     timestamp: new Date().toLocaleDateString()
                 };
-                repairs.unshift(ticket);
-                localStorage.setItem("aura-user-repairs", JSON.stringify(repairs));
+
+                if (typeof FirebaseService !== "undefined") {
+                    await FirebaseService.saveRepair(ticket);
+                } else {
+                    let repairs = JSON.parse(localStorage.getItem("aura-user-repairs")) || [];
+                    repairs.unshift(ticket);
+                    localStorage.setItem("aura-user-repairs", JSON.stringify(repairs));
+                }
 
                 // Save Lead in admin leads panel for real-time leads logs compatibility
                 let leads = JSON.parse(localStorage.getItem("aura-whatsapp-leads")) || [];
                 leads.unshift({
                     name: name,
-                    system: `Broken UPS: ${brand} (${model})`,
+                    system: `Broken Transformer: ${brand} (${model})`,
                     capacity: selectedCapacity,
                     timestamp: "Just now"
                 });
@@ -366,31 +287,33 @@
             const adminTriggerBtn = document.getElementById("admin-trigger-btn");
             const isAdminLoggedIn = localStorage.getItem("aura-admin-logged-in") === "true";
             
-            if (isAdminLoggedIn) {
-                adminTriggerBtn.classList.add("logged-in");
-                
-                // Add logout
-                const logoutBtn = document.createElement("button");
-                logoutBtn.className = "theme-btn logout-trigger";
-                logoutBtn.setAttribute("title", "Logout Securely");
-                logoutBtn.innerHTML = '<i class="fa-solid fa-power-off"></i>';
-                adminTriggerBtn.parentNode.insertBefore(logoutBtn, adminTriggerBtn.nextSibling);
-                
-                logoutBtn.addEventListener("click", () => {
-                    if (confirm("Are you sure you want to sign out from the Admin Portal?")) {
-                        localStorage.removeItem("aura-admin-logged-in");
-                        window.location.reload();
+            if (adminTriggerBtn) {
+                if (isAdminLoggedIn) {
+                    adminTriggerBtn.classList.add("logged-in");
+                    
+                    // Add logout
+                    const logoutBtn = document.createElement("button");
+                    logoutBtn.className = "theme-btn logout-trigger";
+                    logoutBtn.setAttribute("title", "Logout Securely");
+                    logoutBtn.innerHTML = '<i class="fa-solid fa-power-off"></i>';
+                    adminTriggerBtn.parentNode.insertBefore(logoutBtn, adminTriggerBtn.nextSibling);
+                    
+                    logoutBtn.addEventListener("click", () => {
+                        if (confirm("Are you sure you want to sign out from the Admin Portal?")) {
+                            localStorage.removeItem("aura-admin-logged-in");
+                            window.location.reload();
+                        }
+                    });
+                }
+
+                adminTriggerBtn.addEventListener("click", () => {
+                    if (localStorage.getItem("aura-admin-logged-in") === "true") {
+                        window.location.href = "admin.html";
+                    } else {
+                        window.location.href = "customer-login.html";
                     }
                 });
             }
-
-            adminTriggerBtn.addEventListener("click", () => {
-                if (localStorage.getItem("aura-admin-logged-in") === "true") {
-                    window.location.href = "admin.html";
-                } else {
-                    window.location.href = "login.html";
-                }
-            });
 
             // Customer Portal Routing
             const userLoginBtn = document.getElementById("user-login-btn");
@@ -480,7 +403,7 @@
                         if (localStorage.getItem("aura-admin-logged-in") === "true") {
                             window.location.href = "admin.html";
                         } else {
-                            window.location.href = "login.html";
+                            window.location.href = "customer-login.html";
                         }
                     });
                 }

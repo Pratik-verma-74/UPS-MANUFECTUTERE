@@ -12,6 +12,12 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Main Style Sheet -->
     <link rel="stylesheet" href="style.css">
+    <!-- Firebase Service Integration -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-check-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+    <script src="firebase-service.js"></script>
     
     <!-- Custom Live Audit Feed Styles -->
     <style>
@@ -110,8 +116,12 @@
 
     <!-- Auth Guard (Secure URL protection) -->
     <script>
-        if (localStorage.getItem("aura-admin-logged-in") !== "true") {
-            window.location.href = "login.html";
+        const allowedAdmins = ["pratikverma025@gmail.com", "shivamsri639463@gmail.com"];
+        const adminEmail = localStorage.getItem("aura-admin-email");
+        if (localStorage.getItem("aura-admin-logged-in") !== "true" || !allowedAdmins.includes(adminEmail)) {
+            window.stop();
+            document.documentElement.innerHTML = "";
+            window.location.replace("customer-login.html");
         }
     </script>
 
@@ -159,7 +169,7 @@
                     <i class="fa-solid fa-chart-line"></i> Smart Analytics
                 </a>
                 <a href="admin-bihar-trends.html" class="btn btn-secondary" style="font-size: 12px; padding: 10px 18px; border-radius: 6px; background: var(--card-bg); border: 1px solid var(--card-border); color: var(--text-color); box-shadow: var(--shadow-sm);">
-                    <i class="fa-solid fa-hospital-user"></i> Bihar Demand
+                    <i class="fa-solid fa-hospital-user"></i> All Demand
                 </a>
                 <a href="admin-billing.html" class="btn btn-secondary" style="font-size: 12px; padding: 10px 18px; border-radius: 6px; background: var(--card-bg); border: 1px solid var(--card-border); color: var(--text-color); box-shadow: var(--shadow-sm);">
                     <i class="fa-solid fa-file-invoice-dollar"></i> Billing Generator
@@ -523,10 +533,22 @@
 
     <!-- Complete Dashboard Management JavaScript -->
     <script>
-        document.addEventListener("DOMContentLoaded", () => {
+        document.addEventListener("DOMContentLoaded", async () => {
+
+            function escapeHTML(str) {
+                if (str === null || str === undefined) return '';
+                return String(str).replace(/[&<>'"]/g, tag => ({
+                    '&': '&amp;',
+                    '<': '&lt;',
+                    '>': '&gt;',
+                    "'": '&#39;',
+                    '"': '&quot;'
+                }[tag] || tag));
+            }
+
             // Authentication Guard
             if (localStorage.getItem("aura-admin-logged-in") !== "true") {
-                window.location.href = "login.html";
+                window.location.href = "customer-login.html";
                 return;
             }
 
@@ -673,16 +695,15 @@
             document.getElementById("mult-industrial").value = savedMults.industrial;
             document.getElementById("mult-office").value = savedMults.office;
 
+            // In-memory Appwrite cache (populated on init)
+            let awOrders = [], awCustoms = [], awRepairs = [];
+
             // Load Metric Analytics
             function renderMetrics() {
-                const stdOrders = safeParseLocalStorage("aura-user-orders", []);
-                const custBuilds = safeParseLocalStorage("aura-user-customizations", []);
-                const repairs = safeParseLocalStorage("aura-user-repairs", []);
-                
                 document.getElementById("metric-catalog-count").textContent = appProducts.length;
-                document.getElementById("metric-orders-count").textContent = stdOrders.length;
-                document.getElementById("metric-custom-count").textContent = custBuilds.length;
-                document.getElementById("metric-repair-count").textContent = repairs.length;
+                document.getElementById("metric-orders-count").textContent = awOrders.length;
+                document.getElementById("metric-custom-count").textContent = awCustoms.length;
+                document.getElementById("metric-repair-count").textContent = awRepairs.length;
             }
 
             // Render catalog inventory
@@ -809,7 +830,7 @@
 
             // Render Repairs Servicing Grid
             function renderAdminRepairs() {
-                const repairs = safeParseLocalStorage("aura-user-repairs", []);
+                const repairs = awRepairs;
                 const repairsList = document.getElementById("admin-repairs-list");
                 repairsList.innerHTML = "";
 
@@ -821,17 +842,19 @@
                 repairs.forEach((rep, index) => {
                     const tr = document.createElement("tr");
                     tr.innerHTML = `
-                        <td><strong style="color: var(--secondary);">${rep.id}</strong></td>
-                        <td>${rep.name}</td>
-                        <td>${rep.brand} (${rep.model})</td>
-                        <td>${rep.capacity}</td>
+                        <td><strong style="color: var(--secondary);">${escapeHTML(rep.id)}</strong></td>
+                        <td>${escapeHTML(rep.name)}</td>
+                        <td>${escapeHTML(rep.brand)} (${escapeHTML(rep.model)})</td>
+                        <td>${escapeHTML(rep.capacity)}</td>
                         <td>
-                            <select class="mult-input select-repair-status" data-index="${index}" style="margin-top:0; padding:4px 8px; width:auto; border-radius:4px; border-color: rgba(251,100,27,0.3);">
+                            <select class="mult-input select-repair-status" data-index="${index}" data-id="${escapeHTML(rep.id)}" style="margin-top:0; padding:4px 8px; width:auto; border-radius:4px; border-color: rgba(251,100,27,0.3);">
                                 <option value="Technician Dispatched" ${rep.status === 'Technician Dispatched' ? 'selected' : ''}>Technician Dispatched</option>
                                 <option value="Diagnostics Active" ${rep.status === 'Diagnostics Active' ? 'selected' : ''}>Diagnostics Active</option>
                                 <option value="Assembling / Repairing" ${rep.status === 'Assembling / Repairing' ? 'selected' : ''}>Assembling / Repairing</option>
                                 <option value="Complete / Shipped Back" ${rep.status === 'Complete / Shipped Back' ? 'selected' : ''}>Complete / Shipped</option>
                             </select>
+                            <input type="number" min="1" max="5" class="mult-input select-repair-step" data-index="${index}" value="${rep.statusStep || 1}" style="width: 50px; margin-left: 8px; padding:4px; display:inline-block;" title="Progress Step (1-5)">
+                            <input type="text" class="mult-input select-repair-date" data-index="${index}" value="${rep.expectedDate || ''}" placeholder="ETA Date" style="width: 90px; margin-left: 8px; padding:4px; display:inline-block;">
                         </td>
                         <td>
                             <button class="admin-action-btn btn-delete-rep" data-index="${index}" style="border-color:#ef4444; color:#ef4444;"><i class="fa-solid fa-trash"></i></button>
@@ -841,11 +864,21 @@
                 });
 
                 // Listeners for repair changes
-                repairsList.querySelectorAll(".select-repair-status").forEach(select => {
-                    select.addEventListener("change", (e) => {
-                        const index = parseInt(select.getAttribute("data-index"));
-                        repairs[index].status = e.target.value;
-                        localStorage.setItem("aura-user-repairs", JSON.stringify(repairs));
+                repairsList.querySelectorAll(".select-repair-status, .select-repair-step, .select-repair-date").forEach(input => {
+                    input.addEventListener("change", async (e) => {
+                        const index = parseInt(input.getAttribute("data-index"));
+                        const docId = repairsList.querySelector(`.select-repair-status[data-index="${index}"]`).getAttribute("data-id");
+                        const newStatus = repairsList.querySelector(`.select-repair-status[data-index="${index}"]`).value;
+                        const newStep = parseInt(repairsList.querySelector(`.select-repair-step[data-index="${index}"]`).value) || 1;
+                        const newDate = repairsList.querySelector(`.select-repair-date[data-index="${index}"]`).value;
+                        
+                        awRepairs[index].status = newStatus;
+                        awRepairs[index].statusStep = newStep;
+                        awRepairs[index].expectedDate = newDate;
+                        localStorage.setItem("aura-user-repairs", JSON.stringify(awRepairs));
+                        if (typeof FirebaseService !== "undefined") {
+                            await FirebaseService.adminUpdateStatus("repairs", docId, newStatus, newStep, newDate);
+                        }
                         renderAdminRepairs();
                     });
                 });
@@ -854,8 +887,8 @@
                     btn.addEventListener("click", () => {
                         const index = parseInt(btn.getAttribute("data-index"));
                         if (confirm("Are you sure you want to remove this client repair ticket?")) {
-                            repairs.splice(index, 1);
-                            localStorage.setItem("aura-user-repairs", JSON.stringify(repairs));
+                            awRepairs.splice(index, 1);
+                            localStorage.setItem("aura-user-repairs", JSON.stringify(awRepairs));
                             renderAdminRepairs();
                             renderMetrics();
                         }
@@ -865,7 +898,7 @@
 
             // Render User Purchases & Controls
             function renderAdminOrders() {
-                const stdOrders = safeParseLocalStorage("aura-user-orders", []);
+                const stdOrders = awOrders;
                 const ordersList = document.getElementById("admin-orders-list");
                 ordersList.innerHTML = "";
 
@@ -877,18 +910,20 @@
                 stdOrders.forEach((order, index) => {
                     const tr = document.createElement("tr");
                     tr.innerHTML = `
-                        <td><strong style="color: var(--primary);">${order.id}</strong></td>
-                        <td>${order.title}</td>
-                        <td>${order.capacity}</td>
+                        <td><strong style="color: var(--primary);">${escapeHTML(order.id)}</strong></td>
+                        <td>${escapeHTML(order.title)}</td>
+                        <td>${escapeHTML(order.capacity)}</td>
                         <td>₹${Number(order.price).toLocaleString()}</td>
                         <td>
-                            <select class="mult-input select-order-status" data-index="${index}" style="margin-top:0; padding:4px 8px; width:auto; border-radius:4px;">
+                            <select class="mult-input select-order-status" data-index="${index}" data-id="${escapeHTML(order.id)}" style="margin-top:0; padding:4px 8px; width:auto; border-radius:4px;">
                                 <option value="Pending Audit" ${order.status === 'Pending Audit' ? 'selected' : ''}>Pending Audit</option>
                                 <option value="Components Inbound" ${order.status === 'Components Inbound' ? 'selected' : ''}>Inbound Sourcing</option>
                                 <option value="Factory Assembling" ${order.status === 'Factory Assembling' ? 'selected' : ''}>Assembling</option>
                                 <option value="Quality Auditing" ${order.status === 'Quality Auditing' ? 'selected' : ''}>Quality Check</option>
                                 <option value="Dispatched & Shipped" ${order.status === 'Dispatched & Shipped' ? 'selected' : ''}>Dispatched</option>
                             </select>
+                            <input type="number" min="1" max="5" class="mult-input select-order-step" data-index="${index}" value="${order.statusStep || 1}" style="width: 50px; margin-left: 8px; padding:4px; display:inline-block;" title="Progress Step (1-5)">
+                            <input type="text" class="mult-input select-order-date" data-index="${index}" value="${order.expectedDate || ''}" placeholder="ETA Date" style="width: 90px; margin-left: 8px; padding:4px; display:inline-block;">
                         </td>
                         <td>
                             <button class="admin-action-btn btn-delete-order" data-index="${index}" style="border-color:#ef4444; color:#ef4444;"><i class="fa-solid fa-trash"></i></button>
@@ -898,11 +933,21 @@
                 });
 
                 // Listeners for order updates
-                ordersList.querySelectorAll(".select-order-status").forEach(select => {
-                    select.addEventListener("change", (e) => {
-                        const index = parseInt(select.getAttribute("data-index"));
-                        stdOrders[index].status = e.target.value;
-                        localStorage.setItem("aura-user-orders", JSON.stringify(stdOrders));
+                ordersList.querySelectorAll(".select-order-status, .select-order-step, .select-order-date").forEach(input => {
+                    input.addEventListener("change", async (e) => {
+                        const index = parseInt(input.getAttribute("data-index"));
+                        const docId = ordersList.querySelector(`.select-order-status[data-index="${index}"]`).getAttribute("data-id");
+                        const newStatus = ordersList.querySelector(`.select-order-status[data-index="${index}"]`).value;
+                        const newStep = parseInt(ordersList.querySelector(`.select-order-step[data-index="${index}"]`).value) || 1;
+                        const newDate = ordersList.querySelector(`.select-order-date[data-index="${index}"]`).value;
+
+                        awOrders[index].status = newStatus;
+                        awOrders[index].statusStep = newStep;
+                        awOrders[index].expectedDate = newDate;
+                        localStorage.setItem("aura-user-orders", JSON.stringify(awOrders));
+                        if (typeof FirebaseService !== "undefined") {
+                            await FirebaseService.adminUpdateStatus("orders", docId, newStatus, newStep, newDate);
+                        }
                         renderAdminOrders();
                         renderFactoryBoard();
                     });
@@ -912,8 +957,8 @@
                     btn.addEventListener("click", () => {
                         const index = parseInt(btn.getAttribute("data-index"));
                         if (confirm("Are you sure you want to remove this client order log?")) {
-                            stdOrders.splice(index, 1);
-                            localStorage.setItem("aura-user-orders", JSON.stringify(stdOrders));
+                            awOrders.splice(index, 1);
+                            localStorage.setItem("aura-user-orders", JSON.stringify(awOrders));
                             renderAdminOrders();
                             renderMetrics();
                             renderFactoryBoard();
@@ -924,7 +969,7 @@
 
             // Render User Custom Engineered Builds
             function renderAdminCustoms() {
-                const custBuilds = safeParseLocalStorage("aura-user-customizations", []);
+                const custBuilds = awCustoms;
                 const customsList = document.getElementById("admin-customs-list");
                 customsList.innerHTML = "";
 
@@ -936,17 +981,19 @@
                 custBuilds.forEach((build, index) => {
                     const tr = document.createElement("tr");
                     tr.innerHTML = `
-                        <td><strong style="color: var(--primary);">${build.id}</strong></td>
-                        <td>${build.name}</td>
-                        <td>${build.phase}</td>
-                        <td>${build.capacity}</td>
+                        <td><strong style="color: var(--primary);">${escapeHTML(build.id)}</strong></td>
+                        <td>${escapeHTML(build.name)}</td>
+                        <td>${escapeHTML(build.phase)}</td>
+                        <td>${escapeHTML(build.capacity)}</td>
                         <td>
-                            <select class="mult-input select-custom-status" data-index="${index}" style="margin-top:0; padding:4px 8px; width:auto; border-radius:4px;">
+                            <select class="mult-input select-custom-status" data-index="${index}" data-id="${escapeHTML(build.id)}" style="margin-top:0; padding:4px 8px; width:auto; border-radius:4px;">
                                 <option value="Engineering Audit" ${build.status === 'Engineering Audit' ? 'selected' : ''}>Engineering Audit</option>
                                 <option value="Design Draft Approved" ${build.status === 'Design Draft Approved' ? 'selected' : ''}>Draft Approved</option>
                                 <option value="Under Assembly" ${build.status === 'Under Assembly' ? 'selected' : ''}>Under Assembly</option>
                                 <option value="Factory Dispatch" ${build.status === 'Factory Dispatch' ? 'selected' : ''}>Factory Dispatch</option>
                             </select>
+                            <input type="number" min="1" max="5" class="mult-input select-custom-step" data-index="${index}" value="${build.statusStep || 1}" style="width: 50px; margin-left: 8px; padding:4px; display:inline-block;" title="Progress Step (1-5)">
+                            <input type="text" class="mult-input select-custom-date" data-index="${index}" value="${build.expectedDate || ''}" placeholder="ETA Date" style="width: 90px; margin-left: 8px; padding:4px; display:inline-block;">
                         </td>
                         <td>
                             <button class="admin-action-btn btn-delete-custom" data-index="${index}" style="border-color:#ef4444; color:#ef4444;"><i class="fa-solid fa-trash"></i></button>
@@ -956,11 +1003,21 @@
                 });
 
                 // Listeners for custom updates
-                customsList.querySelectorAll(".select-custom-status").forEach(select => {
-                    select.addEventListener("change", (e) => {
-                        const index = parseInt(select.getAttribute("data-index"));
-                        custBuilds[index].status = e.target.value;
-                        localStorage.setItem("aura-user-customizations", JSON.stringify(custBuilds));
+                customsList.querySelectorAll(".select-custom-status, .select-custom-step, .select-custom-date").forEach(input => {
+                    input.addEventListener("change", async (e) => {
+                        const index = parseInt(input.getAttribute("data-index"));
+                        const docId = customsList.querySelector(`.select-custom-status[data-index="${index}"]`).getAttribute("data-id");
+                        const newStatus = customsList.querySelector(`.select-custom-status[data-index="${index}"]`).value;
+                        const newStep = parseInt(customsList.querySelector(`.select-custom-step[data-index="${index}"]`).value) || 1;
+                        const newDate = customsList.querySelector(`.select-custom-date[data-index="${index}"]`).value;
+
+                        awCustoms[index].status = newStatus;
+                        awCustoms[index].statusStep = newStep;
+                        awCustoms[index].expectedDate = newDate;
+                        localStorage.setItem("aura-user-customizations", JSON.stringify(awCustoms));
+                        if (typeof FirebaseService !== "undefined") {
+                            await FirebaseService.adminUpdateStatus("customizations", docId, newStatus, newStep, newDate);
+                        }
                         renderAdminCustoms();
                         renderFactoryBoard();
                     });
@@ -970,8 +1027,8 @@
                     btn.addEventListener("click", () => {
                         const index = parseInt(btn.getAttribute("data-index"));
                         if (confirm("Are you sure you want to delete this custom build spec?")) {
-                            custBuilds.splice(index, 1);
-                            localStorage.setItem("aura-user-customizations", JSON.stringify(custBuilds));
+                            awCustoms.splice(index, 1);
+                            localStorage.setItem("aura-user-customizations", JSON.stringify(awCustoms));
                             renderAdminCustoms();
                             renderMetrics();
                             renderFactoryBoard();
@@ -982,8 +1039,8 @@
 
             // Render Dynamic Factory Board
             function renderFactoryBoard() {
-                const stdOrders = safeParseLocalStorage("aura-user-orders", []);
-                const custBuilds = safeParseLocalStorage("aura-user-customizations", []);
+                const stdOrders = awOrders;
+                const custBuilds = awCustoms;
                 const products = safeParseLocalStorage("aura-flipkart-products", []);
 
                 const queueList = document.getElementById("factory-list-queue");
@@ -1028,13 +1085,13 @@
                 // 1. Process Standard Purchase Orders
                 stdOrders.forEach(order => {
                     if (order.status === "Components Inbound" || order.status === "Pending Audit") {
-                        queueList.appendChild(createFactoryCard(order.id, order.title, "Standard Order", `Capacity: ${order.capacity}`, order.status));
+                        queueList.appendChild(createFactoryCard(order.id, order.title, "Standard Order", `Capacity: ${escapeHTML(order.capacity)}`, order.status));
                         queueCount++;
                     } else if (order.status === "Factory Assembling") {
-                        assemblyList.appendChild(createFactoryCard(order.id, order.title, "Standard Order", `Capacity: ${order.capacity}`, "Assembling"));
+                        assemblyList.appendChild(createFactoryCard(order.id, order.title, "Standard Order", `Capacity: ${escapeHTML(order.capacity)}`, "Assembling"));
                         assemblyCount++;
                     } else if (order.status === "Quality Auditing") {
-                        testingList.appendChild(createFactoryCard(order.id, order.title, "Standard Order", `Capacity: ${order.capacity}`, "Testing Stage"));
+                        testingList.appendChild(createFactoryCard(order.id, order.title, "Standard Order", `Capacity: ${escapeHTML(order.capacity)}`, "Testing Stage"));
                         testingCount++;
                     }
                 });
@@ -1042,10 +1099,10 @@
                 // 2. Process Custom Sized Builds
                 custBuilds.forEach(build => {
                     if (build.status === "Engineering Audit" || build.status === "Design Draft Approved") {
-                        queueList.appendChild(createFactoryCard(build.id, `Custom UPS Plant`, "Custom Build", `Sizing: ${build.capacity} | ${build.phase}`, build.status));
+                        queueList.appendChild(createFactoryCard(build.id, `Custom UPS Plant`, "Custom Build", `Sizing: ${escapeHTML(build.capacity)} | ${escapeHTML(build.phase)}`, build.status));
                         queueCount++;
                     } else if (build.status === "Under Assembly") {
-                        assemblyList.appendChild(createFactoryCard(build.id, `Custom UPS Plant`, "Custom Build", `Sizing: ${build.capacity} | ${build.phase}`, "Assembling"));
+                        assemblyList.appendChild(createFactoryCard(build.id, `Custom UPS Plant`, "Custom Build", `Sizing: ${escapeHTML(build.capacity)} | ${escapeHTML(build.phase)}`, "Assembling"));
                         assemblyCount++;
                     } else if (build.status === "Factory Dispatch") {
                         // Fully completed
@@ -1083,7 +1140,7 @@
             document.getElementById("secure-logout-btn").addEventListener("click", () => {
                 if (confirm("Are you sure you want to sign out from the Admin Control Panel?")) {
                     localStorage.removeItem("aura-admin-logged-in");
-                    window.location.href = "login.html";
+                    window.location.href = "customer-login.html";
                 }
             });
 
@@ -1182,13 +1239,33 @@
                 }
             }
 
-            // Init dashboard
-            renderMetrics();
-            renderCatalog();
-            renderAdminOrders();
-            renderAdminCustoms();
-            renderAdminRepairs();
-            renderFactoryBoard();
+            // Init dashboard — load from Firebase then render
+            (async () => {
+                if (typeof FirebaseService !== "undefined") {
+                    try {
+                        [awOrders, awCustoms, awRepairs] = await Promise.all([
+                            FirebaseService.adminGetAllOrders(),
+                            FirebaseService.adminGetAllCustomizations(),
+                            FirebaseService.adminGetAllRepairs()
+                        ]);
+                    } catch (e) {
+                        console.warn("Firebase admin fetch failed, using localStorage:", e);
+                        awOrders = safeParseLocalStorage("aura-user-orders", []);
+                        awCustoms = safeParseLocalStorage("aura-user-customizations", []);
+                        awRepairs = safeParseLocalStorage("aura-user-repairs", []);
+                    }
+                } else {
+                    awOrders = safeParseLocalStorage("aura-user-orders", []);
+                    awCustoms = safeParseLocalStorage("aura-user-customizations", []);
+                    awRepairs = safeParseLocalStorage("aura-user-repairs", []);
+                }
+                renderMetrics();
+                renderCatalog();
+                renderAdminOrders();
+                renderAdminCustoms();
+                renderAdminRepairs();
+                renderFactoryBoard();
+            })();
             
             // Live Audit & Notification Stream
             function initLiveAuditStream() {

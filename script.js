@@ -101,10 +101,7 @@ const defaultProducts = [
         factoryStage: "Testing Stage"
     }
 ];
-
-// GROQ AI CONFIGURATION
-const GROQ_API_KEY = "gsk_EVALn4f1" + "M74Lyv3JB8E2WGdyb3FY3Xd0LcWTBCAyWi1qzNZ2x1fk";
-
+// GROQ AI CONFIGURATION - Loaded dynamically from local storage for security
 // Helper Functions for Supply Chain
 function stockClass(status) {
     switch (status) {
@@ -233,14 +230,14 @@ document.addEventListener("DOMContentLoaded", () => {
                         </div>
                         
                         <div class="fk-price-row">
-                            <span class="price-deal">₹${Number(product.dealPrice).toLocaleString()}</span>
-                            <span class="price-mrp">₹${Number(product.originalPrice).toLocaleString()}</span>
+                            <span class="price-deal" id="price-deal-${product.id}">₹${Number(product.dealPrice).toLocaleString()}</span>
+                            <span class="price-mrp" id="price-mrp-${product.id}">₹${Number(product.originalPrice).toLocaleString()}</span>
                             <span class="price-off">${percentageOff}% off</span>
                         </div>
                         
                         <div class="bank-offer-row">
                             <i class="fa-solid fa-tag"></i>
-                            <span>₹${Math.round(product.dealPrice * 0.95).toLocaleString()} with Bulk Bank offer</span>
+                            <span id="bank-offer-${product.id}">₹${Math.round(product.dealPrice * 0.95).toLocaleString()} with Bulk Bank offer</span>
                         </div>
 
                         <div class="fk-specs-row">
@@ -250,7 +247,12 @@ document.addEventListener("DOMContentLoaded", () => {
                             </div>
                             <div>
                                 <span>Phase Layout</span>
-                                <span>${product.phase}</span>
+                                <select id="phase-select-${product.id}" style="max-width: 80px; padding: 2px; border-radius: 4px; background: rgba(120,119,119,0.1); color: var(--text-color); border: 1px solid var(--card-border); font-size: 11px; outline: none;">
+                                    <option value="1 Phase" ${product.phase === '1 Phase' ? 'selected' : ''}>1 Phase</option>
+                                    <option value="1/1 Phase" ${product.phase.includes('1/1') ? 'selected' : ''}>1/1 Phase</option>
+                                    <option value="3/1 Phase" ${product.phase.includes('3/1') ? 'selected' : ''}>3/1 Phase</option>
+                                    <option value="3/3 Phase" ${product.phase.includes('3/3') ? 'selected' : ''}>3/3 Phase</option>
+                                </select>
                             </div>
                             <div>
                                 <span>Simulated Load</span>
@@ -296,11 +298,23 @@ document.addEventListener("DOMContentLoaded", () => {
                         <input type="range" class="calc-slider" min="10" max="100" value="${initialLoad}" id="slider-${product.id}" style="height: 4px;">
                     </div>
 
-                    <!-- Order CTA Button -->
-                    <button class="btn btn-primary w-full btn-order-now" data-id="${product.id}" style="padding: 8px 16px; font-size: 12px;">
-                        <span>Order Now</span>
-                        <i class="fa-solid fa-cart-shopping"></i>
-                    </button>
+                    <!-- Quantity Input -->
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; background: rgba(120,119,119,0.05); border: 1px solid var(--card-border); border-radius: 4px; padding: 6px 12px;">
+                        <span style="font-size: 11px; font-weight: bold; color: var(--text-muted); text-transform: uppercase;">Quantity (Pieces):</span>
+                        <input type="number" id="qty-${product.id}" value="1" min="1" max="100" style="width: 60px; padding: 4px 8px; border-radius: 4px; border: 1px solid rgba(0, 229, 255, 0.3); background: rgba(0,0,0,0.2); color: var(--text-color); font-size: 12px; outline: none; text-align: center; box-shadow: inset 0 0 5px rgba(0,0,0,0.5);">
+                    </div>
+
+                    <!-- Order & Customize CTA Buttons -->
+                    <div style="display: flex; gap: 8px;">
+                        <button class="btn btn-primary btn-order-now" data-id="${product.id}" style="flex: 1; padding: 8px; font-size: 12px; display: flex; align-items: center; justify-content: center; gap: 6px;">
+                            <span>Order</span>
+                            <i class="fa-solid fa-cart-shopping"></i>
+                        </button>
+                        <button class="btn btn-secondary btn-customize" onclick="window.location.href='customize.html?product=${encodeURIComponent(product.title)}'" style="flex: 1; padding: 8px; font-size: 12px; background: rgba(139,92,246,0.1); color: #8b5cf6; border: 1px solid rgba(139,92,246,0.3); display: flex; align-items: center; justify-content: center; gap: 6px; transition: all 0.3s ease;">
+                            <span>Customize</span>
+                            <i class="fa-solid fa-sliders"></i>
+                        </button>
+                    </div>
                 </div>
             `;
             productsGrid.appendChild(card);
@@ -309,6 +323,32 @@ document.addEventListener("DOMContentLoaded", () => {
             const slider = card.querySelector(`#slider-${product.id}`);
             const loadLbl = card.querySelector(`#load-label-${product.id}`);
             const runtimeLbl = card.querySelector(`#runtime-label-${product.id}`);
+            const phaseSelect = card.querySelector(`#phase-select-${product.id}`);
+            const dealLbl = card.querySelector(`#price-deal-${product.id}`);
+            const mrpLbl = card.querySelector(`#price-mrp-${product.id}`);
+            const bankLbl = card.querySelector(`#bank-offer-${product.id}`);
+
+            function updateDynamicPrice() {
+                const currentLoad = parseInt(slider.value);
+                const loadFactor = currentLoad / 50; 
+                
+                const phaseVal = phaseSelect.value;
+                let phaseFactor = 1;
+                if (phaseVal === "3/1 Phase") phaseFactor = 1.15;
+                if (phaseVal === "3/3 Phase") phaseFactor = 1.30;
+                
+                const basePhaseFactor = product.phase.includes('3/3') ? 1.30 : (product.phase.includes('3/1') ? 1.15 : 1);
+                const relativePhaseFactor = phaseFactor / basePhaseFactor;
+
+                const newDeal = Math.round(product.dealPrice * loadFactor * relativePhaseFactor);
+                const newMrp = Math.round(product.originalPrice * loadFactor * relativePhaseFactor);
+                
+                dealLbl.textContent = "₹" + newDeal.toLocaleString();
+                mrpLbl.textContent = "₹" + newMrp.toLocaleString();
+                if(bankLbl) bankLbl.textContent = "₹" + Math.round(newDeal * 0.95).toLocaleString() + " with Bulk Bank offer";
+                
+                return newDeal;
+            }
 
             slider.addEventListener("input", (e) => {
                 const currentLoad = parseInt(e.target.value);
@@ -316,50 +356,82 @@ document.addEventListener("DOMContentLoaded", () => {
                 
                 const runtime = Math.round((product.baseBackupMinutes || 45) * (100 / currentLoad));
                 runtimeLbl.textContent = `${runtime} Mins`;
+                
+                updateDynamicPrice();
+            });
+
+            phaseSelect.addEventListener("change", () => {
+                updateDynamicPrice();
             });
 
             // Hook up Order Now Listener
             const orderBtn = card.querySelector(`.btn-order-now`);
-            orderBtn.addEventListener("click", () => {
-                const isUserLoggedIn = localStorage.getItem("aura-user-logged-in") === "true";
-                if (!isUserLoggedIn) {
-                    alert("AURA Security Protocols: Please sign in as a Customer to place orders or request factory quotes!");
-                    localStorage.setItem("aura-auth-redirect", "index.html");
-                    window.location.href = "customer-login.html";
-                    return;
-                }
+            orderBtn.addEventListener("click", async () => {
+                // Real Appwrite session verification
+                const isAuthenticated = await requireAuth("index.html");
+                if (!isAuthenticated) return;
 
-                let orders = JSON.parse(localStorage.getItem("aura-user-orders")) || [];
+                const qtyInput = card.querySelector(`#qty-${product.id}`);
+                const quantity = parseInt(qtyInput.value) || 1;
                 const orderId = "ORD-" + Date.now().toString().slice(-6);
                 
+                const finalPrice = updateDynamicPrice();
+                const selectedPhase = phaseSelect.value;
+                const finalLoad = slider.value;
+                
+                const orderTitle = `${product.title} (${selectedPhase}, ${finalLoad}% Load)`;
+                
+                // Check if User Profile / Address Exists
+                let userProfile = null;
+                if (typeof FirebaseService !== "undefined") {
+                    userProfile = await FirebaseService.getUserProfile();
+                } else {
+                    userProfile = JSON.parse(localStorage.getItem("aura-user-profile"));
+                }
+
+                // If user doesn't have an address, send them to the Checkout Form
+                if (!userProfile || !userProfile.address) {
+                    window.location.href = `checkout.html?type=standard&item=${encodeURIComponent(orderTitle)}&price=${finalPrice * quantity}`;
+                    return; // Stop here, the checkout page will handle saving profile and order
+                }
+
+                // If profile exists, use it to automatically process the order
                 const newOrder = {
                     id: orderId,
-                    title: product.title,
+                    title: orderTitle,
                     capacity: product.capacity,
-                    price: product.dealPrice,
+                    price: finalPrice * quantity,
+                    quantity: quantity,
                     status: "Pending Audit",
+                    shippingAddress: `${userProfile.address}, ${userProfile.city} - ${userProfile.pin} (Ph: ${userProfile.phone})`,
                     timestamp: new Date().toLocaleDateString()
                 };
                 
-                orders.unshift(newOrder);
-                localStorage.setItem("aura-user-orders", JSON.stringify(orders));
+                if (typeof FirebaseService !== "undefined") {
+                    await FirebaseService.saveOrder(newOrder);
+                    await FirebaseService.createNotification("admin", "New Order Received", `User ordered ${orderTitle}. Order ID: ${orderId}`);
+                } else {
+                    let orders = JSON.parse(localStorage.getItem("aura-user-orders")) || [];
+                    orders.unshift(newOrder);
+                    localStorage.setItem("aura-user-orders", JSON.stringify(orders));
+                }
 
-                // Push lead
+                // Push lead for WhatsApp Tracker
                 let leads = JSON.parse(localStorage.getItem("aura-whatsapp-leads")) || [];
                 leads.unshift({
-                    name: "Storefront Customer",
-                    system: product.title,
+                    name: userProfile.name || "Storefront Customer",
+                    system: product.title + " (Qty: " + quantity + ")",
                     capacity: product.capacity,
                     timestamp: "Just now"
                 });
                 localStorage.setItem("aura-whatsapp-leads", JSON.stringify(leads));
 
                 // Open WhatsApp
-                const message = `Hello Aura Power Systems!\n\nI want to place an order for the *${product.title}*:\n*Sizing Rating:* ${product.capacity}\n*Order Reference ID:* ${orderId}`;
-                window.open(`https://wa.me/917463053829?text=${encodeURIComponent(message)}`, "_blank");
+                const message = `Hello Roboart Transformers!\n\nI want to place an order for the *${orderTitle}*:\n*Sizing Rating:* ${product.capacity}\n*Quantity:* ${quantity} Pieces\n*Calculated Price:* ₹${finalPrice.toLocaleString()} (per piece)\n*Order Reference ID:* ${orderId}`;
+                window.open(`https://wa.me/916394635914?text=${encodeURIComponent(message)}`, "_blank");
 
-                // Redirect
-                window.location.href = "orders.html";
+                // Redirect to success page
+                window.location.href = `success.html?id=${orderId}`;
             });
         });
     }
@@ -388,33 +460,35 @@ document.addEventListener("DOMContentLoaded", () => {
     const adminTriggerBtn = document.getElementById("admin-trigger-btn");
     const isAdminLoggedIn = localStorage.getItem("aura-admin-logged-in") === "true";
     
-    if (isAdminLoggedIn) {
-        adminTriggerBtn.classList.add("logged-in");
-        adminTriggerBtn.setAttribute("title", "Admin Authenticated (Click to open panel)");
-        
-        // Dynamic Logout Button creation in header
-        const logoutBtn = document.createElement("button");
-        logoutBtn.className = "theme-btn logout-trigger";
-        logoutBtn.setAttribute("title", "Logout Securely");
-        logoutBtn.innerHTML = '<i class="fa-solid fa-power-off"></i>';
-        
-        adminTriggerBtn.parentNode.insertBefore(logoutBtn, adminTriggerBtn.nextSibling);
-        
-        logoutBtn.addEventListener("click", () => {
-            if (confirm("Are you sure you want to sign out from the Admin Portal?")) {
-                localStorage.removeItem("aura-admin-logged-in");
-                window.location.reload();
+    if (adminTriggerBtn) {
+        if (isAdminLoggedIn) {
+            adminTriggerBtn.classList.add("logged-in");
+            adminTriggerBtn.setAttribute("title", "Admin Authenticated (Click to open panel)");
+            
+            // Dynamic Logout Button creation in header
+            const logoutBtn = document.createElement("button");
+            logoutBtn.className = "theme-btn logout-trigger";
+            logoutBtn.setAttribute("title", "Logout Securely");
+            logoutBtn.innerHTML = '<i class="fa-solid fa-power-off"></i>';
+            
+            adminTriggerBtn.parentNode.insertBefore(logoutBtn, adminTriggerBtn.nextSibling);
+            
+            logoutBtn.addEventListener("click", () => {
+                if (confirm("Are you sure you want to sign out from the Admin Portal?")) {
+                    localStorage.removeItem("aura-admin-logged-in");
+                    window.location.reload();
+                }
+            });
+        }
+
+        adminTriggerBtn.addEventListener("click", () => {
+            if (localStorage.getItem("aura-admin-logged-in") === "true") {
+                window.location.href = "admin.html";
+            } else {
+                window.location.href = "customer-login.html";
             }
         });
     }
-
-    adminTriggerBtn.addEventListener("click", () => {
-        if (localStorage.getItem("aura-admin-logged-in") === "true") {
-            window.location.href = "admin.html";
-        } else {
-            window.location.href = "login.html";
-        }
-    });
 
     // 5b. Customer Portal Authentication Control
     const userLoginBtn = document.getElementById("user-login-btn");
@@ -492,11 +566,10 @@ document.addEventListener("DOMContentLoaded", () => {
         chatBody.scrollTop = chatBody.scrollHeight;
 
         try {
-            const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+            const response = await fetch("/api/chat", {
                 method: "POST",
                 headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": `Bearer ${GROQ_API_KEY}`
+                    "Content-Type": "application/json"
                 },
                 body: JSON.stringify({
                     messages: [
@@ -512,12 +585,13 @@ document.addEventListener("DOMContentLoaded", () => {
                             `
                         },
                         ...chatMessages.map(m => ({ role: m.role, content: m.content }))
-                    ],
-                    model: "llama-3.3-70b-versatile",
-                    temperature: 0.6,
-                    max_tokens: 250
+                    ]
                 })
             });
+
+            if (!response.ok) {
+                throw new Error("Serverless API responded with error status: " + response.status);
+            }
 
             const data = await response.json();
             
@@ -618,7 +692,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (localStorage.getItem("aura-admin-logged-in") === "true") {
                     window.location.href = "admin.html";
                 } else {
-                    window.location.href = "login.html";
+                    window.location.href = "customer-login.html";
                 }
             });
         }

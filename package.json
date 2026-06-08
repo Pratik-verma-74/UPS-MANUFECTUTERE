@@ -1,0 +1,26 @@
+{
+  "name": "ups-manufecture-app",
+  "version": "1.0.0",
+  "description": "This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).",
+  "main": "components.js",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Pratik-verma-74/UPS-MANUFECTUTERE.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Pratik-verma-74/UPS-MANUFECTUTERE/issues"
+  },
+  "homepage": "https://github.com/Pratik-verma-74/UPS-MANUFECTUTERE#readme",
+  "devDependencies": {
+    "terser": "^5.48.0",
+    "vite": "^8.0.16"
+  }
+}

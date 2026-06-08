@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="normal">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Successful - Roboart Transformers</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        .success-container {
+            max-width: 600px;
+            margin: 120px auto 80px auto;
+            text-align: center;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            padding: 60px 40px;
+            box-shadow: var(--shadow-lg);
+        }
+        .success-icon {
+            width: 96px;
+            height: 96px;
+            border-radius: 50%;
+            background: rgba(16, 185, 129, 0.1);
+            color: #10b981;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            margin: 0 auto 32px auto;
+            animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+            transform: scale(0);
+        }
+        @keyframes popIn {
+            to { transform: scale(1); }
+        }
+        .success-title {
+            font-size: 28px;
+            font-family: "Space Grotesk", sans-serif;
+            color: var(--text-color);
+            margin-bottom: 16px;
+            font-weight: 700;
+        }
+        .success-desc {
+            font-size: 15px;
+            color: var(--text-muted);
+            margin-bottom: 32px;
+            line-height: 1.6;
+        }
+        .order-id-box {
+            display: inline-block;
+            background: var(--bg-color);
+            border: 1px dashed var(--card-border);
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-family: "Space Grotesk", monospace;
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 40px;
+            letter-spacing: 1px;
+        }
+    </style>
+  <link rel="stylesheet" crossorigin href="/assets/style-Bg7YTivN.css">
+</head>
+<body>
+    <aura-header></aura-header>
+
+    <main>
+        <div class="container">
+            <div class="success-container glass">
+                <div class="success-icon">
+                    <i class="fa-solid fa-check"></i>
+                </div>
+                <h1 class="success-title">Order Successfully Placed!</h1>
+                <p class="success-desc">
+                    Thank you for choosing Roboart Transformers. Our engineering team has received your request and is currently auditing your order. You will receive an update shortly.
+                </p>
+                <div class="order-id-box">
+                    Order ID: <span id="display-order-id">Loading...</span>
+                </div>
+                
+                <div style="display: flex; gap: 16px; justify-content: center;">
+                    <a href="orders.html" class="btn btn-primary" style="padding: 16px 32px; font-size: 15px;">
+                        Track Order in Dashboard <i class="fa-solid fa-arrow-right"></i>
+                    </a>
+                    <a href="index.html" class="btn btn-glass" style="padding: 16px 32px; font-size: 15px;">
+                        Return Home
+                    </a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <aura-footer></aura-footer>
+    <script src="components.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const id = urlParams.get('id') || "N/A";
+            document.getElementById("display-order-id").textContent = id;
+        });
+    </script>
+</body>
+</html>

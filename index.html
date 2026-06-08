@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AURA | Premium Power E-Commerce Catalog</title>
+    <title>ROBOART | Transformer Range</title>
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -12,45 +12,28 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Main Style Sheet -->
     <link rel="stylesheet" href="style.css">
+    <!-- Firebase Service Integration -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-check-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+    <script src="firebase-service.js"></script>
+    <script src="components.js"></script>
 </head>
 <body>
 
-    <!-- Transparent Fixed Header -->
-    <header class="header">
-        <div class="header-left-group" style="display: flex; align-items: center; gap: 16px;">
-            <button id="left-settings-trigger" class="theme-btn" title="Settings & Admin Control" style="margin-right: 4px;">
-                <i class="fa-solid fa-bars"></i>
-            </button>
-            <div class="logo" onclick="window.location.href='index.html'">
-                <i class="fa-solid fa-bolt logo-icon"></i>
-                <span>AURA</span>
-            </div>
+    <!-- Web Component Header -->
+    <aura-header active="systems"></aura-header>
+
+    <!-- ROBOART Hero Section -->
+    <section class="hero-section" style="padding: 100px 0 60px; background: linear-gradient(135deg, rgba(var(--primary-rgb), 0.1) 0%, rgba(var(--secondary-rgb), 0.05) 100%); text-align: center; border-bottom: 1px solid var(--card-border);">
+        <div class="container">
+            <h1 style="font-family: 'Space Grotesk', sans-serif; font-size: 48px; font-weight: 800; color: var(--primary); margin-bottom: 16px;">Transformer Range</h1>
+            <h3 style="font-size: 24px; color: var(--text-color); margin-bottom: 12px; font-weight: 600;">Reliable Power. Stronger Performance.</h3>
+            <p style="font-size: 16px; color: var(--text-muted); max-width: 600px; margin: 0 auto 30px;">Powering Automation. Empowering Industries. We make your ideas boost!</p>
+            <a href="#products" class="btn btn-primary" style="padding: 14px 32px; font-size: 16px; border-radius: 8px;"><i class="fa-solid fa-bolt"></i> Explore Transformers</a>
         </div>
-        <nav class="nav">
-            <a href="index.html" class="nav-link active">Systems</a>
-            <a href="b2c-store.html" class="nav-link">B2C Products</a>
-            <a href="calculator.html" class="nav-link">Calculator</a>
-            <a href="customize.html" class="nav-link">Customize</a>
-            <a href="repair.html" class="nav-link">Repair Service</a>
-            <a href="orders.html" class="nav-link">My Orders</a>
-        </nav>
-        <div class="header-actions">
-            <!-- Theme Toggle Button -->
-            <button id="theme-toggle" class="theme-btn" title="Toggle Light/Dark Theme">
-                <i class="fa-solid fa-moon"></i>
-            </button>
-            <button id="admin-trigger-btn" class="theme-btn admin-btn" title="Open Admin Control Panel">
-                <i class="fa-solid fa-user-gear"></i>
-            </button>
-            <button id="user-login-btn" class="theme-btn user-btn" title="Customer Portal Login">
-                <i class="fa-solid fa-user"></i>
-            </button>
-            <a href="contact.html" class="btn btn-primary btn-quote">
-                <span>Get B2B Pricing</span>
-                <i class="fa-brands fa-whatsapp"></i>
-            </a>
-        </div>
-    </header>
+    </section>
 
     <!-- 1. Flipkart-style Search & Category Icon Shelf -->
     <section class="ecom-header-shelf" style="margin-top: 64px;">
@@ -67,27 +50,23 @@
             <div class="ecom-categories-shelf">
                 <div class="cat-shelf-item active" data-category="all">
                     <div class="cat-icon-box"><i class="fa-solid fa-boxes-stacked"></i></div>
-                    <span>For You</span>
+                    <span>All Products</span>
                 </div>
-                <div class="cat-shelf-item" data-category="online">
-                    <div class="cat-icon-box"><i class="fa-solid fa-server"></i></div>
-                    <span>Online UPS</span>
+                <div class="cat-shelf-item" data-category="control">
+                    <div class="cat-icon-box"><i class="fa-solid fa-bolt"></i></div>
+                    <span>Control Transformers</span>
                 </div>
-                <div class="cat-shelf-item" data-category="modular">
-                    <div class="cat-icon-box"><i class="fa-solid fa-network-wired"></i></div>
-                    <span>Modular Systems</span>
+                <div class="cat-shelf-item" data-category="stepdown">
+                    <div class="cat-icon-box"><i class="fa-solid fa-arrow-down-up-across-line"></i></div>
+                    <span>Step Down Transformers</span>
                 </div>
-                <div class="cat-shelf-item" data-category="solar">
-                    <div class="cat-icon-box"><i class="fa-solid fa-solar-panel"></i></div>
-                    <span>Solar Inverters</span>
+                <div class="cat-shelf-item" data-category="isolation">
+                    <div class="cat-icon-box"><i class="fa-solid fa-shield-halved"></i></div>
+                    <span>Isolation Transformers</span>
                 </div>
-                <div class="cat-shelf-item" data-category="batteries">
-                    <div class="cat-icon-box"><i class="fa-solid fa-car-battery"></i></div>
-                    <span>Battery Banks</span>
-                </div>
-                <div class="cat-shelf-item" data-category="bypass">
-                    <div class="cat-icon-box"><i class="fa-solid fa-toggle-on"></i></div>
-                    <span>Bypass Cabinet</span>
+                <div class="cat-shelf-item" data-category="threephase">
+                    <div class="cat-icon-box"><i class="fa-solid fa-industry"></i></div>
+                    <span>Three Phase Transformers</span>
                 </div>
             </div>
         </div>
@@ -97,9 +76,9 @@
     <section id="products" class="products-section" style="padding-top: 40px; padding-bottom: 60px;">
         <div class="container">
             <div class="section-header" style="margin-bottom: 40px;">
-                <span class="section-tag">Aura Deals Storefront</span>
-                <h2 class="section-title">Trending Power Solutions</h2>
-                <p class="section-desc">Design your own specs, calculate custom autonomy times, or buy high-conversion systems directly.</p>
+                <span class="section-tag">ROBOART Storefront</span>
+                <h2 class="section-title">Industrial Transformer Range</h2>
+                <p class="section-desc">Browse our high-efficiency transformers, custom built for maximum reliability and electrical safety.</p>
             </div>
 
             <!-- Products Grid -->
@@ -109,48 +88,51 @@
         </div>
     </section>
 
-    <!-- 3. Specialized Services Routing Cards Grid -->
+    <!-- 3. ROBOART Website Features Section -->
     <section class="about-stats" style="padding: 60px 0; background: var(--section-white-bg); border-top: 1px solid var(--card-border); border-bottom: 1px solid var(--card-border); transition: background-color 0.3s ease;">
         <div class="container">
             <div class="section-header" style="margin-bottom: 40px;">
-                <span class="section-tag" style="color: var(--secondary);">Industrial Verticals</span>
-                <h2 class="section-title">Our Business Services</h2>
-                <p class="section-desc">Select a specialized workflow to size backups, design multi-megawatt setups, or repair damaged hardware.</p>
+                <span class="section-tag" style="color: var(--secondary);">Why Choose Roboart</span>
+                <h2 class="section-title">Built For Performance</h2>
+                <p class="section-desc">We deliver custom-built, highly efficient transformer systems tailored for every industrial requirement.</p>
             </div>
 
-            <div class="admin-metrics-row" style="margin-bottom: 0;">
-                <!-- Card 1: Capacity Calculator -->
-                <div class="metric-card" onclick="window.location.href='calculator.html'" style="cursor: pointer; flex-direction: column; align-items: flex-start; gap: 16px; padding: 24px; border: 1px solid var(--card-border);">
-                    <div class="metric-icon" style="background: rgba(40,116,240,0.06); color: var(--primary);"><i class="fa-solid fa-calculator"></i></div>
+            <div class="admin-metrics-row" style="margin-bottom: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
+                <!-- Feature 1: High Efficiency -->
+                <div class="metric-card" style="flex-direction: column; align-items: flex-start; gap: 16px; padding: 24px; border: 1px solid var(--card-border);">
+                    <div class="metric-icon" style="background: rgba(40,116,240,0.06); color: var(--primary);"><i class="fa-solid fa-bolt"></i></div>
                     <div class="metric-info" style="display: flex; flex-direction: column;">
-                        <span style="font-size: 16px; color: var(--text-color); font-weight: 700;">Capacity Calculator</span>
-                        <p style="font-size: 11px; color: var(--text-muted); margin-top: 4px;">Size backup autonomy battery banks according to your load profile factor.</p>
-                        <a href="calculator.html" style="font-size: 11px; font-weight: bold; color: var(--primary); text-decoration: none; margin-top: 12px; display: inline-flex; align-items: center; gap: 4px;">
-                            <span>Launch Calculator</span> <i class="fa-solid fa-arrow-right"></i>
-                        </a>
+                        <span style="font-size: 16px; color: var(--text-color); font-weight: 700;">High Efficiency</span>
+                        <p style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Low Losses & High Performance.</p>
                     </div>
                 </div>
 
-                <!-- Card 2: Custom UPS Design -->
-                <div class="metric-card" onclick="window.location.href='customize.html'" style="cursor: pointer; flex-direction: column; align-items: flex-start; gap: 16px; padding: 24px; border: 1px solid var(--card-border);">
-                    <div class="metric-icon" style="background: rgba(16,185,129,0.06); color: #10b981;"><i class="fa-solid fa-compass-drafting"></i></div>
+                <!-- Feature 2: Built To Last -->
+                <div class="metric-card" style="flex-direction: column; align-items: flex-start; gap: 16px; padding: 24px; border: 1px solid var(--card-border);">
+                    <div class="metric-icon" style="background: rgba(16,185,129,0.06); color: #10b981;"><i class="fa-solid fa-shield-halved"></i></div>
                     <div class="metric-info" style="display: flex; flex-direction: column;">
-                        <span style="font-size: 16px; color: var(--text-color); font-weight: 700;">Design Custom UPS</span>
-                        <p style="font-size: 11px; color: var(--text-muted); margin-top: 4px;">Detail neutral isolations, redundant floor setups, and bypass configurations.</p>
-                        <a href="customize.html" style="font-size: 11px; font-weight: bold; color: #10b981; text-decoration: none; margin-top: 12px; display: inline-flex; align-items: center; gap: 4px;">
-                            <span>Model Custom System</span> <i class="fa-solid fa-arrow-right"></i>
-                        </a>
+                        <span style="font-size: 16px; color: var(--text-color); font-weight: 700;">Built To Last</span>
+                        <p style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Premium Materials & Reliable Design.</p>
                     </div>
                 </div>
 
-                <!-- Card 3: UPS Repair Desk -->
-                <div class="metric-card" onclick="window.location.href='repair.html'" style="cursor: pointer; flex-direction: column; align-items: flex-start; gap: 16px; padding: 24px; border: 1px solid var(--card-border);">
-                    <div class="metric-icon" style="background: rgba(251,100,27,0.06); color: var(--secondary);"><i class="fa-solid fa-screwdriver-wrench"></i></div>
+                <!-- Feature 3: Electrical Safety -->
+                <div class="metric-card" style="flex-direction: column; align-items: flex-start; gap: 16px; padding: 24px; border: 1px solid var(--card-border);">
+                    <div class="metric-icon" style="background: rgba(251,100,27,0.06); color: var(--secondary);"><i class="fa-solid fa-plug-circle-check"></i></div>
                     <div class="metric-info" style="display: flex; flex-direction: column;">
-                        <span style="font-size: 16px; color: var(--text-color); font-weight: 700;">UPS Repair & Service</span>
-                        <p style="font-size: 11px; color: var(--text-muted); margin-top: 4px;">Got a broken APC, Delta or Vertiv? Dispatch a service technician for repairs.</p>
-                        <a href="repair.html" style="font-size: 11px; font-weight: bold; color: var(--secondary); text-decoration: none; margin-top: 12px; display: inline-flex; align-items: center; gap: 4px;">
-                            <span>Submit Broken UPS</span> <i class="fa-solid fa-arrow-right"></i>
+                        <span style="font-size: 16px; color: var(--text-color); font-weight: 700;">Electrical Safety</span>
+                        <p style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Isolation Driven Design.</p>
+                    </div>
+                </div>
+
+                <!-- Feature 4: Custom Solutions -->
+                <div class="metric-card" onclick="window.location.href='customize.html'" style="cursor: pointer; flex-direction: column; align-items: flex-start; gap: 16px; padding: 24px; border: 1px solid var(--card-border); transition: all 0.2s ease;">
+                    <div class="metric-icon" style="background: rgba(139,92,246,0.06); color: #8b5cf6;"><i class="fa-solid fa-sliders"></i></div>
+                    <div class="metric-info" style="display: flex; flex-direction: column;">
+                        <span style="font-size: 16px; color: var(--text-color); font-weight: 700;">Custom Solutions</span>
+                        <p style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Tailored Design For Every Requirement.</p>
+                        <a href="customize.html" style="font-size: 11px; font-weight: bold; color: #8b5cf6; text-decoration: none; margin-top: 12px; display: inline-flex; align-items: center; gap: 4px;">
+                            <span>Request Custom Build</span> <i class="fa-solid fa-arrow-right"></i>
                         </a>
                     </div>
                 </div>
@@ -158,93 +140,14 @@
         </div>
     </section>
 
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="container footer-container">
-            <div class="footer-logo">
-                <i class="fa-solid fa-bolt"></i>
-                <span>AURA</span>
-            </div>
-            <p class="footer-copy">© <span id="year"></span> Aura Power Solutions. Engineered for Excellence.</p>
-        </div>
-        <!-- Secure Console Gateway Link -->
-        <div style="border-top: 1px solid rgba(255,255,255,0.06); margin-top: 16px; padding-top: 16px; text-align: center; font-size: 11px;">
-            <a href="login.html" style="color: rgba(255,255,255,0.3); text-decoration: none; display: inline-flex; align-items: center; gap: 6px; letter-spacing: 1px; text-transform: uppercase; transition: all 0.3s ease;" onmouseover="this.style.color='#00e5ff'" onmouseout="this.style.color='rgba(255,255,255,0.3)'">
-                <i class="fa-solid fa-user-shield"></i>
-                <span>Login as Admin / Secure Console</span>
-            </a>
-        </div>
-    </footer>
+    <!-- Web Component Footer -->
+    <aura-footer></aura-footer>
 
-    <!-- Premium Floating AI Assistant -->
-    <div class="chat-widget-container">
-        <div class="floating-triggers">
-            <a href="https://wa.me/917463053829" target="_blank" class="float-btn whatsapp-float" title="Direct WhatsApp Sales">
-                <i class="fa-brands fa-whatsapp"></i>
-            </a>
-            <button id="ai-chat-toggle" class="float-btn ai-chat-float" title="Aura AI Assistant">
-                <i class="fa-solid fa-comment-dots"></i>
-                <span class="ping-badge"></span>
-            </button>
-        </div>
+    <!-- Web Component Chat Widget -->
+    <aura-chat></aura-chat>
 
-        <div class="chat-window" id="chat-window">
-            <div class="chat-header">
-                <div class="chat-avatar"><i class="fa-solid fa-robot"></i></div>
-                <div class="chat-header-info">
-                    <h4>Aura AI System</h4>
-                    <p><span class="status-indicator"></span> Active Support</p>
-                </div>
-                <button id="chat-close-btn" class="chat-close"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-            <div class="chat-body" id="chat-body"></div>
-            <form id="chat-form" class="chat-footer">
-                <input type="text" id="chat-input" placeholder="Ask about sizing, batteries..." required>
-                <button type="submit" class="chat-send-btn"><i class="fa-solid fa-paper-plane"></i></button>
-            </form>
-        </div>
-    </div>
-
-    <!-- Sliding Settings Sidebar -->
-    <div id="settings-sidebar" class="sidebar-panel">
-        <div class="sidebar-header">
-            <h3><i class="fa-solid fa-gears"></i> Settings Panel</h3>
-            <button id="sidebar-close-btn" class="close-btn">&times;</button>
-        </div>
-        <div class="sidebar-body">
-            <!-- Theme Preference -->
-            <div class="settings-group">
-                <label><i class="fa-solid fa-circle-half-stroke"></i> Select Theme</label>
-                <div class="theme-select-grid">
-                    <button id="theme-normal-select" class="theme-select-btn active">Light Mode</button>
-                    <button id="theme-neon-select" class="theme-select-btn">Dark Mode</button>
-                </div>
-            </div>
-
-            <!-- Admin Access Gate -->
-            <div class="settings-group admin-gate-group">
-                <label><i class="fa-solid fa-user-shield"></i> Administration</label>
-                <p class="settings-desc">Access factory scaling multipliers, WhatsApp leads trackers, and catalog upload desks.</p>
-                <button id="sidebar-admin-btn" class="btn btn-secondary w-full">
-                    <span>Admin Portal Access</span>
-                    <i class="fa-solid fa-right-to-bracket"></i>
-                </button>
-            </div>
-            
-            <!-- Quick Portal links -->
-            <div class="settings-group">
-                <label><i class="fa-solid fa-link"></i> Quick Navigation</label>
-                <ul class="settings-nav-links">
-                    <li><a href="index.html"><i class="fa-solid fa-house"></i> Home Systems</a></li>
-                    <li><a href="calculator.html"><i class="fa-solid fa-calculator"></i> Capacity Sizer</a></li>
-                    <li><a href="customize.html"><i class="fa-solid fa-sliders"></i> Custom Plant Designer</a></li>
-                    <li><a href="repair.html"><i class="fa-solid fa-wrench"></i> Repair Dispatch</a></li>
-                    <li><a href="orders.html"><i class="fa-solid fa-cart-flatbed"></i> My Orders Registry</a></li>
-                </ul>
-            </div>
-        </div>
-    </div>
-    <div id="sidebar-overlay" class="sidebar-overlay"></div>
+    <!-- Web Component Sidebar -->
+    <aura-sidebar></aura-sidebar>
 
     <!-- Main JavaScript File -->
     <script src="script.js"></script>

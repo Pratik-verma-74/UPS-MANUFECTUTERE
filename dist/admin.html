@@ -1,0 +1,1368 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="normal">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AURA | Admin Control Center</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Space+Grotesk:wght@300..700&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Main Style Sheet -->
+    <!-- Firebase Service Integration -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-check-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+    <script src="firebase-service.js"></script>
+    
+    <!-- Custom Live Audit Feed Styles -->
+    <style>
+        #live-audit-feed::-webkit-scrollbar {
+            width: 6px;
+        }
+        #live-audit-feed::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        #live-audit-feed::-webkit-scrollbar-thumb {
+            background: var(--card-border);
+            border-radius: 10px;
+        }
+        .audit-item {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 16px;
+            border-radius: 8px;
+            border: 1px solid var(--card-border);
+            background: rgba(255, 255, 255, 0.01);
+            animation: auditSlideIn 0.4s ease-out forwards;
+            gap: 8px;
+        }
+        .audit-item.success {
+            border-left: 3px solid #22c55e;
+            background: linear-gradient(90deg, rgba(34, 197, 94, 0.03) 0%, transparent 100%);
+        }
+        .audit-item.info {
+            border-left: 3px solid #3b82f6;
+            background: linear-gradient(90deg, rgba(59, 130, 246, 0.03) 0%, transparent 100%);
+        }
+        .audit-item.warning {
+            border-left: 3px solid #f59e0b;
+            background: linear-gradient(90deg, rgba(245, 158, 11, 0.03) 0%, transparent 100%);
+        }
+        .audit-badge {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+        .success .audit-badge { color: #22c55e; background: rgba(34, 197, 94, 0.1); }
+        .info .audit-badge { color: #3b82f6; background: rgba(59, 130, 246, 0.1); }
+        .warning .audit-badge { color: #f59e0b; background: rgba(245, 158, 11, 0.1); }
+
+        .audit-text {
+            font-size: 12px;
+            color: var(--text-color);
+            flex: 1;
+            min-width: 200px;
+        }
+        .audit-time {
+            font-size: 10px;
+            color: var(--text-muted);
+        }
+        @keyframes auditSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-8px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        @keyframes pulse {
+            0% { transform: scale(0.95); opacity: 1; }
+            50% { transform: scale(1.15); opacity: 0.6; }
+            100% { transform: scale(0.95); opacity: 1; }
+        }
+
+        /* Mobile responsive audit cards */
+        @media (max-width: 768px) {
+            .audit-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 6px;
+            }
+            .audit-text {
+                width: 100%;
+                min-width: 0;
+            }
+            .audit-time {
+                align-self: flex-end;
+            }
+        }
+    </style>
+  <link rel="stylesheet" crossorigin href="/assets/style-Bg7YTivN.css">
+</head>
+<body class="admin-dashboard-body">
+
+    <!-- Auth Guard (Secure URL protection) -->
+    <script>
+        const allowedAdmins = ["pratikverma025@gmail.com", "shivamsri639463@gmail.com"];
+        const adminEmail = localStorage.getItem("aura-admin-email");
+        if (localStorage.getItem("aura-admin-logged-in") !== "true" || !allowedAdmins.includes(adminEmail)) {
+            window.stop();
+            document.documentElement.innerHTML = "";
+            window.location.replace("customer-login.html");
+        }
+    </script>
+
+    <!-- Professional Sleek Header -->
+    <header class="header">
+        <div class="header-left-group" style="display: flex; align-items: center; gap: 16px;">
+            <button id="left-settings-trigger" class="theme-btn" title="Settings & Admin Control" style="margin-right: 4px;">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+            <div class="logo" onclick="window.location.href='index.html'">
+                <i class="fa-solid fa-bolt logo-icon"></i>
+                <span>AURA</span>
+            </div>
+        </div>
+        <nav class="nav">
+            <a href="index.html" class="nav-link">Systems</a>
+            <a href="calculator.html" class="nav-link">Calculator</a>
+            <a href="customize.html" class="nav-link">Customize</a>
+            <a href="repair.html" class="nav-link">Repair Service</a>
+            <a href="orders.html" class="nav-link">My Orders</a>
+        </nav>
+        <div class="header-actions">
+            <button id="theme-toggle" class="theme-btn" title="Toggle Light/Dark Theme">
+                <i class="fa-solid fa-moon"></i>
+            </button>
+            <button id="secure-logout-btn" class="theme-btn logout-trigger" title="Logout Securely">
+                <i class="fa-solid fa-power-off"></i>
+            </button>
+        </div>
+    </header>
+
+    <div class="container" style="padding-top: 20px;">
+        
+        <!-- Welcome Row & Admin Navigation Tabs -->
+        <div class="admin-welcome-row" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; margin-bottom: 24px;">
+            <div>
+                <h2>System Control Panel</h2>
+                <p style="font-size: 13px; color: var(--text-muted); margin-top: 4px;">Real-time monitoring of storefront listings, client orders, repair diagnostic tickets, and safety parameters.</p>
+            </div>
+            <div class="admin-nav-tabs" style="display: flex; gap: 10px; flex-wrap: wrap; width: 100%; align-items: center;">
+                <a href="admin.html" class="btn btn-primary" style="font-size: 12px; padding: 10px 18px; border-radius: 6px; box-shadow: var(--shadow-md);">
+                    <i class="fa-solid fa-network-wired"></i> Workspace Control
+                </a>
+                <a href="admin-analytics.html" class="btn btn-secondary" style="font-size: 12px; padding: 10px 18px; border-radius: 6px; background: var(--card-bg); border: 1px solid var(--card-border); color: var(--text-color); box-shadow: var(--shadow-sm);">
+                    <i class="fa-solid fa-chart-line"></i> Smart Analytics
+                </a>
+                <a href="admin-bihar-trends.html" class="btn btn-secondary" style="font-size: 12px; padding: 10px 18px; border-radius: 6px; background: var(--card-bg); border: 1px solid var(--card-border); color: var(--text-color); box-shadow: var(--shadow-sm);">
+                    <i class="fa-solid fa-hospital-user"></i> All Demand
+                </a>
+                <a href="admin-billing.html" class="btn btn-secondary" style="font-size: 12px; padding: 10px 18px; border-radius: 6px; background: var(--card-bg); border: 1px solid var(--card-border); color: var(--text-color); box-shadow: var(--shadow-sm);">
+                    <i class="fa-solid fa-file-invoice-dollar"></i> Billing Generator
+                </a>
+                <a href="admin-quotation.html" class="btn btn-secondary" style="font-size: 12px; padding: 10px 18px; border-radius: 6px; background: var(--card-bg); border: 1px solid var(--card-border); color: var(--text-color); box-shadow: var(--shadow-sm);">
+                    <i class="fa-solid fa-file-signature"></i> Quotation Maker
+                </a>
+                <a href="admin-b2c.html" class="btn btn-secondary" style="font-size: 12px; padding: 10px 18px; border-radius: 6px; background: var(--card-bg); border: 1px solid var(--card-border); color: var(--text-color); box-shadow: var(--shadow-sm);">
+                    <i class="fa-solid fa-shop"></i> B2C Catalog CMS
+                </a>
+                <a href="index.html" class="btn btn-secondary" style="font-size: 12px; padding: 10px 18px; border-radius: 6px; background: rgba(34,197,94,0.1); border: 1px solid #22c55e; color: #22c55e; box-shadow: var(--shadow-sm); margin-left: auto;">
+                    <i class="fa-solid fa-globe"></i> Customer Storefront
+                </a>
+            </div>
+        </div>
+
+        <div class="admin-metrics-row">
+            <div class="metric-card">
+                <div class="metric-icon"><i class="fa-solid fa-boxes-stacked"></i></div>
+                <div class="metric-info">
+                    <span id="metric-catalog-count">0</span>
+                    <label>Catalog Systems</label>
+                </div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-icon"><i class="fa-solid fa-cart-shopping"></i></div>
+                <div class="metric-info">
+                    <span id="metric-orders-count">0</span>
+                    <label>Purchase Orders</label>
+                </div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-icon"><i class="fa-solid fa-drafting-compass"></i></div>
+                <div class="metric-info">
+                    <span id="metric-custom-count">0</span>
+                    <label>Custom Builds</label>
+                </div>
+            </div>
+            <div class="metric-card" style="border-color: rgba(251,100,27,0.2);">
+                <div class="metric-icon" style="color: var(--secondary); background: rgba(251,100,27,0.06);"><i class="fa-solid fa-screwdriver-wrench"></i></div>
+                <div class="metric-info">
+                    <span id="metric-repair-count" style="color: var(--secondary);">0</span>
+                    <label>Repair Tickets</label>
+                </div>
+            </div>
+        </div>
+
+        <!-- Admin Workspace Layout -->
+        <div class="admin-grid-layout" style="margin-bottom: 60px;">
+            
+            <!-- Left Side: Catalog Listings & Orders Management -->
+            <div style="display: flex; flex-direction: column; gap: 24px;">
+                
+                <!-- 1. UPS Repair & Servicing Tickets Controls -->
+                <div class="admin-card-section" style="border-color: rgba(251,100,27,0.2);">
+                    <div class="card-section-header">
+                        <h3 style="color: var(--secondary);"><i class="fa-solid fa-toolbox" style="margin-right: 6px;"></i>UPS Servicing & Repair Registrations</h3>
+                        <p>View broken UPS brands/models submitted by customers. Change technician SLAs, diagnostic stages, and dispatch parameters.</p>
+                    </div>
+
+                    <div class="inventory-table-container">
+                        <table class="inventory-table">
+                            <thead>
+                                <tr>
+                                    <th>Ticket ID</th>
+                                    <th>Client Name</th>
+                                    <th>Model Details</th>
+                                    <th>Capacity</th>
+                                    <th>Status (SLA)</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="admin-repairs-list">
+                                <!-- Loaded dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Live Factory Board & Assembly Lines -->
+                <div class="admin-card-section" style="border-color: rgba(16,185,129,0.2);">
+                    <div class="card-section-header">
+                        <h3 style="color: #10b981;"><i class="fa-solid fa-industry" style="margin-right: 6px;"></i>Live Factory Board & Assembly Lines</h3>
+                        <p>Dynamic pipeline tracking client custom builds and catalog standard purchase orders currently actively processed on the factory floor.</p>
+                    </div>
+                    
+                    <div class="factory-pipeline-board">
+                        <!-- Production Queue Column -->
+                        <div class="pipeline-col" style="background: rgba(120,119,119,0.03); border: 1px dashed var(--card-border); padding: 16px; border-radius: 6px;">
+                            <div class="pipeline-col-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; border-bottom: 2px solid var(--primary); padding-bottom: 6px;">
+                                <h4 style="font-size: 13px; font-weight: bold; text-transform: uppercase;"><i class="fa-solid fa-list-ol"></i> Production Queue</h4>
+                                <span id="factory-count-queue" class="badge" style="background: var(--primary); font-size: 11px; padding: 2px 8px; border-radius: 50px; color: white;">0</span>
+                            </div>
+                            <div id="factory-list-queue" style="display: flex; flex-direction: column; gap: 10px;">
+                                <!-- Cards -->
+                            </div>
+                        </div>
+
+                        <!-- Pending Assembly Column -->
+                        <div class="pipeline-col" style="background: rgba(120,119,119,0.03); border: 1px dashed var(--card-border); padding: 16px; border-radius: 6px;">
+                            <div class="pipeline-col-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; border-bottom: 2px solid var(--secondary); padding-bottom: 6px;">
+                                <h4 style="font-size: 13px; font-weight: bold; text-transform: uppercase;"><i class="fa-solid fa-screwdriver-wrench"></i> Pending Assembly</h4>
+                                <span id="factory-count-assembly" class="badge" style="background: var(--secondary); font-size: 11px; padding: 2px 8px; border-radius: 50px; color: white;">0</span>
+                            </div>
+                            <div id="factory-list-assembly" style="display: flex; flex-direction: column; gap: 10px;">
+                                <!-- Cards -->
+                            </div>
+                        </div>
+
+                        <!-- Testing Stage Column -->
+                        <div class="pipeline-col" style="background: rgba(120,119,119,0.03); border: 1px dashed var(--card-border); padding: 16px; border-radius: 6px;">
+                            <div class="pipeline-col-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; border-bottom: 2px solid #a855f7; padding-bottom: 6px;">
+                                <h4 style="font-size: 13px; font-weight: bold; text-transform: uppercase;"><i class="fa-solid fa-flask"></i> Testing Stage</h4>
+                                <span id="factory-count-testing" class="badge" style="background: #a855f7; font-size: 11px; padding: 2px 8px; border-radius: 50px; color: white;">0</span>
+                            </div>
+                            <div id="factory-list-testing" style="display: flex; flex-direction: column; gap: 10px;">
+                                <!-- Cards -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. Customer Purchases & Orders -->
+                <div class="admin-card-section">
+                    <div class="card-section-header">
+                        <h3>Client Purchase Orders</h3>
+                        <p>View standard storefront catalog purchases and update transit/dispatch states.</p>
+                    </div>
+
+                    <div class="inventory-table-container">
+                        <table class="inventory-table">
+                            <thead>
+                                <tr>
+                                    <th>Order ID</th>
+                                    <th>Model Purchased</th>
+                                    <th>Capacity</th>
+                                    <th>Price</th>
+                                    <th>Tracking State</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="admin-orders-list">
+                                <!-- Loaded dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- 3. Customer Custom Sized Configurations -->
+                <div class="admin-card-section">
+                    <div class="card-section-header">
+                        <h3>Custom Engineered Builds</h3>
+                        <p>View client customized single-line configurations, batteries layout, specs details, and audit states.</p>
+                    </div>
+
+                    <div class="inventory-table-container">
+                        <table class="inventory-table">
+                            <thead>
+                                <tr>
+                                    <th>Build ID</th>
+                                    <th>Client Name</th>
+                                    <th>Topology</th>
+                                    <th>Sizing</th>
+                                    <th>Engineering Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="admin-customs-list">
+                                <!-- Loaded dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- 4. Storefront Product Catalog Management -->
+                <div class="admin-card-section">
+                    <div class="card-section-header">
+                        <h3>Storefront Inventory</h3>
+                        <p>Currently configured systems active on the landing page catalog shelves.</p>
+                    </div>
+                    <div id="admin-catalog-inventory" style="display: flex; flex-direction: column;">
+                        <!-- Loaded dynamically -->
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Right Side: Config Form & Multipliers Overrides -->
+            <div style="display: flex; flex-direction: column; gap: 24px;">
+                
+                <!-- 1. Catalog Sizer Upload Form -->
+                <div class="admin-card-section">
+                    <div class="card-section-header">
+                        <h3 id="form-heading">Configure Power System</h3>
+                        <p>Upload new models or save specs updates in real-time.</p>
+                    </div>
+
+                    <form id="admin-system-form" class="lead-form">
+                        <input type="hidden" id="edit-prod-id">
+                        
+                        <div class="form-group">
+                            <label for="prod-name">Product Model Name</label>
+                            <input type="text" id="prod-name" required placeholder="e.g. Quantum TX 40kVA">
+                        </div>
+                        <div class="form-group">
+                            <label for="prod-cat">Product Category</label>
+                            <select id="prod-cat">
+                                <option value="online">Online UPS</option>
+                                <option value="modular">Modular Systems</option>
+                                <option value="solar">Solar Inverters</option>
+                                <option value="batteries">Battery Banks</option>
+                                <option value="bypass">Bypass Cabinet</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="prod-capacity">Capacity Sizing (e.g. 40 kVA)</label>
+                            <input type="text" id="prod-capacity" required placeholder="e.g. 40 kVA">
+                        </div>
+                        <div class="form-group">
+                            <label for="prod-phase">Phase Configuration (e.g. 3/3 Phase)</label>
+                            <input type="text" id="prod-phase" required placeholder="e.g. 3/3 Phase">
+                        </div>
+                        <div class="form-group">
+                            <label for="prod-price">Deal Price (₹)</label>
+                            <input type="number" id="prod-price" required placeholder="e.g. 185000">
+                        </div>
+                        <div class="form-group">
+                            <label for="prod-mrp">Original MRP Price (₹)</label>
+                            <input type="number" id="prod-mrp" required placeholder="e.g. 299000">
+                        </div>
+                        <div class="form-group">
+                            <label for="prod-image">Image URL</label>
+                            <input type="text" id="prod-image" required placeholder="e.g. Image URL path">
+                        </div>
+                        <div class="form-group">
+                            <label for="prod-rating">Rating (e.g. 4.6)</label>
+                            <input type="text" id="prod-rating" required placeholder="e.g. 4.6">
+                        </div>
+                        <div class="form-group">
+                            <label for="prod-reviews">Reviews Count</label>
+                            <input type="number" id="prod-reviews" required placeholder="e.g. 84">
+                        </div>
+
+                        <!-- New Inventory & Factory Manufacturing fields -->
+                        <div class="form-group">
+                            <label for="prod-stock-status">Inventory Stock Status</label>
+                            <select id="prod-stock-status">
+                                <option value="In Stock">In Stock</option>
+                                <option value="Under Production">Under Production</option>
+                                <option value="Dispatch Ready">Dispatch Ready</option>
+                                <option value="Out of Stock">Out of Stock</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="prod-stock-count">Stock Count (Units)</label>
+                            <input type="number" id="prod-stock-count" required placeholder="e.g. 14">
+                        </div>
+                        <div class="form-group">
+                            <label for="prod-mfg-eta">Manufacturing ETA</label>
+                            <input type="text" id="prod-mfg-eta" required placeholder="e.g. Immediate, 4 Days, 8 Days">
+                        </div>
+                        <div class="form-group">
+                            <label for="prod-battery-status">Battery Availability Details</label>
+                            <input type="text" id="prod-battery-status" required placeholder="e.g. Lithium: High, Lead-Acid: Low Stock">
+                        </div>
+                        <div class="form-group">
+                            <label for="prod-factory-stage">Current Factory Stage</label>
+                            <select id="prod-factory-stage">
+                                <option value="Completed">Completed / In Stock</option>
+                                <option value="Testing Stage">Testing Stage</option>
+                                <option value="Pending Assembly">Pending Assembly</option>
+                                <option value="Production Queue">Production Queue</option>
+                            </select>
+                        </div>
+
+                        <button type="submit" id="admin-submit-btn" class="btn btn-primary w-full">
+                            <span>Save System Configuration</span>
+                            <i class="fa-solid fa-floppy-disk"></i>
+                        </button>
+                    </form>
+                </div>
+
+                <!-- 2. Sizing Calculator Multipliers Buffers Editor -->
+                <div class="admin-card-section">
+                    <div class="card-section-header">
+                        <h3>Calculator Buffer Factors</h3>
+                        <p>Configure dynamic capacity safety buffers configured across industry verticals.</p>
+                    </div>
+
+                    <div class="multipliers-editor-grid">
+                        <div class="multiplier-input-card">
+                            <label>Datacenter Factor</label>
+                            <input type="number" step="0.1" id="mult-datacenter" class="mult-input" value="1.5">
+                        </div>
+                        <div class="multiplier-input-card">
+                            <label>Medical Care Factor</label>
+                            <input type="number" step="0.1" id="mult-medical" class="mult-input" value="1.8">
+                        </div>
+                        <div class="multiplier-input-card">
+                            <label>Industrial Factor</label>
+                            <input type="number" step="0.1" id="mult-industrial" class="mult-input" value="1.4">
+                        </div>
+                        <div class="multiplier-input-card">
+                            <label>Office Buildings Factor</label>
+                            <input type="number" step="0.1" id="mult-office" class="mult-input" value="1.2">
+                        </div>
+                    </div>
+
+                    <button id="save-multipliers-btn" class="btn btn-secondary w-full" style="margin-top: 16px;">
+                        <span>Override Sizing Multipliers</span>
+                        <i class="fa-solid fa-circle-check"></i>
+                    </button>
+                </div>
+
+            <!-- Live Alerts & System Audit Console (Third Row) -->
+            <div class="admin-metrics-row" style="margin-top: 32px; grid-template-columns: 1fr; display: grid;">
+                <div class="metric-card" style="flex-direction: column; align-items: stretch; gap: 20px; padding: 24px; border: 1px solid var(--card-border); background: var(--card-bg);">
+                    <div style="display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--card-border); padding-bottom: 16px;">
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <div class="metric-icon" style="background: rgba(var(--primary-rgb), 0.1); color: var(--primary); margin: 0; position: relative; display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 8px;">
+                                <i class="fa-solid fa-bell"></i>
+                                <span style="position: absolute; top: 0px; right: 0px; width: 10px; height: 10px; background: #ef4444; border: 2px solid var(--card-bg); border-radius: 50%; display: inline-block; animation: pulse 1.5s infinite;"></span>
+                            </div>
+                            <div>
+                                <h3 style="font-size: 16px; font-weight: 700; color: var(--text-color); margin: 0;">Live System & Audit Stream</h3>
+                                <p style="font-size: 11px; color: var(--text-muted); margin: 2px 0 0 0;">Real-time automated diagnostics, customer inquiries, and sales activities.</p>
+                            </div>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <span class="status-indicator" style="background-color: #22c55e;"></span>
+                            <span style="font-size: 10px; font-weight: bold; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Live Gateway</span>
+                        </div>
+                    </div>
+
+                    <!-- Dynamic Alerts Container -->
+                    <div id="live-audit-feed" style="max-height: 300px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; padding-right: 4px;">
+                        <!-- Alerts slide in dynamically here -->
+                        <div class="audit-item success">
+                            <div class="audit-badge"><i class="fa-solid fa-check"></i> System Initialized</div>
+                            <div class="audit-text">Secure gateway pipeline loaded. Listening for incoming telemetry data.</div>
+                            <span class="audit-time">Just Now</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container footer-container">
+            <div class="footer-logo">
+                <i class="fa-solid fa-bolt"></i>
+                <span>AURA</span>
+            </div>
+            <p class="footer-copy">© <span id="year"></span> Aura Power Solutions. Engineered for Excellence.</p>
+        </div>
+    </footer>
+
+    <!-- Complete Dashboard Management JavaScript -->
+    <script>
+        document.addEventListener("DOMContentLoaded", async () => {
+
+            function escapeHTML(str) {
+                if (str === null || str === undefined) return '';
+                return String(str).replace(/[&<>'"]/g, tag => ({
+                    '&': '&amp;',
+                    '<': '&lt;',
+                    '>': '&gt;',
+                    "'": '&#39;',
+                    '"': '&quot;'
+                }[tag] || tag));
+            }
+
+            // Authentication Guard
+            if (localStorage.getItem("aura-admin-logged-in") !== "true") {
+                window.location.href = "customer-login.html";
+                return;
+            }
+
+            document.getElementById("year").textContent = new Date().getFullYear();
+
+            // Safe localStorage parser helper to prevent crashes if JSON is corrupted or invalid
+            function safeParseLocalStorage(key, defaultValue) {
+                try {
+                    const val = localStorage.getItem(key);
+                    if (!val) return defaultValue;
+                    const parsed = JSON.parse(val);
+                    if (Array.isArray(defaultValue)) {
+                        return Array.isArray(parsed) ? parsed : defaultValue;
+                    }
+                    if (typeof defaultValue === "object" && defaultValue !== null) {
+                        return (typeof parsed === "object" && parsed !== null) ? parsed : defaultValue;
+                    }
+                    return parsed;
+                } catch (e) {
+                    console.error("Localstorage parse error:", e);
+                    return defaultValue;
+                }
+            }
+
+            // Default fallback products if localStorage empty
+            const defaultProducts = [
+                {
+                    id: "fk-quantum-tx",
+                    title: "Quantum TX Series 40kVA Online Double Conversion UPS",
+                    category: "online",
+                    originalPrice: 139900,
+                    dealPrice: 82900,
+                    rating: "4.6",
+                    reviewsCount: 11324,
+                    imageUrl: "https://images.unsplash.com/photo-1620245648834-8c88fdce1d45?q=80&w=600&auto=format&fit=crop",
+                    capacity: "10-40 kVA",
+                    phase: "3/3 Phase",
+                    transfer: "0 ms",
+                    baseEfficiency: 96.5,
+                    baseBackupMinutes: 60,
+                    stockStatus: "In Stock",
+                    stockCount: 12,
+                    manufacturingEta: "Immediate",
+                    batteryAvailability: "Lithium: Available, Lead-Acid: Low Stock",
+                    factoryStage: "Completed"
+                },
+                {
+                    id: "fk-aegis-rack",
+                    title: "Aegis Rackmount 20kVA Modular Scalable Hot-Swap UPS",
+                    category: "modular",
+                    originalPrice: 99999,
+                    dealPrice: 49999,
+                    rating: "4.5",
+                    reviewsCount: 4936,
+                    imageUrl: "https://images.unsplash.com/photo-1544197150-b99a580bb7a8?q=80&w=600&auto=format&fit=crop",
+                    capacity: "5-20 kVA",
+                    phase: "1/1 Phase",
+                    transfer: "0 ms",
+                    baseEfficiency: 95.0,
+                    baseBackupMinutes: 45,
+                    stockStatus: "In Stock",
+                    stockCount: 8,
+                    manufacturingEta: "Immediate",
+                    batteryAvailability: "Lithium: Available, Lead-Acid: Available",
+                    factoryStage: "Completed"
+                },
+                {
+                    id: "fk-titan-inv",
+                    title: "Titan Smart 10kW Grid-Tie Hybrid Solar Inverter",
+                    category: "solar",
+                    originalPrice: 45000,
+                    dealPrice: 28999,
+                    rating: "4.3",
+                    reviewsCount: 3526,
+                    imageUrl: "https://images.unsplash.com/photo-1581092160562-40aa08e78837?q=80&w=600&auto=format&fit=crop",
+                    capacity: "5-10 kW",
+                    phase: "1 Phase",
+                    transfer: "< 10 ms",
+                    baseEfficiency: 97.8,
+                    baseBackupMinutes: 90,
+                    stockStatus: "Under Production",
+                    stockCount: 5,
+                    manufacturingEta: "4 Days",
+                    batteryAvailability: "Lithium: Inbound, Lead-Acid: Out of Stock",
+                    factoryStage: "Pending Assembly"
+                },
+                {
+                    id: "fk-nova-edge",
+                    title: "Nova Edge Compute 500kVA High Capacity Datacenter Power Cabinet",
+                    category: "online",
+                    originalPrice: 890000,
+                    dealPrice: 599999,
+                    rating: "4.8",
+                    reviewsCount: 911,
+                    imageUrl: "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?q=80&w=600&auto=format&fit=crop",
+                    capacity: "50-500 kVA",
+                    phase: "3/3 Phase",
+                    transfer: "0 ms",
+                    baseEfficiency: 97.0,
+                    baseBackupMinutes: 120,
+                    stockStatus: "Dispatch Ready",
+                    stockCount: 3,
+                    manufacturingEta: "Immediate",
+                    batteryAvailability: "Lithium: Available, Lead-Acid: Available",
+                    factoryStage: "Completed"
+                },
+                {
+                    id: "fk-life-pack",
+                    title: "Aura LiFePO4 Smart Battery Bank 48V 200Ah Lithium Pack",
+                    category: "batteries",
+                    originalPrice: 120000,
+                    dealPrice: 79999,
+                    rating: "4.7",
+                    reviewsCount: 2043,
+                    imageUrl: "https://images.unsplash.com/photo-1620245648834-8c88fdce1d45?q=80&w=600&auto=format&fit=crop",
+                    capacity: "48V / 200Ah",
+                    phase: "DC Bank",
+                    transfer: "Instant",
+                    baseEfficiency: 98.5,
+                    baseBackupMinutes: 180,
+                    stockStatus: "Under Production",
+                    stockCount: 2,
+                    manufacturingEta: "8 Days",
+                    batteryAvailability: "Lithium: High Capacity Inbound, Lead-Acid: Low Stock",
+                    factoryStage: "Testing Stage"
+                }
+            ];
+
+            let appProducts = safeParseLocalStorage("aura-flipkart-products", defaultProducts);
+            if (!localStorage.getItem("aura-flipkart-products") || !appProducts.find(p => p.id.startsWith("fk-"))) {
+                appProducts = defaultProducts;
+                localStorage.setItem("aura-flipkart-products", JSON.stringify(appProducts));
+            }
+
+            // Load Multiplier configs
+            const savedMults = safeParseLocalStorage("aura-sizing-multipliers", {
+                datacenter: 1.5,
+                medical: 1.8,
+                industrial: 1.4,
+                office: 1.2
+            });
+            document.getElementById("mult-datacenter").value = savedMults.datacenter;
+            document.getElementById("mult-medical").value = savedMults.medical;
+            document.getElementById("mult-industrial").value = savedMults.industrial;
+            document.getElementById("mult-office").value = savedMults.office;
+
+            // In-memory Appwrite cache (populated on init)
+            let awOrders = [], awCustoms = [], awRepairs = [];
+
+            // Load Metric Analytics
+            function renderMetrics() {
+                document.getElementById("metric-catalog-count").textContent = appProducts.length;
+                document.getElementById("metric-orders-count").textContent = awOrders.length;
+                document.getElementById("metric-custom-count").textContent = awCustoms.length;
+                document.getElementById("metric-repair-count").textContent = awRepairs.length;
+            }
+
+            // Render catalog inventory
+            function renderCatalog() {
+                const catalogBox = document.getElementById("admin-catalog-inventory");
+                catalogBox.innerHTML = "";
+                
+                appProducts.forEach(prod => {
+                    const item = document.createElement("div");
+                    item.className = "admin-prod-item";
+                    item.innerHTML = `
+                        <div class="admin-prod-info">
+                            <img src="${prod.imageUrl}" alt="${prod.title}">
+                            <div class="admin-prod-details">
+                                <h5>${prod.title}</h5>
+                                <span>₹${Number(prod.dealPrice).toLocaleString()} | ${prod.capacity}</span>
+                            </div>
+                        </div>
+                        <div class="admin-prod-actions">
+                            <button class="admin-action-btn btn-edit-prod" data-id="${prod.id}"><i class="fa-solid fa-pen"></i></button>
+                            <button class="admin-action-btn btn-delete-prod" data-id="${prod.id}"><i class="fa-solid fa-trash"></i></button>
+                        </div>
+                    `;
+                    catalogBox.appendChild(item);
+                });
+
+                // Listeners
+                catalogBox.querySelectorAll(".btn-edit-prod").forEach(btn => {
+                    btn.addEventListener("click", () => {
+                        const id = btn.getAttribute("data-id");
+                        const prod = appProducts.find(p => p.id === id);
+                        if (prod) {
+                            document.getElementById("edit-prod-id").value = prod.id;
+                            document.getElementById("prod-name").value = prod.title;
+                            document.getElementById("prod-cat").value = prod.category;
+                            document.getElementById("prod-capacity").value = prod.capacity;
+                            document.getElementById("prod-phase").value = prod.phase;
+                            document.getElementById("prod-price").value = prod.dealPrice;
+                            document.getElementById("prod-mrp").value = prod.originalPrice;
+                            document.getElementById("prod-image").value = prod.imageUrl;
+                            document.getElementById("prod-rating").value = prod.rating;
+                            document.getElementById("prod-reviews").value = prod.reviewsCount;
+                            
+                            // Load inventory values
+                            document.getElementById("prod-stock-status").value = prod.stockStatus || "In Stock";
+                            document.getElementById("prod-stock-count").value = prod.stockCount !== undefined ? prod.stockCount : 10;
+                            document.getElementById("prod-mfg-eta").value = prod.manufacturingEta || "Immediate";
+                            document.getElementById("prod-battery-status").value = prod.batteryAvailability || "Lithium: Available";
+                            document.getElementById("prod-factory-stage").value = prod.factoryStage || "Completed";
+
+                            document.getElementById("form-heading").textContent = "Update Sized System";
+                            document.getElementById("admin-submit-btn").textContent = "Save Configuration Updates";
+                        }
+                    });
+                });
+
+                catalogBox.querySelectorAll(".btn-delete-prod").forEach(btn => {
+                    btn.addEventListener("click", () => {
+                        const id = btn.getAttribute("data-id");
+                        if (confirm("Are you sure you want to delete this system configuration?")) {
+                            appProducts = appProducts.filter(p => p.id !== id);
+                            localStorage.setItem("aura-flipkart-products", JSON.stringify(appProducts));
+                            renderCatalog();
+                            renderMetrics();
+                            renderFactoryBoard();
+                        }
+                    });
+                });
+            }
+
+            // Save product form
+            document.getElementById("admin-system-form").addEventListener("submit", (e) => {
+                e.preventDefault();
+                const editId = document.getElementById("edit-prod-id").value;
+                
+                const newProduct = {
+                    id: editId || "fk-" + Date.now(),
+                    title: document.getElementById("prod-name").value.trim(),
+                    category: document.getElementById("prod-cat").value,
+                    capacity: document.getElementById("prod-capacity").value.trim(),
+                    phase: document.getElementById("prod-phase").value.trim(),
+                    dealPrice: parseFloat(document.getElementById("prod-price").value),
+                    originalPrice: parseFloat(document.getElementById("prod-mrp").value),
+                    imageUrl: document.getElementById("prod-image").value.trim(),
+                    rating: document.getElementById("prod-rating").value.trim(),
+                    reviewsCount: parseInt(document.getElementById("prod-reviews").value),
+                    baseBackupMinutes: 45,
+                    stockStatus: document.getElementById("prod-stock-status").value,
+                    stockCount: parseInt(document.getElementById("prod-stock-count").value),
+                    manufacturingEta: document.getElementById("prod-mfg-eta").value.trim(),
+                    batteryAvailability: document.getElementById("prod-battery-status").value.trim(),
+                    factoryStage: document.getElementById("prod-factory-stage").value
+                };
+
+                if (editId) {
+                    appProducts = appProducts.map(p => p.id === editId ? newProduct : p);
+                } else {
+                    appProducts.unshift(newProduct);
+                }
+
+                localStorage.setItem("aura-flipkart-products", JSON.stringify(appProducts));
+                document.getElementById("admin-system-form").reset();
+                document.getElementById("edit-prod-id").value = "";
+                document.getElementById("form-heading").textContent = "Configure Power System";
+                document.getElementById("admin-submit-btn").textContent = "Save System Configuration";
+
+                renderCatalog();
+                renderMetrics();
+                renderFactoryBoard();
+                alert("Storefront configuration saved successfully!");
+            });
+
+            // Save multiplier config
+            document.getElementById("save-multipliers-btn").addEventListener("click", () => {
+                const config = {
+                    datacenter: parseFloat(document.getElementById("mult-datacenter").value),
+                    medical: parseFloat(document.getElementById("mult-medical").value),
+                    industrial: parseFloat(document.getElementById("mult-industrial").value),
+                    office: parseFloat(document.getElementById("mult-office").value)
+                };
+                localStorage.setItem("aura-sizing-multipliers", JSON.stringify(config));
+                alert("Safety overrides configured instantly on customer calculators!");
+            });
+
+            // Render Repairs Servicing Grid
+            function renderAdminRepairs() {
+                const repairs = awRepairs;
+                const repairsList = document.getElementById("admin-repairs-list");
+                repairsList.innerHTML = "";
+
+                if (repairs.length === 0) {
+                    repairsList.innerHTML = `<tr><td colspan="6" style="text-align:center; padding:20px; color:var(--text-muted);">No hardware repair tickets logged.</td></tr>`;
+                    return;
+                }
+
+                repairs.forEach((rep, index) => {
+                    const tr = document.createElement("tr");
+                    tr.innerHTML = `
+                        <td><strong style="color: var(--secondary);">${escapeHTML(rep.id)}</strong></td>
+                        <td>${escapeHTML(rep.name)}</td>
+                        <td>${escapeHTML(rep.brand)} (${escapeHTML(rep.model)})</td>
+                        <td>${escapeHTML(rep.capacity)}</td>
+                        <td>
+                            <select class="mult-input select-repair-status" data-index="${index}" data-id="${escapeHTML(rep.id)}" style="margin-top:0; padding:4px 8px; width:auto; border-radius:4px; border-color: rgba(251,100,27,0.3);">
+                                <option value="Technician Dispatched" ${rep.status === 'Technician Dispatched' ? 'selected' : ''}>Technician Dispatched</option>
+                                <option value="Diagnostics Active" ${rep.status === 'Diagnostics Active' ? 'selected' : ''}>Diagnostics Active</option>
+                                <option value="Assembling / Repairing" ${rep.status === 'Assembling / Repairing' ? 'selected' : ''}>Assembling / Repairing</option>
+                                <option value="Complete / Shipped Back" ${rep.status === 'Complete / Shipped Back' ? 'selected' : ''}>Complete / Shipped</option>
+                            </select>
+                            <input type="number" min="1" max="5" class="mult-input select-repair-step" data-index="${index}" value="${rep.statusStep || 1}" style="width: 50px; margin-left: 8px; padding:4px; display:inline-block;" title="Progress Step (1-5)">
+                            <input type="text" class="mult-input select-repair-date" data-index="${index}" value="${rep.expectedDate || ''}" placeholder="ETA Date" style="width: 90px; margin-left: 8px; padding:4px; display:inline-block;">
+                        </td>
+                        <td>
+                            <button class="admin-action-btn btn-delete-rep" data-index="${index}" style="border-color:#ef4444; color:#ef4444;"><i class="fa-solid fa-trash"></i></button>
+                        </td>
+                    `;
+                    repairsList.appendChild(tr);
+                });
+
+                // Listeners for repair changes
+                repairsList.querySelectorAll(".select-repair-status, .select-repair-step, .select-repair-date").forEach(input => {
+                    input.addEventListener("change", async (e) => {
+                        const index = parseInt(input.getAttribute("data-index"));
+                        const docId = repairsList.querySelector(`.select-repair-status[data-index="${index}"]`).getAttribute("data-id");
+                        const newStatus = repairsList.querySelector(`.select-repair-status[data-index="${index}"]`).value;
+                        const newStep = parseInt(repairsList.querySelector(`.select-repair-step[data-index="${index}"]`).value) || 1;
+                        const newDate = repairsList.querySelector(`.select-repair-date[data-index="${index}"]`).value;
+                        
+                        awRepairs[index].status = newStatus;
+                        awRepairs[index].statusStep = newStep;
+                        awRepairs[index].expectedDate = newDate;
+                        localStorage.setItem("aura-user-repairs", JSON.stringify(awRepairs));
+                        if (typeof FirebaseService !== "undefined") {
+                            await FirebaseService.adminUpdateStatus("repairs", docId, newStatus, newStep, newDate);
+                        }
+                        renderAdminRepairs();
+                    });
+                });
+
+                repairsList.querySelectorAll(".btn-delete-rep").forEach(btn => {
+                    btn.addEventListener("click", () => {
+                        const index = parseInt(btn.getAttribute("data-index"));
+                        if (confirm("Are you sure you want to remove this client repair ticket?")) {
+                            awRepairs.splice(index, 1);
+                            localStorage.setItem("aura-user-repairs", JSON.stringify(awRepairs));
+                            renderAdminRepairs();
+                            renderMetrics();
+                        }
+                    });
+                });
+            }
+
+            // Render User Purchases & Controls
+            function renderAdminOrders() {
+                const stdOrders = awOrders;
+                const ordersList = document.getElementById("admin-orders-list");
+                ordersList.innerHTML = "";
+
+                if (stdOrders.length === 0) {
+                    ordersList.innerHTML = `<tr><td colspan="6" style="text-align:center; padding:20px; color:var(--text-muted);">No client purchases logged.</td></tr>`;
+                    return;
+                }
+
+                stdOrders.forEach((order, index) => {
+                    const tr = document.createElement("tr");
+                    tr.innerHTML = `
+                        <td><strong style="color: var(--primary);">${escapeHTML(order.id)}</strong></td>
+                        <td>${escapeHTML(order.title)}</td>
+                        <td>${escapeHTML(order.capacity)}</td>
+                        <td>₹${Number(order.price).toLocaleString()}</td>
+                        <td>
+                            <select class="mult-input select-order-status" data-index="${index}" data-id="${escapeHTML(order.id)}" style="margin-top:0; padding:4px 8px; width:auto; border-radius:4px;">
+                                <option value="Pending Audit" ${order.status === 'Pending Audit' ? 'selected' : ''}>Pending Audit</option>
+                                <option value="Components Inbound" ${order.status === 'Components Inbound' ? 'selected' : ''}>Inbound Sourcing</option>
+                                <option value="Factory Assembling" ${order.status === 'Factory Assembling' ? 'selected' : ''}>Assembling</option>
+                                <option value="Quality Auditing" ${order.status === 'Quality Auditing' ? 'selected' : ''}>Quality Check</option>
+                                <option value="Dispatched & Shipped" ${order.status === 'Dispatched & Shipped' ? 'selected' : ''}>Dispatched</option>
+                            </select>
+                            <input type="number" min="1" max="5" class="mult-input select-order-step" data-index="${index}" value="${order.statusStep || 1}" style="width: 50px; margin-left: 8px; padding:4px; display:inline-block;" title="Progress Step (1-5)">
+                            <input type="text" class="mult-input select-order-date" data-index="${index}" value="${order.expectedDate || ''}" placeholder="ETA Date" style="width: 90px; margin-left: 8px; padding:4px; display:inline-block;">
+                        </td>
+                        <td>
+                            <button class="admin-action-btn btn-delete-order" data-index="${index}" style="border-color:#ef4444; color:#ef4444;"><i class="fa-solid fa-trash"></i></button>
+                        </td>
+                    `;
+                    ordersList.appendChild(tr);
+                });
+
+                // Listeners for order updates
+                ordersList.querySelectorAll(".select-order-status, .select-order-step, .select-order-date").forEach(input => {
+                    input.addEventListener("change", async (e) => {
+                        const index = parseInt(input.getAttribute("data-index"));
+                        const docId = ordersList.querySelector(`.select-order-status[data-index="${index}"]`).getAttribute("data-id");
+                        const newStatus = ordersList.querySelector(`.select-order-status[data-index="${index}"]`).value;
+                        const newStep = parseInt(ordersList.querySelector(`.select-order-step[data-index="${index}"]`).value) || 1;
+                        const newDate = ordersList.querySelector(`.select-order-date[data-index="${index}"]`).value;
+
+                        awOrders[index].status = newStatus;
+                        awOrders[index].statusStep = newStep;
+                        awOrders[index].expectedDate = newDate;
+                        localStorage.setItem("aura-user-orders", JSON.stringify(awOrders));
+                        if (typeof FirebaseService !== "undefined") {
+                            await FirebaseService.adminUpdateStatus("orders", docId, newStatus, newStep, newDate);
+                        }
+                        renderAdminOrders();
+                        renderFactoryBoard();
+                    });
+                });
+
+                ordersList.querySelectorAll(".btn-delete-order").forEach(btn => {
+                    btn.addEventListener("click", () => {
+                        const index = parseInt(btn.getAttribute("data-index"));
+                        if (confirm("Are you sure you want to remove this client order log?")) {
+                            awOrders.splice(index, 1);
+                            localStorage.setItem("aura-user-orders", JSON.stringify(awOrders));
+                            renderAdminOrders();
+                            renderMetrics();
+                            renderFactoryBoard();
+                        }
+                    });
+                });
+            }
+
+            // Render User Custom Engineered Builds
+            function renderAdminCustoms() {
+                const custBuilds = awCustoms;
+                const customsList = document.getElementById("admin-customs-list");
+                customsList.innerHTML = "";
+
+                if (custBuilds.length === 0) {
+                    customsList.innerHTML = `<tr><td colspan="6" style="text-align:center; padding:20px; color:var(--text-muted);">No custom specs requests logged.</td></tr>`;
+                    return;
+                }
+
+                custBuilds.forEach((build, index) => {
+                    const tr = document.createElement("tr");
+                    tr.innerHTML = `
+                        <td><strong style="color: var(--primary);">${escapeHTML(build.id)}</strong></td>
+                        <td>${escapeHTML(build.name)}</td>
+                        <td>${escapeHTML(build.phase)}</td>
+                        <td>${escapeHTML(build.capacity)}</td>
+                        <td>
+                            <select class="mult-input select-custom-status" data-index="${index}" data-id="${escapeHTML(build.id)}" style="margin-top:0; padding:4px 8px; width:auto; border-radius:4px;">
+                                <option value="Engineering Audit" ${build.status === 'Engineering Audit' ? 'selected' : ''}>Engineering Audit</option>
+                                <option value="Design Draft Approved" ${build.status === 'Design Draft Approved' ? 'selected' : ''}>Draft Approved</option>
+                                <option value="Under Assembly" ${build.status === 'Under Assembly' ? 'selected' : ''}>Under Assembly</option>
+                                <option value="Factory Dispatch" ${build.status === 'Factory Dispatch' ? 'selected' : ''}>Factory Dispatch</option>
+                            </select>
+                            <input type="number" min="1" max="5" class="mult-input select-custom-step" data-index="${index}" value="${build.statusStep || 1}" style="width: 50px; margin-left: 8px; padding:4px; display:inline-block;" title="Progress Step (1-5)">
+                            <input type="text" class="mult-input select-custom-date" data-index="${index}" value="${build.expectedDate || ''}" placeholder="ETA Date" style="width: 90px; margin-left: 8px; padding:4px; display:inline-block;">
+                        </td>
+                        <td>
+                            <button class="admin-action-btn btn-delete-custom" data-index="${index}" style="border-color:#ef4444; color:#ef4444;"><i class="fa-solid fa-trash"></i></button>
+                        </td>
+                    `;
+                    customsList.appendChild(tr);
+                });
+
+                // Listeners for custom updates
+                customsList.querySelectorAll(".select-custom-status, .select-custom-step, .select-custom-date").forEach(input => {
+                    input.addEventListener("change", async (e) => {
+                        const index = parseInt(input.getAttribute("data-index"));
+                        const docId = customsList.querySelector(`.select-custom-status[data-index="${index}"]`).getAttribute("data-id");
+                        const newStatus = customsList.querySelector(`.select-custom-status[data-index="${index}"]`).value;
+                        const newStep = parseInt(customsList.querySelector(`.select-custom-step[data-index="${index}"]`).value) || 1;
+                        const newDate = customsList.querySelector(`.select-custom-date[data-index="${index}"]`).value;
+
+                        awCustoms[index].status = newStatus;
+                        awCustoms[index].statusStep = newStep;
+                        awCustoms[index].expectedDate = newDate;
+                        localStorage.setItem("aura-user-customizations", JSON.stringify(awCustoms));
+                        if (typeof FirebaseService !== "undefined") {
+                            await FirebaseService.adminUpdateStatus("customizations", docId, newStatus, newStep, newDate);
+                        }
+                        renderAdminCustoms();
+                        renderFactoryBoard();
+                    });
+                });
+
+                customsList.querySelectorAll(".btn-delete-custom").forEach(btn => {
+                    btn.addEventListener("click", () => {
+                        const index = parseInt(btn.getAttribute("data-index"));
+                        if (confirm("Are you sure you want to delete this custom build spec?")) {
+                            awCustoms.splice(index, 1);
+                            localStorage.setItem("aura-user-customizations", JSON.stringify(awCustoms));
+                            renderAdminCustoms();
+                            renderMetrics();
+                            renderFactoryBoard();
+                        }
+                    });
+                });
+            }
+
+            // Render Dynamic Factory Board
+            function renderFactoryBoard() {
+                const stdOrders = awOrders;
+                const custBuilds = awCustoms;
+                const products = safeParseLocalStorage("aura-flipkart-products", []);
+
+                const queueList = document.getElementById("factory-list-queue");
+                const assemblyList = document.getElementById("factory-list-assembly");
+                const testingList = document.getElementById("factory-list-testing");
+
+                queueList.innerHTML = "";
+                assemblyList.innerHTML = "";
+                testingList.innerHTML = "";
+
+                let queueCount = 0;
+                let assemblyCount = 0;
+                let testingCount = 0;
+
+                const createFactoryCard = (id, title, type, details, status) => {
+                    const card = document.createElement("div");
+                    card.className = "factory-item-card";
+                    card.style = `
+                        background: var(--card-bg);
+                        border: 1px solid var(--card-border);
+                        border-radius: 6px;
+                        padding: 12px;
+                        font-size: 11px;
+                        box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+                        transition: transform 0.2s;
+                    `;
+                    card.innerHTML = `
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 6px;">
+                            <span style="font-weight:bold; color:var(--text-color); font-size:10px;">${id}</span>
+                            <span style="font-size: 8px; text-transform: uppercase; background: rgba(40,116,240,0.08); color: var(--primary); padding: 2px 6px; border-radius: 4px; font-weight:bold;">${type}</span>
+                        </div>
+                        <h5 style="font-size:12px; color:var(--text-color); font-weight:bold; margin-bottom:4px;">${title}</h5>
+                        <p style="color:var(--text-muted); margin-bottom: 6px; font-size:10px;">${details}</p>
+                        <div style="display:flex; justify-content:space-between; align-items:center; border-top: 1px solid rgba(120,119,119,0.1); padding-top: 6px; margin-top: 6px;">
+                            <span style="color:var(--text-muted); font-size:9px;">Stage:</span>
+                            <strong style="color:var(--primary); font-size: 9px; text-transform:uppercase;">${status}</strong>
+                        </div>
+                    `;
+                    return card;
+                };
+
+                // 1. Process Standard Purchase Orders
+                stdOrders.forEach(order => {
+                    if (order.status === "Components Inbound" || order.status === "Pending Audit") {
+                        queueList.appendChild(createFactoryCard(order.id, order.title, "Standard Order", `Capacity: ${escapeHTML(order.capacity)}`, order.status));
+                        queueCount++;
+                    } else if (order.status === "Factory Assembling") {
+                        assemblyList.appendChild(createFactoryCard(order.id, order.title, "Standard Order", `Capacity: ${escapeHTML(order.capacity)}`, "Assembling"));
+                        assemblyCount++;
+                    } else if (order.status === "Quality Auditing") {
+                        testingList.appendChild(createFactoryCard(order.id, order.title, "Standard Order", `Capacity: ${escapeHTML(order.capacity)}`, "Testing Stage"));
+                        testingCount++;
+                    }
+                });
+
+                // 2. Process Custom Sized Builds
+                custBuilds.forEach(build => {
+                    if (build.status === "Engineering Audit" || build.status === "Design Draft Approved") {
+                        queueList.appendChild(createFactoryCard(build.id, `Custom UPS Plant`, "Custom Build", `Sizing: ${escapeHTML(build.capacity)} | ${escapeHTML(build.phase)}`, build.status));
+                        queueCount++;
+                    } else if (build.status === "Under Assembly") {
+                        assemblyList.appendChild(createFactoryCard(build.id, `Custom UPS Plant`, "Custom Build", `Sizing: ${escapeHTML(build.capacity)} | ${escapeHTML(build.phase)}`, "Assembling"));
+                        assemblyCount++;
+                    } else if (build.status === "Factory Dispatch") {
+                        // Fully completed
+                    }
+                });
+
+                // 3. Process Under Production Catalog Products
+                products.forEach(prod => {
+                    if (prod.stockStatus === "Under Production") {
+                        const stage = prod.factoryStage || "Production Queue";
+                        if (stage === "Production Queue") {
+                            queueList.appendChild(createFactoryCard(prod.id.substring(0, 8).toUpperCase(), prod.title, "Catalog System", `Capacity: ${prod.capacity} | ${prod.stockCount} units`, "Queueing"));
+                            queueCount++;
+                        } else if (stage === "Pending Assembly") {
+                            assemblyList.appendChild(createFactoryCard(prod.id.substring(0, 8).toUpperCase(), prod.title, "Catalog System", `Capacity: ${prod.capacity} | ${prod.stockCount} units`, "Assembling"));
+                            assemblyCount++;
+                        } else if (stage === "Testing Stage") {
+                            testingList.appendChild(createFactoryCard(prod.id.substring(0, 8).toUpperCase(), prod.title, "Catalog System", `Capacity: ${prod.capacity} | ${prod.stockCount} units`, "Testing Stage"));
+                            testingCount++;
+                        }
+                    }
+                });
+
+                document.getElementById("factory-count-queue").textContent = queueCount;
+                document.getElementById("factory-count-assembly").textContent = assemblyCount;
+                document.getElementById("factory-count-testing").textContent = testingCount;
+
+                // Handle Empty States
+                if (queueCount === 0) queueList.innerHTML = `<div style="text-align:center; padding:16px; color:var(--text-muted); font-size:10px;">Queue is clear.</div>`;
+                if (assemblyCount === 0) assemblyList.innerHTML = `<div style="text-align:center; padding:16px; color:var(--text-muted); font-size:10px;">No assembly active.</div>`;
+                if (testingCount === 0) testingList.innerHTML = `<div style="text-align:center; padding:16px; color:var(--text-muted); font-size:10px;">No systems in test.</div>`;
+            }
+
+            // Secure Logout Trigger
+            document.getElementById("secure-logout-btn").addEventListener("click", () => {
+                if (confirm("Are you sure you want to sign out from the Admin Control Panel?")) {
+                    localStorage.removeItem("aura-admin-logged-in");
+                    window.location.href = "customer-login.html";
+                }
+            });
+
+            // Theme Switcher Sync
+            const htmlElement = document.documentElement;
+            const themeToggle = document.getElementById("theme-toggle");
+            
+            const savedTheme = localStorage.getItem("aura-theme") || "normal";
+            htmlElement.setAttribute("data-theme", savedTheme);
+            updateThemeIcon(savedTheme);
+
+            themeToggle.addEventListener("click", () => {
+                const currentTheme = htmlElement.getAttribute("data-theme");
+                const newTheme = currentTheme === "normal" ? "neon" : "normal";
+                
+                htmlElement.setAttribute("data-theme", newTheme);
+                localStorage.setItem("aura-theme", newTheme);
+                updateThemeIcon(newTheme);
+            });
+
+            function updateThemeIcon(theme) {
+                const icon = themeToggle.querySelector("i");
+                if (theme === "neon") {
+                    icon.className = "fa-solid fa-sun";
+                } else {
+                    icon.className = "fa-solid fa-moon";
+                }
+            }
+
+            // ==========================================
+            // SLIDING SETTINGS SIDEBAR EVENT HANDLERS
+            // ==========================================
+            const leftTrigger = document.getElementById("left-settings-trigger");
+            const settingsSidebar = document.getElementById("settings-sidebar");
+            const sidebarCloseBtn = document.getElementById("sidebar-close-btn");
+            const sidebarOverlay = document.getElementById("sidebar-overlay");
+            const sidebarAdminBtn = document.getElementById("sidebar-admin-btn");
+
+            if (leftTrigger && settingsSidebar && sidebarCloseBtn && sidebarOverlay) {
+                leftTrigger.addEventListener("click", () => {
+                    settingsSidebar.classList.add("open");
+                    sidebarOverlay.classList.add("open");
+                });
+
+                const closeSidebar = () => {
+                    settingsSidebar.classList.remove("open");
+                    sidebarOverlay.classList.remove("open");
+                };
+
+                sidebarCloseBtn.addEventListener("click", closeSidebar);
+                sidebarOverlay.addEventListener("click", closeSidebar);
+
+                const normalThemeSelect = document.getElementById("theme-normal-select");
+                const neonThemeSelect = document.getElementById("theme-neon-select");
+
+                if (normalThemeSelect && neonThemeSelect) {
+                    const currentTheme = document.documentElement.getAttribute("data-theme") || "normal";
+                    if (currentTheme === "neon") {
+                        normalThemeSelect.classList.remove("active");
+                        neonThemeSelect.classList.add("active");
+                    } else {
+                        normalThemeSelect.classList.add("active");
+                        neonThemeSelect.classList.remove("active");
+                    }
+
+                    normalThemeSelect.addEventListener("click", () => {
+                        document.documentElement.setAttribute("data-theme", "normal");
+                        localStorage.setItem("aura-theme", "normal");
+                        normalThemeSelect.classList.add("active");
+                        neonThemeSelect.classList.remove("active");
+                        const mainToggle = document.getElementById("theme-toggle");
+                        if (mainToggle) {
+                            const icon = mainToggle.querySelector("i");
+                            if (icon) icon.className = "fa-solid fa-moon";
+                        }
+                    });
+
+                    neonThemeSelect.addEventListener("click", () => {
+                        document.documentElement.setAttribute("data-theme", "neon");
+                        localStorage.setItem("aura-theme", "neon");
+                        neonThemeSelect.classList.add("active");
+                        normalThemeSelect.classList.remove("active");
+                        const mainToggle = document.getElementById("theme-toggle");
+                        if (mainToggle) {
+                            const icon = mainToggle.querySelector("i");
+                            if (icon) icon.className = "fa-solid fa-sun";
+                        }
+                    });
+                }
+
+                if (sidebarAdminBtn) {
+                    sidebarAdminBtn.addEventListener("click", () => {
+                        closeSidebar();
+                        window.location.href = "admin.html";
+                    });
+                }
+            }
+
+            // Init dashboard — load from Firebase then render
+            (async () => {
+                if (typeof FirebaseService !== "undefined") {
+                    try {
+                        [awOrders, awCustoms, awRepairs] = await Promise.all([
+                            FirebaseService.adminGetAllOrders(),
+                            FirebaseService.adminGetAllCustomizations(),
+                            FirebaseService.adminGetAllRepairs()
+                        ]);
+                    } catch (e) {
+                        console.warn("Firebase admin fetch failed, using localStorage:", e);
+                        awOrders = safeParseLocalStorage("aura-user-orders", []);
+                        awCustoms = safeParseLocalStorage("aura-user-customizations", []);
+                        awRepairs = safeParseLocalStorage("aura-user-repairs", []);
+                    }
+                } else {
+                    awOrders = safeParseLocalStorage("aura-user-orders", []);
+                    awCustoms = safeParseLocalStorage("aura-user-customizations", []);
+                    awRepairs = safeParseLocalStorage("aura-user-repairs", []);
+                }
+                renderMetrics();
+                renderCatalog();
+                renderAdminOrders();
+                renderAdminCustoms();
+                renderAdminRepairs();
+                renderFactoryBoard();
+            })();
+            
+            // Live Audit & Notification Stream
+            function initLiveAuditStream() {
+                const feed = document.getElementById("live-audit-feed");
+                if (!feed) return;
+
+                const events = [
+                    { type: "success", badge: "Order Placed", text: "New B2C purchase: AURA WallWall-Li 2kVA Smart UPS (₹29,999) from Patna, Bihar." },
+                    { type: "info", badge: "Capacity Sizer", text: "Anonymous user sized deep-cycle tubular bank: 850VA Load, required 4 Hours autonomy." },
+                    { type: "success", badge: "WhatsApp Lead", text: "Customer routed inquiry to WhatsApp routing gate 7463053829: 'Inquire about B2B modular cost'." },
+                    { type: "info", badge: "BMS Telemetry", text: "Integrated LFP active balancer system ping: 48V LFP active cell calibration successful." },
+                    { type: "warning", badge: "Service Alert", text: "Broken APC Smart-UPS 3000VA reported for dispatch in Muzaffarpur service zone." },
+                    { type: "success", badge: "CMS Update", text: "B2C Product catalog inventory synchronized. AI pre-generated high-fidelity product images active." },
+                    { type: "info", badge: "Custom Spec", text: "New custom industrial blueprint designed: 250kVA Modular, N+1 Redundancy with Neutral Isolation." },
+                    { type: "warning", badge: "Grid Sentry", text: "High utility ripple voltage (248V Peak) isolated by Aura Active Bypass Cabinet controller." },
+                    { type: "success", badge: "Tech Dispatch", text: "Service technician dispatched to onsite commercial server room in Gaya, Bihar." },
+                    { type: "info", badge: "SSO Audit", text: "Super-Administrator authenticated securely via holographic Google Identity SSO exchange credentials." }
+                ];
+
+                // Add initial logs instantly
+                for (let i = 0; i < 3; i++) {
+                    const randomEv = events[Math.floor(Math.random() * events.length)];
+                    const pastMinutes = (i + 1) * 3;
+                    const item = document.createElement("div");
+                    item.className = `audit-item ${randomEv.type}`;
+                    item.innerHTML = `
+                        <div class="audit-badge"><i class="${randomEv.type === 'success' ? 'fa-solid fa-check' : randomEv.type === 'warning' ? 'fa-solid fa-triangle-exclamation' : 'fa-solid fa-circle-info'}"></i> ${randomEv.badge}</div>
+                        <div class="audit-text">${randomEv.text}</div>
+                        <span class="audit-time">${pastMinutes} mins ago</span>
+                    `;
+                    feed.appendChild(item);
+                }
+
+                setInterval(() => {
+                    const randomEv = events[Math.floor(Math.random() * events.length)];
+                    const timeString = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+                    
+                    const item = document.createElement("div");
+                    item.className = `audit-item ${randomEv.type}`;
+                    item.innerHTML = `
+                        <div class="audit-badge"><i class="${randomEv.type === 'success' ? 'fa-solid fa-check' : randomEv.type === 'warning' ? 'fa-solid fa-triangle-exclamation' : 'fa-solid fa-circle-info'}"></i> ${randomEv.badge}</div>
+                        <div class="audit-text">${randomEv.text}</div>
+                        <span class="audit-time">${timeString}</span>
+                    `;
+                    
+                    feed.prepend(item);
+                    
+                    // Keep max 10 logs
+                    if (feed.children.length > 10) {
+                        feed.removeChild(feed.lastChild);
+                    }
+                }, 10000); // Trigger every 10 seconds
+            }
+            
+            initLiveAuditStream();
+        });
+    </script>
+
+    <!-- Sliding Settings Sidebar HTML -->
+    <div id="settings-sidebar" class="sidebar-panel">
+        <div class="sidebar-header">
+            <h3><i class="fa-solid fa-gears"></i> Settings Panel</h3>
+            <button id="sidebar-close-btn" class="close-btn">&times;</button>
+        </div>
+        <div class="sidebar-body">
+            <!-- Theme Preference -->
+            <div class="settings-group">
+                <label><i class="fa-solid fa-circle-half-stroke"></i> Select Theme</label>
+                <div class="theme-select-grid">
+                    <button id="theme-normal-select" class="theme-select-btn active">Light Mode</button>
+                    <button id="theme-neon-select" class="theme-select-btn">Dark Mode</button>
+                </div>
+            </div>
+
+            <!-- Admin Access Gate -->
+            <div class="settings-group admin-gate-group">
+                <label><i class="fa-solid fa-user-shield"></i> Administration</label>
+                <p class="settings-desc">Access factory scaling multipliers, WhatsApp leads trackers, and catalog upload desks.</p>
+                <button id="sidebar-admin-btn" class="btn btn-secondary w-full">
+                    <span>Admin Workspace Active</span>
+                    <i class="fa-solid fa-check-circle"></i>
+                </button>
+            </div>
+            
+            <!-- Quick Portal links -->
+            <div class="settings-group">
+                <label><i class="fa-solid fa-link"></i> Quick Navigation</label>
+                <ul class="settings-nav-links">
+                    <li><a href="index.html"><i class="fa-solid fa-house"></i> Home Systems</a></li>
+                    <li><a href="calculator.html"><i class="fa-solid fa-calculator"></i> Capacity Sizer</a></li>
+                    <li><a href="customize.html"><i class="fa-solid fa-sliders"></i> Custom Plant Designer</a></li>
+                    <li><a href="repair.html"><i class="fa-solid fa-wrench"></i> Repair Dispatch</a></li>
+                    <li><a href="orders.html"><i class="fa-solid fa-cart-flatbed"></i> My Orders Registry</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div id="sidebar-overlay" class="sidebar-overlay"></div>
+</body>
+</html>
