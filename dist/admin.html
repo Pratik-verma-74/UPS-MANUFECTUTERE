@@ -1389,27 +1389,31 @@
             (async () => {
                 if (typeof FirebaseService !== "undefined") {
                     try {
-                        [awOrders, awCustoms, awRepairs] = await Promise.all([
+                        [awOrders, awCustoms, awRepairs, awUsers] = await Promise.all([
                             FirebaseService.adminGetAllOrders(),
                             FirebaseService.adminGetAllCustomizations(),
-                            FirebaseService.adminGetAllRepairs()
+                            FirebaseService.adminGetAllRepairs(),
+                            FirebaseService.adminGetAllUsers()
                         ]);
                     } catch (e) {
                         console.warn("Firebase admin fetch failed, using localStorage:", e);
                         awOrders = safeParseLocalStorage("aura-user-orders", []);
                         awCustoms = safeParseLocalStorage("aura-user-customizations", []);
                         awRepairs = safeParseLocalStorage("aura-user-repairs", []);
+                        awUsers = [];
                     }
                 } else {
                     awOrders = safeParseLocalStorage("aura-user-orders", []);
                     awCustoms = safeParseLocalStorage("aura-user-customizations", []);
                     awRepairs = safeParseLocalStorage("aura-user-repairs", []);
+                    awUsers = [];
                 }
                 renderMetrics();
                 renderCatalog();
+                renderAdminUsers();
                 renderAdminOrders();
-                renderAdminCustoms();
                 renderAdminRepairs();
+                renderAdminCustoms();
                 renderFactoryBoard();
             })();
             
