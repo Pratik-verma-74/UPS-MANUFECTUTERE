@@ -446,12 +446,8 @@ const FirebaseService = {
         if (!auth) return;
         try {
             const provider = new firebase.auth.GoogleAuthProvider();
-            const result = await auth.signInWithPopup(provider);
-            const user = result.user;
-            localStorage.setItem("aura-user-logged-in", "true");
-            localStorage.setItem("aura-user-email", user.email);
-            localStorage.setItem("aura-user-name", user.displayName || user.email);
-            window.location.reload();
+            // Using redirect instead of popup for better mobile support
+            await auth.signInWithRedirect(provider);
         } catch (err) {
             console.error("Firebase Auth: Google OAuth failed", err);
             if (err.code === "auth/unauthorized-domain") {
