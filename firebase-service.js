@@ -444,17 +444,37 @@ const FirebaseService = {
 
     async loginWithGoogle() {
         if (!auth) return;
+        const provider = new firebase.auth.GoogleAuthProvider();
         try {
-            const provider = new firebase.auth.GoogleAuthProvider();
-            // Using redirect instead of popup for better mobile support
-            await auth.signInWithRedirect(provider);
+            // Primary method: Popup (Most reliable on Desktop)
+            const result = await auth.signInWithPopup(provider);
+            return result;
         } catch (err) {
-            console.error("Firebase Auth: Google OAuth failed", err);
-            if (err.code === "auth/unauthorized-domain") {
-                alert("Google Sign-In Error: Please open the app using 'http://localhost' instead of your network IP, OR add your current IP/Domain to the Firebase Console -> Authentication -> Settings -> Authorized Domains.");
+            console.error("Firebase Auth: Google OAuth Popup failed", err);
+            // Fallback for Mobile or aggressive popup blockers
+            if (err.code === 'auth/popup-blocked' || err.code === 'auth/cancelled-popup-request') {
+                console.log("Popup blocked/cancelled, falling back to redirect...");
+                try {
+                    await auth.signInWithRedirect(provider);
+                } catch (redirectErr) {
+                    console.error("Redirect fallback failed:", redirectErr);
+                    this._handleAuthError(redirectErr);
+                    throw redirectErr;
+                }
             } else {
-                alert("Google Sign-In failed: " + err.message);
+                this._handleAuthError(err);
+                throw err;
             }
+        }
+    },
+
+    _handleAuthError(err) {
+        if (err.code === "auth/unauthorized-domain") {
+            alert("Google Sign-In Error: Domain not authorized in Firebase Console.");
+        } else if (err.code === "auth/network-request-failed") {
+            alert("Network Error: Could not reach Google. Please check your internet connection or disable ad-blockers (like Brave Shields/uBlock) which might be blocking Firebase.");
+        } else {
+            alert("Google Sign-In failed: " + err.message);
         }
     },
 

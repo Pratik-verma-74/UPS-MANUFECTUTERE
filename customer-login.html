@@ -399,7 +399,7 @@
             
             // Handle Google Auth Click
             if (googleBtn) {
-                googleBtn.addEventListener("click", () => {
+                googleBtn.addEventListener("click", async () => {
                     if (typeof FirebaseService !== "undefined") {
                         // Show loading state
                         const svg = googleBtn.querySelector(".btn-svg");
@@ -415,8 +415,22 @@
                             googleBtn.style.pointerEvents = "none";
                         }
                         
-                        // Fire the actual login logic
-                        FirebaseService.loginWithGoogle();
+                        try {
+                            // Fire the actual login logic
+                            await FirebaseService.loginWithGoogle();
+                            // Note: if popup succeeds, onAuthStateChanged handles the rest
+                            // If redirect falls back, page will navigate away
+                        } catch (err) {
+                            // Reset the UI so user can try again
+                            if (svg && loader && text) {
+                                svg.style.display = "block";
+                                loader.style.display = "none";
+                                text.textContent = "Continue with Google";
+                                googleBtn.style.opacity = "1";
+                                googleBtn.style.cursor = "pointer";
+                                googleBtn.style.pointerEvents = "auto";
+                            }
+                        }
                     } else {
                         alert("Authentication service not available. Please wait for the page to load or refresh.");
                     }
