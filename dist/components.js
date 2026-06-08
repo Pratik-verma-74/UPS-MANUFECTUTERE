@@ -8,9 +8,13 @@ class AuraHeader extends HTMLElement {
         const userEmail = localStorage.getItem("aura-user-email") || "Secure Session";
 
         const userProfileStr = localStorage.getItem("aura-user-profile");
-        const userProfile = userProfileStr ? JSON.parse(userProfileStr) : null;
+        let userProfile = null;
+        try {
+            if (userProfileStr && userProfileStr !== "undefined") {
+                userProfile = JSON.parse(userProfileStr);
+            }
+        } catch(e) { console.error("Error parsing profile", e); }
         const userAvatar = userProfile && userProfile.profilePicture ? userProfile.profilePicture : null;
-
 
         this.innerHTML = `
         <header class="header">

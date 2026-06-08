@@ -6,7 +6,7 @@
   "main": "components.js",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "vite build && node copy-files.cjs",
     "preview": "vite preview"
   },
   "repository": {
