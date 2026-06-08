@@ -297,201 +297,6 @@
                     <div class="card-section-header">
                         <h3>Client Purchase Orders</h3>
                         <p>View standard storefront catalog purchases and update transit/dispatch states.</p>
-            .audit-text {
-                width: 100%;
-                min-width: 0;
-            }
-            .audit-time {
-                align-self: flex-end;
-            }
-        }
-    </style>
-</head>
-<body class="admin-dashboard-body">
-
-    <!-- Auth Guard (Secure URL protection) -->
-    <script>
-        const allowedAdmins = ["pratikverma025@gmail.com", "shivamsri639463@gmail.com"];
-        const adminEmail = localStorage.getItem("aura-admin-email");
-        if (localStorage.getItem("aura-admin-logged-in") !== "true" || !allowedAdmins.includes(adminEmail)) {
-            window.stop();
-            document.documentElement.innerHTML = "";
-            window.location.replace("customer-login.html");
-        }
-    </script>
-
-    <!-- Professional Sleek Header -->
-    <header class="header">
-        <div class="header-left-group" style="display: flex; align-items: center; gap: 16px;">
-            <button id="left-settings-trigger" class="theme-btn" title="Settings & Admin Control" style="margin-right: 4px;">
-                <i class="fa-solid fa-bars"></i>
-            </button>
-            <div class="logo" onclick="window.location.href='index.html'">
-                <i class="fa-solid fa-bolt logo-icon"></i>
-                <span>ROBOART</span>
-            </div>
-        </div>
-        <nav class="nav">
-            <a href="index.html" class="nav-link">Systems</a>
-            <a href="calculator.html" class="nav-link">Calculator</a>
-            <a href="customize.html" class="nav-link">Customize</a>
-            <a href="repair.html" class="nav-link">Repair Service</a>
-            <a href="orders.html" class="nav-link">My Orders</a>
-        </nav>
-        <div class="header-actions">
-            <button id="theme-toggle" class="theme-btn" title="Toggle Light/Dark Theme">
-                <i class="fa-solid fa-moon"></i>
-            </button>
-            <button id="secure-logout-btn" class="theme-btn logout-trigger" title="Logout Securely">
-                <i class="fa-solid fa-power-off"></i>
-            </button>
-        </div>
-    </header>
-
-    <div class="container" style="padding-top: 20px;">
-        
-        <!-- Welcome Row & Admin Navigation Tabs -->
-        <div class="admin-welcome-row" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; margin-bottom: 24px;">
-            <div>
-                <h2>System Control Panel</h2>
-                <p style="font-size: 13px; color: var(--text-muted); margin-top: 4px;">Real-time monitoring of storefront listings, client orders, repair diagnostic tickets, and safety parameters.</p>
-            </div>
-            <div class="admin-nav-tabs" style="display: flex; gap: 10px; flex-wrap: wrap; width: 100%; align-items: center;">
-                <a href="admin.html" class="btn btn-primary" style="font-size: 12px; padding: 10px 18px; border-radius: 6px; box-shadow: var(--shadow-md);">
-                    <i class="fa-solid fa-network-wired"></i> Workspace Control
-                </a>
-                <a href="admin-analytics.html" class="btn btn-secondary" style="font-size: 12px; padding: 10px 18px; border-radius: 6px; background: var(--card-bg); border: 1px solid var(--card-border); color: var(--text-color); box-shadow: var(--shadow-sm);">
-                    <i class="fa-solid fa-chart-line"></i> Smart Analytics
-                </a>
-                <a href="admin-bihar-trends.html" class="btn btn-secondary" style="font-size: 12px; padding: 10px 18px; border-radius: 6px; background: var(--card-bg); border: 1px solid var(--card-border); color: var(--text-color); box-shadow: var(--shadow-sm);">
-                    <i class="fa-solid fa-hospital-user"></i> All Demand
-                </a>
-                <a href="admin-billing.html" class="btn btn-secondary" style="font-size: 12px; padding: 10px 18px; border-radius: 6px; background: var(--card-bg); border: 1px solid var(--card-border); color: var(--text-color); box-shadow: var(--shadow-sm);">
-                    <i class="fa-solid fa-file-invoice-dollar"></i> Billing Generator
-                </a>
-                <a href="admin-quotation.html" class="btn btn-secondary" style="font-size: 12px; padding: 10px 18px; border-radius: 6px; background: var(--card-bg); border: 1px solid var(--card-border); color: var(--text-color); box-shadow: var(--shadow-sm);">
-                    <i class="fa-solid fa-file-signature"></i> Quotation Maker
-                </a>
-                <a href="admin-b2c.html" class="btn btn-secondary" style="font-size: 12px; padding: 10px 18px; border-radius: 6px; background: var(--card-bg); border: 1px solid var(--card-border); color: var(--text-color); box-shadow: var(--shadow-sm);">
-                    <i class="fa-solid fa-shop"></i> B2C Catalog CMS
-                </a>
-                <a href="index.html" class="btn btn-secondary" style="font-size: 12px; padding: 10px 18px; border-radius: 6px; background: rgba(34,197,94,0.1); border: 1px solid #22c55e; color: #22c55e; box-shadow: var(--shadow-sm); margin-left: auto;">
-                    <i class="fa-solid fa-globe"></i> Customer Storefront
-                </a>
-            </div>
-        </div>
-
-        <div class="admin-metrics-row">
-            <div class="metric-card">
-                <div class="metric-icon"><i class="fa-solid fa-boxes-stacked"></i></div>
-                <div class="metric-info">
-                    <span id="metric-catalog-count">0</span>
-                    <label>Catalog Systems</label>
-                </div>
-            </div>
-            <div class="metric-card">
-                <div class="metric-icon"><i class="fa-solid fa-cart-shopping"></i></div>
-                <div class="metric-info">
-                    <span id="metric-orders-count">0</span>
-                    <label>Purchase Orders</label>
-                </div>
-            </div>
-            <div class="metric-card">
-                <div class="metric-icon"><i class="fa-solid fa-drafting-compass"></i></div>
-                <div class="metric-info">
-                    <span id="metric-custom-count">0</span>
-                    <label>Custom Builds</label>
-                </div>
-            </div>
-            <div class="metric-card" style="border-color: rgba(251,100,27,0.2);">
-                <div class="metric-icon" style="color: var(--secondary); background: rgba(251,100,27,0.06);"><i class="fa-solid fa-screwdriver-wrench"></i></div>
-                <div class="metric-info">
-                    <span id="metric-repair-count" style="color: var(--secondary);">0</span>
-                    <label>Repair Tickets</label>
-                </div>
-            </div>
-        </div>
-
-        <!-- Admin Workspace Layout -->
-        <div class="admin-grid-layout" style="margin-bottom: 60px;">
-            
-            <!-- Left Side: Catalog Listings & Orders Management -->
-            <div style="display: flex; flex-direction: column; gap: 24px;">
-                
-                <!-- 1. UPS Repair & Servicing Tickets Controls -->
-                <div class="admin-card-section" style="border-color: rgba(251,100,27,0.2);">
-                    <div class="card-section-header">
-                        <h3 style="color: var(--secondary);"><i class="fa-solid fa-toolbox" style="margin-right: 6px;"></i>UPS Servicing & Repair Registrations</h3>
-                        <p>View broken UPS brands/models submitted by customers. Change technician SLAs, diagnostic stages, and dispatch parameters.</p>
-                    </div>
-
-                    <div class="inventory-table-container">
-                        <table class="inventory-table">
-                            <thead>
-                                <tr>
-                                    <th>Ticket ID</th>
-                                    <th>Client Name</th>
-                                    <th>Model Details</th>
-                                    <th>Capacity</th>
-                                    <th>Status (SLA)</th>
-                                    <th>Action</th>
-                                </tr>
-                            </thead>
-                            <tbody id="admin-repairs-list">
-                                <!-- Loaded dynamically -->
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
-                <!-- Live Factory Board & Assembly Lines -->
-                <div class="admin-card-section" style="border-color: rgba(16,185,129,0.2);">
-                    <div class="card-section-header">
-                        <h3 style="color: #10b981;"><i class="fa-solid fa-industry" style="margin-right: 6px;"></i>Live Factory Board & Assembly Lines</h3>
-                        <p>Dynamic pipeline tracking client custom builds and catalog standard purchase orders currently actively processed on the factory floor.</p>
-                    </div>
-                    
-                    <div class="factory-pipeline-board">
-                        <!-- Production Queue Column -->
-                        <div class="pipeline-col" style="background: rgba(120,119,119,0.03); border: 1px dashed var(--card-border); padding: 16px; border-radius: 6px;">
-                            <div class="pipeline-col-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; border-bottom: 2px solid var(--primary); padding-bottom: 6px;">
-                                <h4 style="font-size: 13px; font-weight: bold; text-transform: uppercase;"><i class="fa-solid fa-list-ol"></i> Production Queue</h4>
-                                <span id="factory-count-queue" class="badge" style="background: var(--primary); font-size: 11px; padding: 2px 8px; border-radius: 50px; color: white;">0</span>
-                            </div>
-                            <div id="factory-list-queue" style="display: flex; flex-direction: column; gap: 10px;">
-                                <!-- Cards -->
-                            </div>
-                        </div>
-
-                        <!-- Pending Assembly Column -->
-                        <div class="pipeline-col" style="background: rgba(120,119,119,0.03); border: 1px dashed var(--card-border); padding: 16px; border-radius: 6px;">
-                            <div class="pipeline-col-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; border-bottom: 2px solid var(--secondary); padding-bottom: 6px;">
-                                <h4 style="font-size: 13px; font-weight: bold; text-transform: uppercase;"><i class="fa-solid fa-screwdriver-wrench"></i> Pending Assembly</h4>
-                                <span id="factory-count-assembly" class="badge" style="background: var(--secondary); font-size: 11px; padding: 2px 8px; border-radius: 50px; color: white;">0</span>
-                            </div>
-                            <div id="factory-list-assembly" style="display: flex; flex-direction: column; gap: 10px;">
-                                <!-- Cards -->
-                            </div>
-                        </div>
-
-                        <!-- Testing Stage Column -->
-                        <div class="pipeline-col" style="background: rgba(120,119,119,0.03); border: 1px dashed var(--card-border); padding: 16px; border-radius: 6px;">
-                            <div class="pipeline-col-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; border-bottom: 2px solid #a855f7; padding-bottom: 6px;">
-                                <h4 style="font-size: 13px; font-weight: bold; text-transform: uppercase;"><i class="fa-solid fa-flask"></i> Testing Stage</h4>
-                                <span id="factory-count-testing" class="badge" style="background: #a855f7; font-size: 11px; padding: 2px 8px; border-radius: 50px; color: white;">0</span>
-                            </div>
-                            <div id="factory-list-testing" style="display: flex; flex-direction: column; gap: 10px;">
-                                <!-- Cards -->
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 2. Customer Purchases & Orders -->
-                <div class="admin-card-section">
-                    <div class="card-section-header">
-                        <h3>Client Purchase Orders</h3>
-                        <p>View standard storefront catalog purchases and update transit/dispatch states.</p>
                     </div>
 
                     <div class="inventory-table-container">
@@ -499,7 +304,7 @@
                             <thead>
                                 <tr>
                                     <th>Order ID</th>
-                                    <th>Client & Model Purchased</th>
+                                    <th>Model Purchased</th>
                                     <th>Capacity</th>
                                     <th>Price</th>
                                     <th>Tracking State</th>
@@ -740,6 +545,378 @@
                     '"': '&quot;'
                 }[tag] || tag));
             }
+
+            // Authentication Guard
+            if (localStorage.getItem("aura-admin-logged-in") !== "true") {
+                window.location.href = "customer-login.html";
+                return;
+            }
+
+            document.getElementById("year").textContent = new Date().getFullYear();
+
+            // Safe localStorage parser helper to prevent crashes if JSON is corrupted or invalid
+            function safeParseLocalStorage(key, defaultValue) {
+                try {
+                    const val = localStorage.getItem(key);
+                    if (!val) return defaultValue;
+                    const parsed = JSON.parse(val);
+                    if (Array.isArray(defaultValue)) {
+                        return Array.isArray(parsed) ? parsed : defaultValue;
+                    }
+                    if (typeof defaultValue === "object" && defaultValue !== null) {
+                        return (typeof parsed === "object" && parsed !== null) ? parsed : defaultValue;
+                    }
+                    return parsed;
+                } catch (e) {
+                    console.error("Localstorage parse error:", e);
+                    return defaultValue;
+                }
+            }
+
+            // Default fallback products if localStorage empty
+            const defaultProducts = [
+                {
+                    id: "fk-quantum-tx",
+                    title: "Quantum TX Series 40kVA Online Double Conversion UPS",
+                    category: "online",
+                    originalPrice: 139900,
+                    dealPrice: 82900,
+                    rating: "4.6",
+                    reviewsCount: 11324,
+                    imageUrl: "https://images.unsplash.com/photo-1620245648834-8c88fdce1d45?q=80&w=600&auto=format&fit=crop",
+                    capacity: "10-40 kVA",
+                    phase: "3/3 Phase",
+                    transfer: "0 ms",
+                    baseEfficiency: 96.5,
+                    baseBackupMinutes: 60,
+                    stockStatus: "In Stock",
+                    stockCount: 12,
+                    manufacturingEta: "Immediate",
+                    batteryAvailability: "Lithium: Available, Lead-Acid: Low Stock",
+                    factoryStage: "Completed"
+                },
+                {
+                    id: "fk-aegis-rack",
+                    title: "Aegis Rackmount 20kVA Modular Scalable Hot-Swap UPS",
+                    category: "modular",
+                    originalPrice: 99999,
+                    dealPrice: 49999,
+                    rating: "4.5",
+                    reviewsCount: 4936,
+                    imageUrl: "https://images.unsplash.com/photo-1544197150-b99a580bb7a8?q=80&w=600&auto=format&fit=crop",
+                    capacity: "5-20 kVA",
+                    phase: "1/1 Phase",
+                    transfer: "0 ms",
+                    baseEfficiency: 95.0,
+                    baseBackupMinutes: 45,
+                    stockStatus: "In Stock",
+                    stockCount: 8,
+                    manufacturingEta: "Immediate",
+                    batteryAvailability: "Lithium: Available, Lead-Acid: Available",
+                    factoryStage: "Completed"
+                },
+                {
+                    id: "fk-titan-inv",
+                    title: "Titan Smart 10kW Grid-Tie Hybrid Solar Inverter",
+                    category: "solar",
+                    originalPrice: 45000,
+                    dealPrice: 28999,
+                    rating: "4.3",
+                    reviewsCount: 3526,
+                    imageUrl: "https://images.unsplash.com/photo-1581092160562-40aa08e78837?q=80&w=600&auto=format&fit=crop",
+                    capacity: "5-10 kW",
+                    phase: "1 Phase",
+                    transfer: "< 10 ms",
+                    baseEfficiency: 97.8,
+                    baseBackupMinutes: 90,
+                    stockStatus: "Under Production",
+                    stockCount: 5,
+                    manufacturingEta: "4 Days",
+                    batteryAvailability: "Lithium: Inbound, Lead-Acid: Out of Stock",
+                    factoryStage: "Pending Assembly"
+                },
+                {
+                    id: "fk-nova-edge",
+                    title: "Nova Edge Compute 500kVA High Capacity Datacenter Power Cabinet",
+                    category: "online",
+                    originalPrice: 890000,
+                    dealPrice: 599999,
+                    rating: "4.8",
+                    reviewsCount: 911,
+                    imageUrl: "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?q=80&w=600&auto=format&fit=crop",
+                    capacity: "50-500 kVA",
+                    phase: "3/3 Phase",
+                    transfer: "0 ms",
+                    baseEfficiency: 97.0,
+                    baseBackupMinutes: 120,
+                    stockStatus: "Dispatch Ready",
+                    stockCount: 3,
+                    manufacturingEta: "Immediate",
+                    batteryAvailability: "Lithium: Available, Lead-Acid: Available",
+                    factoryStage: "Completed"
+                },
+                {
+                    id: "fk-life-pack",
+                    title: "Roboart LiFePO4 Smart Battery Bank 48V 200Ah Lithium Pack",
+                    category: "batteries",
+                    originalPrice: 120000,
+                    dealPrice: 79999,
+                    rating: "4.7",
+                    reviewsCount: 2043,
+                    imageUrl: "https://images.unsplash.com/photo-1620245648834-8c88fdce1d45?q=80&w=600&auto=format&fit=crop",
+                    capacity: "48V / 200Ah",
+                    phase: "DC Bank",
+                    transfer: "Instant",
+                    baseEfficiency: 98.5,
+                    baseBackupMinutes: 180,
+                    stockStatus: "Under Production",
+                    stockCount: 2,
+                    manufacturingEta: "8 Days",
+                    batteryAvailability: "Lithium: High Capacity Inbound, Lead-Acid: Low Stock",
+                    factoryStage: "Testing Stage"
+                }
+            ];
+
+            let appProducts = safeParseLocalStorage("aura-flipkart-products", defaultProducts);
+            if (!localStorage.getItem("aura-flipkart-products") || !appProducts.find(p => p.id.startsWith("fk-"))) {
+                appProducts = defaultProducts;
+                localStorage.setItem("aura-flipkart-products", JSON.stringify(appProducts));
+            }
+
+            // Load Multiplier configs
+            const savedMults = safeParseLocalStorage("aura-sizing-multipliers", {
+                datacenter: 1.5,
+                medical: 1.8,
+                industrial: 1.4,
+                office: 1.2
+            });
+            document.getElementById("mult-datacenter").value = savedMults.datacenter;
+            document.getElementById("mult-medical").value = savedMults.medical;
+            document.getElementById("mult-industrial").value = savedMults.industrial;
+            document.getElementById("mult-office").value = savedMults.office;
+
+            // In-memory Appwrite cache (populated on init)
+            let awOrders = [], awCustoms = [], awRepairs = [];
+
+            // Load Metric Analytics
+            function renderMetrics() {
+                document.getElementById("metric-catalog-count").textContent = appProducts.length;
+                document.getElementById("metric-orders-count").textContent = awOrders.length;
+                document.getElementById("metric-custom-count").textContent = awCustoms.length;
+                document.getElementById("metric-repair-count").textContent = awRepairs.length;
+            }
+
+            // Render catalog inventory
+            function renderCatalog() {
+                const catalogBox = document.getElementById("admin-catalog-inventory");
+                catalogBox.innerHTML = "";
+                
+                appProducts.forEach(prod => {
+                    const item = document.createElement("div");
+                    item.className = "admin-prod-item";
+                    item.innerHTML = `
+                        <div class="admin-prod-info">
+                            <img src="${prod.imageUrl}" alt="${prod.title}">
+                            <div class="admin-prod-details">
+                                <h5>${prod.title}</h5>
+                                <span>₹${Number(prod.dealPrice).toLocaleString()} | ${prod.capacity}</span>
+                            </div>
+                        </div>
+                        <div class="admin-prod-actions">
+                            <button class="admin-action-btn btn-edit-prod" data-id="${prod.id}"><i class="fa-solid fa-pen"></i></button>
+                            <button class="admin-action-btn btn-delete-prod" data-id="${prod.id}"><i class="fa-solid fa-trash"></i></button>
+                        </div>
+                    `;
+                    catalogBox.appendChild(item);
+                });
+
+                // Listeners
+                catalogBox.querySelectorAll(".btn-edit-prod").forEach(btn => {
+                    btn.addEventListener("click", () => {
+                        const id = btn.getAttribute("data-id");
+                        const prod = appProducts.find(p => p.id === id);
+                        if (prod) {
+                            document.getElementById("edit-prod-id").value = prod.id;
+                            document.getElementById("prod-name").value = prod.title;
+                            document.getElementById("prod-cat").value = prod.category;
+                            document.getElementById("prod-capacity").value = prod.capacity;
+                            document.getElementById("prod-phase").value = prod.phase;
+                            document.getElementById("prod-price").value = prod.dealPrice;
+                            document.getElementById("prod-mrp").value = prod.originalPrice;
+                            document.getElementById("prod-image").value = prod.imageUrl;
+                            document.getElementById("prod-rating").value = prod.rating;
+                            document.getElementById("prod-reviews").value = prod.reviewsCount;
+                            
+                            // Load inventory values
+                            document.getElementById("prod-stock-status").value = prod.stockStatus || "In Stock";
+                            document.getElementById("prod-stock-count").value = prod.stockCount !== undefined ? prod.stockCount : 10;
+                            document.getElementById("prod-mfg-eta").value = prod.manufacturingEta || "Immediate";
+                            document.getElementById("prod-battery-status").value = prod.batteryAvailability || "Lithium: Available";
+                            document.getElementById("prod-factory-stage").value = prod.factoryStage || "Completed";
+
+                            document.getElementById("form-heading").textContent = "Update Sized System";
+                            document.getElementById("admin-submit-btn").textContent = "Save Configuration Updates";
+                        }
+                    });
+                });
+
+                catalogBox.querySelectorAll(".btn-delete-prod").forEach(btn => {
+                    btn.addEventListener("click", () => {
+                        const id = btn.getAttribute("data-id");
+                        if (confirm("Are you sure you want to delete this system configuration?")) {
+                            appProducts = appProducts.filter(p => p.id !== id);
+                            localStorage.setItem("aura-flipkart-products", JSON.stringify(appProducts));
+                            renderCatalog();
+                            renderMetrics();
+                            renderFactoryBoard();
+                        }
+                    });
+                });
+            }
+
+            // Save product form
+            document.getElementById("admin-system-form").addEventListener("submit", (e) => {
+                e.preventDefault();
+                const editId = document.getElementById("edit-prod-id").value;
+                
+                const newProduct = {
+                    id: editId || "fk-" + Date.now(),
+                    title: document.getElementById("prod-name").value.trim(),
+                    category: document.getElementById("prod-cat").value,
+                    capacity: document.getElementById("prod-capacity").value.trim(),
+                    phase: document.getElementById("prod-phase").value.trim(),
+                    dealPrice: parseFloat(document.getElementById("prod-price").value),
+                    originalPrice: parseFloat(document.getElementById("prod-mrp").value),
+                    imageUrl: document.getElementById("prod-image").value.trim(),
+                    rating: document.getElementById("prod-rating").value.trim(),
+                    reviewsCount: parseInt(document.getElementById("prod-reviews").value),
+                    baseBackupMinutes: 45,
+                    stockStatus: document.getElementById("prod-stock-status").value,
+                    stockCount: parseInt(document.getElementById("prod-stock-count").value),
+                    manufacturingEta: document.getElementById("prod-mfg-eta").value.trim(),
+                    batteryAvailability: document.getElementById("prod-battery-status").value.trim(),
+                    factoryStage: document.getElementById("prod-factory-stage").value
+                };
+
+                if (editId) {
+                    appProducts = appProducts.map(p => p.id === editId ? newProduct : p);
+                } else {
+                    appProducts.unshift(newProduct);
+                }
+
+                localStorage.setItem("aura-flipkart-products", JSON.stringify(appProducts));
+                document.getElementById("admin-system-form").reset();
+                document.getElementById("edit-prod-id").value = "";
+                document.getElementById("form-heading").textContent = "Configure Power System";
+                document.getElementById("admin-submit-btn").textContent = "Save System Configuration";
+
+                renderCatalog();
+                renderMetrics();
+                renderFactoryBoard();
+                alert("Storefront configuration saved successfully!");
+            });
+
+            // Save multiplier config
+            document.getElementById("save-multipliers-btn").addEventListener("click", () => {
+                const config = {
+                    datacenter: parseFloat(document.getElementById("mult-datacenter").value),
+                    medical: parseFloat(document.getElementById("mult-medical").value),
+                    industrial: parseFloat(document.getElementById("mult-industrial").value),
+                    office: parseFloat(document.getElementById("mult-office").value)
+                };
+                localStorage.setItem("aura-sizing-multipliers", JSON.stringify(config));
+                alert("Safety overrides configured instantly on customer calculators!");
+            });
+
+            // Render Repairs Servicing Grid
+            function renderAdminRepairs() {
+                const repairs = awRepairs;
+                const repairsList = document.getElementById("admin-repairs-list");
+                repairsList.innerHTML = "";
+
+                if (repairs.length === 0) {
+                    repairsList.innerHTML = `<tr><td colspan="6" style="text-align:center; padding:20px; color:var(--text-muted);">No hardware repair tickets logged.</td></tr>`;
+                    return;
+                }
+
+                repairs.forEach((rep, index) => {
+                    const tr = document.createElement("tr");
+                    tr.innerHTML = `
+                        <td><strong style="color: var(--secondary);">${escapeHTML(rep.id)}</strong></td>
+                        <td>${escapeHTML(rep.name)}</td>
+                        <td>${escapeHTML(rep.brand)} (${escapeHTML(rep.model)})</td>
+                        <td>${escapeHTML(rep.capacity)}</td>
+                        <td>
+                            <select class="mult-input select-repair-status" data-index="${index}" data-id="${escapeHTML(rep.id)}" style="margin-top:0; padding:4px 8px; width:auto; border-radius:4px; border-color: rgba(251,100,27,0.3);">
+                                <option value="Technician Dispatched" ${rep.status === 'Technician Dispatched' ? 'selected' : ''}>Technician Dispatched</option>
+                                <option value="Diagnostics Active" ${rep.status === 'Diagnostics Active' ? 'selected' : ''}>Diagnostics Active</option>
+                                <option value="Assembling / Repairing" ${rep.status === 'Assembling / Repairing' ? 'selected' : ''}>Assembling / Repairing</option>
+                                <option value="Complete / Shipped Back" ${rep.status === 'Complete / Shipped Back' ? 'selected' : ''}>Complete / Shipped</option>
+                            </select>
+                            <input type="number" min="1" max="5" class="mult-input select-repair-step" data-index="${index}" value="${rep.statusStep || 1}" style="width: 50px; margin-left: 8px; padding:4px; display:inline-block;" title="Progress Step (1-5)">
+                            <input type="text" class="mult-input select-repair-date" data-index="${index}" value="${rep.expectedDate || ''}" placeholder="ETA Date" style="width: 90px; margin-left: 8px; padding:4px; display:inline-block;">
+                        </td>
+                        <td>
+                            <button class="admin-action-btn btn-delete-rep" data-index="${index}" style="border-color:#ef4444; color:#ef4444;"><i class="fa-solid fa-trash"></i></button>
+                        </td>
+                    `;
+                    repairsList.appendChild(tr);
+                });
+
+                // Listeners for repair changes
+                repairsList.querySelectorAll(".select-repair-status, .select-repair-step, .select-repair-date").forEach(input => {
+                    input.addEventListener("change", async (e) => {
+                        const index = parseInt(input.getAttribute("data-index"));
+                        const docId = repairsList.querySelector(`.select-repair-status[data-index="${index}"]`).getAttribute("data-id");
+                        const newStatus = repairsList.querySelector(`.select-repair-status[data-index="${index}"]`).value;
+                        const newStep = parseInt(repairsList.querySelector(`.select-repair-step[data-index="${index}"]`).value) || 1;
+                        const newDate = repairsList.querySelector(`.select-repair-date[data-index="${index}"]`).value;
+                        
+                        awRepairs[index].status = newStatus;
+                        awRepairs[index].statusStep = newStep;
+                        awRepairs[index].expectedDate = newDate;
+                        localStorage.setItem("aura-user-repairs", JSON.stringify(awRepairs));
+                        if (typeof FirebaseService !== "undefined") {
+                            await FirebaseService.adminUpdateStatus("repairs", docId, newStatus, newStep, newDate);
+                        }
+                        renderAdminRepairs();
+                    });
+                });
+
+                repairsList.querySelectorAll(".btn-delete-rep").forEach(btn => {
+                    btn.addEventListener("click", () => {
+                        const index = parseInt(btn.getAttribute("data-index"));
+                        if (confirm("Are you sure you want to remove this client repair ticket?")) {
+                            awRepairs.splice(index, 1);
+                            localStorage.setItem("aura-user-repairs", JSON.stringify(awRepairs));
+                            renderAdminRepairs();
+                            renderMetrics();
+                        }
+                    });
+                });
+            }
+
+            // Render User Purchases & Controls
+            function renderAdminOrders() {
+                const stdOrders = awOrders;
+                const ordersList = document.getElementById("admin-orders-list");
+                ordersList.innerHTML = "";
+
+                if (stdOrders.length === 0) {
+                    ordersList.innerHTML = `<tr><td colspan="6" style="text-align:center; padding:20px; color:var(--text-muted);">No client purchases logged.</td></tr>`;
+                    return;
+                }
+
+                stdOrders.forEach((order, index) => {
+                    const tr = document.createElement("tr");
+                    tr.innerHTML = `
+                        <td><strong style="color: var(--primary);">${escapeHTML(order.id)}</strong></td>
+                        <td>${escapeHTML(order.title)}</td>
+                        <td>${escapeHTML(order.capacity)}</td>
+                        <td>₹${Number(order.price).toLocaleString()}</td>
+                        <td>
+                            <select class="mult-input select-order-status" data-index="${index}" data-id="${escapeHTML(order.id)}" style="margin-top:0; padding:4px 8px; width:auto; border-radius:4px;">
+                                <option value="Pending Audit" ${order.status === 'Pending Audit' ? 'selected' : ''}>Pending Audit</option>
                                 <option value="Components Inbound" ${order.status === 'Components Inbound' ? 'selected' : ''}>Inbound Sourcing</option>
                                 <option value="Factory Assembling" ${order.status === 'Factory Assembling' ? 'selected' : ''}>Assembling</option>
                                 <option value="Quality Auditing" ${order.status === 'Quality Auditing' ? 'selected' : ''}>Quality Check</option>
