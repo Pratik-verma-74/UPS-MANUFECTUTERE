@@ -310,6 +310,50 @@ const FirebaseService = {
     // -----------------------------------------------------
     // ADMIN ONLY METHODS
     // -----------------------------------------------------
+    // --- ADMIN USER CRM METHODS ---
+    async adminGetAllUsers() {
+        if (!db) return [];
+        try {
+            const snapshot = await db.collection("users").get();
+            let users = [];
+            snapshot.forEach(doc => {
+                users.push({
+                    email: doc.id,
+                    ...doc.data()
+                });
+            });
+            return users;
+        } catch (err) {
+            console.error("Firebase: Failed to fetch all users", err);
+            return [];
+        }
+    },
+
+    async adminUpdateUserProfile(email, updatedData) {
+        if (!db) return false;
+        try {
+            await db.collection("users").doc(email).set(updatedData, { merge: true });
+            console.log(`Firebase: User profile ${email} updated by admin`);
+            return true;
+        } catch (err) {
+            console.error("Firebase: Failed to update user profile", err);
+            return false;
+        }
+    },
+
+    async adminDeleteUserProfile(email) {
+        if (!db) return false;
+        try {
+            await db.collection("users").doc(email).delete();
+            console.log(`Firebase: User profile ${email} deleted by admin`);
+            return true;
+        } catch (err) {
+            console.error("Firebase: Failed to delete user profile", err);
+            return false;
+        }
+    },
+
+    // --- ADMIN ORDER & REPAIR METHODS ---
     async adminGetAllOrders() {
         if (!db) return [];
         try {

@@ -223,6 +223,31 @@
             <!-- Left Side: Catalog Listings & Orders Management -->
             <div style="display: flex; flex-direction: column; gap: 24px;">
                 
+                <!-- 0. User CRM -->
+                <div class="admin-card-section" style="border-color: rgba(14, 165, 233, 0.2);">
+                    <div class="card-section-header">
+                        <h3 style="color: #0ea5e9;"><i class="fa-solid fa-users-gear" style="margin-right: 6px;"></i>User Details & CRM</h3>
+                        <p>Manage registered user profiles, contact information, and view their lifetime purchase history.</p>
+                    </div>
+
+                    <div class="inventory-table-container">
+                        <table class="inventory-table" id="admin-users-table">
+                            <thead>
+                                <tr>
+                                    <th>User Profile</th>
+                                    <th>Contact Details</th>
+                                    <th>Address / Shipping</th>
+                                    <th>Purchase History</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="admin-users-list">
+                                <tr><td colspan="5" style="text-align:center; padding:20px; color:var(--text-muted);"><i class="fa-solid fa-spinner fa-spin"></i> Loading users...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
                 <!-- 1. UPS Repair & Servicing Tickets Controls -->
                 <div class="admin-card-section" style="border-color: rgba(251,100,27,0.2);">
                     <div class="card-section-header">
@@ -696,7 +721,7 @@
             document.getElementById("mult-office").value = savedMults.office;
 
             // In-memory Appwrite cache (populated on init)
-            let awOrders = [], awCustoms = [], awRepairs = [];
+            let awOrders = [], awCustoms = [], awRepairs = [], awUsers = [];
 
             // Load Metric Analytics
             function renderMetrics() {
@@ -897,6 +922,127 @@
             }
 
             // Render User Purchases & Controls
+            async function renderAdminUsers() {
+                const usersList = document.getElementById("admin-users-list");
+                if (!usersList) return;
+                
+                if (!awUsers || awUsers.length === 0) {
+                    usersList.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:20px; color:var(--text-muted);">No users found in database.</td></tr>`;
+                    return;
+                }
+
+                usersList.innerHTML = "";
+
+                awUsers.forEach((user, index) => {
+                    // Match orders to this user
+                    const userOrders = awOrders.filter(o => o.userEmail === user.email);
+                    
+                    let ordersHtml = '<ul style="margin:0; padding-left:16px; font-size:12px; color:var(--text-muted);">';
+                    if(userOrders.length > 0) {
+                        userOrders.forEach(o => {
+                            ordersHtml += `<li style="margin-bottom:4px;"><strong>${escapeHTML(o.title)}</strong> <br><span style="font-size:10px;">Order ID: ${escapeHTML(o.id)} | Date: ${escapeHTML(o.createdAt || 'N/A')}</span></li>`;
+                        });
+                    } else {
+                        ordersHtml += '<li style="list-style:none; color:#94a3b8;">No purchases yet</li>';
+                    }
+                    ordersHtml += '</ul>';
+
+                    const tr = document.createElement("tr");
+                    tr.innerHTML = `
+                        <td>
+                            <strong style="color: #0ea5e9; font-size:14px;"><i class="fa-solid fa-circle-user" style="margin-right:6px;"></i>${escapeHTML(user.name || 'N/A')}</strong><br>
+                            <span style="font-size:11px; color:var(--text-muted);">${escapeHTML(user.email)}</span>
+                        </td>
+                        <td>
+                            <div style="font-size:12px; display:flex; flex-direction:column; gap:4px;">
+                                <span><i class="fa-solid fa-phone" style="width:16px; color:#64748b;"></i> ${escapeHTML(user.phone || 'Not provided')}</span>
+                            </div>
+                        </td>
+                        <td>
+                            <div style="font-size:12px; line-height:1.4; color:var(--text-color); max-width:200px;">
+                                <i class="fa-solid fa-location-dot" style="color:#64748b; margin-right:4px;"></i> 
+                                ${escapeHTML(user.address || 'Address not provided')}
+                                ${user.city ? '<br>' + escapeHTML(user.city) + ', ' + escapeHTML(user.state || '') + ' - ' + escapeHTML(user.pincode || '') : ''}
+                            </div>
+                        </td>
+                        <td>
+                            ${ordersHtml}
+                        </td>
+                        <td style="vertical-align: middle;">
+                            <div style="display:flex; gap:8px;">
+                                <button class="admin-action-btn btn-edit-user" data-index="${index}" style="border-color:#3b82f6; color:#3b82f6;" title="Edit User"><i class="fa-solid fa-pen-to-square"></i></button>
+                                <button class="admin-action-btn btn-delete-user" data-index="${index}" style="border-color:#ef4444; color:#ef4444;" title="Delete User Profile"><i class="fa-solid fa-trash"></i></button>
+                            </div>
+                        </td>
+                    `;
+                    usersList.appendChild(tr);
+                });
+
+                // Attach Event Listeners
+                usersList.querySelectorAll(".btn-edit-user").forEach(btn => {
+                    btn.addEventListener("click", () => {
+                        const index = btn.getAttribute("data-index");
+                        const user = awUsers[index];
+                        document.getElementById("edit-user-email").value = user.email;
+                        document.getElementById("edit-user-name").value = user.name || '';
+                        document.getElementById("edit-user-phone").value = user.phone || '';
+                        document.getElementById("edit-user-address").value = user.address || '';
+                        document.getElementById("edit-user-modal").style.display = "flex";
+                    });
+                });
+
+                usersList.querySelectorAll(".btn-delete-user").forEach(btn => {
+                    btn.addEventListener("click", async () => {
+                        const index = btn.getAttribute("data-index");
+                        const user = awUsers[index];
+                        if(confirm(`Are you sure you want to permanently delete the profile of ${user.email}? This will remove their CRM record.`)) {
+                            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
+                            btn.disabled = true;
+                            const success = await FirebaseService.adminDeleteUserProfile(user.email);
+                            if(success) {
+                                awUsers.splice(index, 1);
+                                renderAdminUsers();
+                            } else {
+                                alert("Failed to delete user from Firebase.");
+                                btn.innerHTML = '<i class="fa-solid fa-trash"></i>';
+                                btn.disabled = false;
+                            }
+                        }
+                    });
+                });
+            }
+
+            // Handle Save User Modal
+            document.getElementById("save-user-btn").addEventListener("click", async () => {
+                const btn = document.getElementById("save-user-btn");
+                const email = document.getElementById("edit-user-email").value;
+                const updatedData = {
+                    name: document.getElementById("edit-user-name").value,
+                    phone: document.getElementById("edit-user-phone").value,
+                    address: document.getElementById("edit-user-address").value,
+                };
+
+                btn.innerHTML = 'Saving...';
+                btn.disabled = true;
+
+                const success = await FirebaseService.adminUpdateUserProfile(email, updatedData);
+                
+                if(success) {
+                    // Update local awUsers array
+                    const userIndex = awUsers.findIndex(u => u.email === email);
+                    if(userIndex > -1) {
+                        awUsers[userIndex] = { ...awUsers[userIndex], ...updatedData };
+                    }
+                    renderAdminUsers();
+                    document.getElementById("edit-user-modal").style.display = "none";
+                } else {
+                    alert("Failed to update user profile in Firebase.");
+                }
+
+                btn.innerHTML = 'Save Changes';
+                btn.disabled = false;
+            });
+
             function renderAdminOrders() {
                 const stdOrders = awOrders;
                 const ordersList = document.getElementById("admin-orders-list");
