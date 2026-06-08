@@ -25,11 +25,15 @@ function initFirebase() {
         auth = firebase.auth();
 
         try {
+            // App Check is temporarily disabled as it may be causing network-request-failed errors
+            // if domains are not properly whitelisted in reCAPTCHA
+            /*
             if (firebase.appCheck) {
                 const appCheck = firebase.appCheck();
                 appCheck.activate('6LfEmhMtAAAAAOEh6v1pDo9SQtYvdiWmBHnxUnOR', true);
                 console.log("Firebase App Check initialized successfully.");
             }
+            */
         } catch (e) {
             console.warn("App Check initialization skipped or failed:", e);
         }
