@@ -324,6 +324,8 @@
             }
         }
     </style>
+    <!-- HTML2PDF library for generating documents -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 </head>
 <body class="admin-body">
 
@@ -656,6 +658,11 @@
                             <span>Auto Share Quote via WhatsApp</span>
                             <i class="fa-brands fa-whatsapp"></i>
                         </button>
+                        
+                        <button type="button" id="btn-share-qtn" class="btn btn-secondary w-full" style="height: 44px; background: rgba(14, 165, 233, 0.1); border: 1px solid rgba(14, 165, 233, 0.2); color: #0ea5e9;">
+                            <span>Share PDF Document</span>
+                            <i class="fa-solid fa-share-nodes"></i>
+                        </button>
                     </div>
                 </div>
 
@@ -832,7 +839,24 @@
 
             // Download Quotation PDF Action
             document.getElementById("btn-print-qtn").addEventListener("click", () => {
-                window.print();
+                const element = document.getElementById("qtn-render-proposal");
+                const quoteId = document.getElementById("qtn-disp-id").textContent.replace(/\//g, '_');
+                const opt = {
+                    margin:       0.5,
+                    filename:     `${quoteId}.pdf`,
+                    image:        { type: 'jpeg', quality: 0.98 },
+                    html2canvas:  { scale: 2, useCORS: true },
+                    jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
+                };
+                
+                // Show loading state
+                const btn = document.getElementById("btn-print-qtn");
+                const originalText = btn.innerHTML;
+                btn.innerHTML = '<span>Generating PDF...</span> <i class="fa-solid fa-spinner fa-spin"></i>';
+                
+                html2pdf().set(opt).from(element).save().then(() => {
+                    btn.innerHTML = originalText;
+                });
             });
 
             // Register into CRM Registry Action
@@ -890,6 +914,48 @@
                 }
                 
                 window.open(`https://wa.me/${cleanPhone}?text=${encodeURIComponent(message)}`, "_blank");
+            });
+
+            // Share PDF Document Action
+            document.getElementById("btn-share-qtn").addEventListener("click", async () => {
+                const element = document.getElementById("qtn-render-proposal");
+                const quoteId = document.getElementById("qtn-disp-id").textContent.replace(/\//g, '_');
+                const opt = {
+                    margin:       0.5,
+                    filename:     `${quoteId}.pdf`,
+                    image:        { type: 'jpeg', quality: 0.98 },
+                    html2canvas:  { scale: 2, useCORS: true },
+                    jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
+                };
+                
+                const btn = document.getElementById("btn-share-qtn");
+                const originalText = btn.innerHTML;
+                btn.innerHTML = '<span>Preparing Document...</span> <i class="fa-solid fa-spinner fa-spin"></i>';
+                
+                try {
+                    const pdfBlob = await html2pdf().set(opt).from(element).outputPdf('blob');
+                    const file = new File([pdfBlob], opt.filename, { type: 'application/pdf' });
+                    
+                    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                        btn.innerHTML = originalText;
+                        await navigator.share({
+                            files: [file],
+                            title: 'ROBOART Commercial Quotation',
+                            text: 'Please find the attached B2B Quotation from ROBOART.'
+                        });
+                    } else {
+                        alert('Native file sharing is not supported on this device/browser. The PDF will be downloaded instead.');
+                        html2pdf().set(opt).from(element).save().then(() => {
+                            btn.innerHTML = originalText;
+                        });
+                    }
+                } catch (error) {
+                    console.error('Error sharing:', error);
+                    alert('Error sharing the document. It will be downloaded instead.');
+                    html2pdf().set(opt).from(element).save().then(() => {
+                        btn.innerHTML = originalText;
+                    });
+                }
             });
 
         });
