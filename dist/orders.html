@@ -421,6 +421,7 @@
                 }
 
 
+            }
             // Tracking Modal Logic
             const trackModal = document.getElementById("tracking-modal");
             const closeTrackModal = document.getElementById("close-tracking-modal");
@@ -449,19 +450,21 @@
 
                 // Update Icons
                 for (let i = 1; i <= 5; i++) {
-                    const iconWrap = document.querySelector(\#t-step-\ .t-icon\);
-                    if (i <= step) {
-                        iconWrap.style.borderColor = "#10b981";
-                        iconWrap.style.color = "#10b981";
-                    } else {
-                        iconWrap.style.borderColor = "var(--card-border)";
-                        iconWrap.style.color = "var(--text-muted)";
+                    const iconWrap = document.querySelector(`#t-step-${i} .t-icon`);
+                    if (iconWrap) {
+                        if (i <= step) {
+                            iconWrap.style.borderColor = "#10b981";
+                            iconWrap.style.color = "#10b981";
+                        } else {
+                            iconWrap.style.borderColor = "var(--card-border)";
+                            iconWrap.style.color = "var(--text-muted)";
+                        }
                     }
                 }
 
                 trackContactSupport.onclick = () => {
-                    const message = \Hello Support!\\n\\nI want to track my order:\\n*Reference ID:* \\\n*Current Status:* \\\n\\nPlease provide an update.\;
-                    window.open(\https://wa.me/917463053829?text=\\, "_blank");
+                    const message = `Hello Support!\n\nI want to track my order:\n*Reference ID:* ${id}\n*Current Status:* ${status}\n\nPlease provide an update.`;
+                    window.open(`https://wa.me/917463053829?text=${encodeURIComponent(message)}`, "_blank");
                 };
 
                 trackModal.style.display = "flex";
