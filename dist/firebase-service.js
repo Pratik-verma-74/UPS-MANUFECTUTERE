@@ -61,7 +61,7 @@ const FirebaseService = {
         if (!db) return false;
         try {
             const userEmail = getLoggedInUserEmail();
-            await db.collection("users").doc(userEmail).set(profileData, { merge: true });
+            await db.collection("userProfiles").doc(userEmail).set(profileData, { merge: true });
             localStorage.setItem("aura-user-profile", JSON.stringify(profileData));
             console.log("Firebase: User profile saved");
             return true;
@@ -75,7 +75,7 @@ const FirebaseService = {
         if (!db) return JSON.parse(localStorage.getItem("aura-user-profile")) || null;
         try {
             const userEmail = getLoggedInUserEmail();
-            const doc = await db.collection("users").doc(userEmail).get();
+            const doc = await db.collection("userProfiles").doc(userEmail).get();
             if (doc.exists) {
                 const data = doc.data();
                 localStorage.setItem("aura-user-profile", JSON.stringify(data));
@@ -314,7 +314,7 @@ const FirebaseService = {
     async adminGetAllUsers() {
         if (!db) return [];
         try {
-            const snapshot = await db.collection("users").get();
+            const snapshot = await db.collection("userProfiles").get();
             let users = [];
             snapshot.forEach(doc => {
                 users.push({
@@ -332,7 +332,7 @@ const FirebaseService = {
     async adminUpdateUserProfile(email, updatedData) {
         if (!db) return false;
         try {
-            await db.collection("users").doc(email).set(updatedData, { merge: true });
+            await db.collection("userProfiles").doc(email).set(updatedData, { merge: true });
             console.log(`Firebase: User profile ${email} updated by admin`);
             return true;
         } catch (err) {
@@ -344,7 +344,7 @@ const FirebaseService = {
     async adminDeleteUserProfile(email) {
         if (!db) return false;
         try {
-            await db.collection("users").doc(email).delete();
+            await db.collection("userProfiles").doc(email).delete();
             console.log(`Firebase: User profile ${email} deleted by admin`);
             return true;
         } catch (err) {
