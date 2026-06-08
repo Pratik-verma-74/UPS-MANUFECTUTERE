@@ -329,7 +329,7 @@
                             <thead>
                                 <tr>
                                     <th>Order ID</th>
-                                    <th>Model Purchased</th>
+                                    <th>Client & Model Purchased</th>
                                     <th>Capacity</th>
                                     <th>Price</th>
                                     <th>Tracking State</th>
@@ -1057,7 +1057,12 @@
                     const tr = document.createElement("tr");
                     tr.innerHTML = `
                         <td><strong style="color: var(--primary);">${escapeHTML(order.id)}</strong></td>
-                        <td>${escapeHTML(order.title)}</td>
+                        <td>
+                            <div style="font-size: 11px; font-weight: bold; color: var(--primary); margin-bottom: 4px;">
+                                <i class="fa-solid fa-user"></i> ${escapeHTML(order.userName || order.userEmail || "Storefront Customer")}
+                            </div>
+                            ${escapeHTML(order.title)}
+                        </td>
                         <td>${escapeHTML(order.capacity)}</td>
                         <td>₹${Number(order.price).toLocaleString()}</td>
                         <td>

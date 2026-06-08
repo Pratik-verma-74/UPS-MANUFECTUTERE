@@ -557,9 +557,19 @@ const FirebaseService = {
         localStorage.removeItem("aura-user-picture");
         localStorage.removeItem("aura-admin-logged-in");
         console.log("Firebase Auth: Logged out successfully");
+    
+    async adminDeleteDocument(collectionName, documentId) {
+        if (!db) return false;
+        try {
+            await db.collection(collectionName).doc(documentId).delete();
+            console.log(`Firebase: Document ${documentId} deleted from ${collectionName}`);
+            return true;
+        } catch (err) {
+            console.error(`Firebase: Failed to delete ${documentId}`, err);
+            return false;
+        }
     }
 };
-
 window.FirebaseService = FirebaseService;
 // Maintain backward compatibility for a moment while transitioning files
 window.AppwriteService = FirebaseService;
