@@ -444,8 +444,8 @@
             };
 
             let productsDb = JSON.parse(localStorage.getItem("aura-b2c-products"));
-            // Force reset to new DB if old AURA data exists (check via title)
-            if (!productsDb || !productsDb.tubular[0] || productsDb.tubular[0].title.includes("AURA")) {
+            // Force reset to new DB if old ROBOART data exists (check via title)
+            if (!productsDb || !productsDb.tubular[0] || productsDb.tubular[0].title.includes("ROBOART")) {
                 productsDb = defaultDb;
                 localStorage.setItem("aura-b2c-products", JSON.stringify(productsDb));
             }

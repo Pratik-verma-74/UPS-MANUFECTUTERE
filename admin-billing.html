@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AURA | Smart GST Billing Hub</title>
+    <title>ROBOART | Smart GST Billing Hub</title>
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -223,7 +223,7 @@
         <div class="header-left-group" style="display: flex; align-items: center; gap: 16px;">
             <div class="logo" onclick="window.location.href='index.html'">
                 <i class="fa-solid fa-bolt logo-icon"></i>
-                <span>AURA</span>
+                <span>ROBOART</span>
             </div>
             <span class="badge" style="background: rgba(0, 229, 255, 0.1); color: var(--primary); font-size: 10px; padding: 4px 10px; text-transform: uppercase; font-weight: 700; border: 1px solid rgba(0,229,255,0.2);">Admin Mode</span>
         </div>
@@ -342,7 +342,7 @@
                     <div id="items-rows-container">
                         <!-- Initial Row -->
                         <div class="item-row-input" data-row-id="1">
-                            <input type="text" class="item-title" placeholder="Aura Med-Safe online UPS" value="Aura Med-Safe Medical Online UPS">
+                            <input type="text" class="item-title" placeholder="Roboart Med-Safe online UPS" value="Roboart Med-Safe Medical Online UPS">
                             <input type="text" class="item-rating" placeholder="80 kVA" value="80 kVA">
                             <input type="number" class="item-price" placeholder="420000" value="420000">
                             <input type="number" class="item-qty" placeholder="1" value="1">
@@ -398,9 +398,9 @@
                         <div>
                             <div class="invoice-brand">
                                 <i class="fa-solid fa-bolt"></i>
-                                <span>AURA</span>
+                                <span>ROBOART</span>
                             </div>
-                            <p style="font-size: 11px; color: #64748b; margin-top: 4px; font-weight: bold;">Aura Power Solutions Pvt. Ltd.</p>
+                            <p style="font-size: 11px; color: #64748b; margin-top: 4px; font-weight: bold;">Roboart Transformers Pvt. Ltd.</p>
                             <p style="font-size: 10px; color: #94a3b8;">GSTIN: 10AAACA5534B1ZM</p>
                         </div>
                         <div class="invoice-details-column">
@@ -423,7 +423,7 @@
                             <span style="color: #64748b;">Issue Date:</span> <strong style="color: #334155;" id="inv-display-date">19 May 2026</strong><br>
                             <span style="color: #64748b;">Due Date:</span> <strong style="color: #334155;">29 May 2026</strong><br>
                             <span style="color: #64748b;">Payment Status:</span> <span style="background: rgba(22, 163, 74, 0.1); color: #16a34a; font-size: 10px; font-weight: bold; padding: 2px 8px; border-radius: 50px;">DRAFT / PENDING</span><br>
-                            <span style="color: #64748b;">Delivery Via:</span> <strong style="color: #334155;">AURA Logistics</strong>
+                            <span style="color: #64748b;">Delivery Via:</span> <strong style="color: #334155;">ROBOART Logistics</strong>
                         </div>
                     </div>
 
@@ -482,7 +482,7 @@
                     </div>
 
                     <div class="invoice-footer">
-                        <strong>Thank you for choosing AURA Power Solutions!</strong><br>
+                        <strong>Thank you for choosing ROBOART Power Solutions!</strong><br>
                         <span>Subject to standard terms: This invoice is a valid electronic tax invoice under Section 31 of the CGST Act. All goods are covered by full manufacturer warranties.</span>
                     </div>
                 </div>
@@ -585,7 +585,7 @@
                 newRow.className = "item-row-input";
                 newRow.setAttribute("data-row-id", rowCounter);
                 newRow.innerHTML = `
-                    <input type="text" class="item-title" placeholder="Aura Med-Safe online UPS" value="Aura Industrial Power Stack">
+                    <input type="text" class="item-title" placeholder="Roboart Med-Safe online UPS" value="Roboart Industrial Power Stack">
                     <input type="text" class="item-rating" placeholder="80 kVA" value="120 kVA">
                     <input type="number" class="item-price" placeholder="420000" value="580000">
                     <input type="number" class="item-qty" placeholder="1" value="1">
@@ -723,13 +723,13 @@
                 const totalCostText = document.getElementById("inv-calc-grand-total").textContent;
                 
                 if (!clientEmail) {
-                    alert("AURA System Error: Please fill in a Customer Registered Email first!");
+                    alert("ROBOART System Error: Please fill in a Customer Registered Email first!");
                     return;
                 }
 
                 // Add to standard orders database
                 let orders = JSON.parse(localStorage.getItem("aura-user-orders")) || [];
-                const firstRowTitle = container.querySelector(".item-row-input .item-title").value || "Aura Custom Plant";
+                const firstRowTitle = container.querySelector(".item-row-input .item-title").value || "Roboart Custom Plant";
                 const firstRowRating = container.querySelector(".item-row-input .item-rating").value || "80 kVA";
 
                 const newOrder = {
@@ -793,7 +793,7 @@
 
                 const currentDate = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
 
-                const message = `⚡️ *AURA POWER SOLUTIONS PVT. LTD.* ⚡️\n_Corporate Tax Audit Desk, Patna, Bihar_\n--------------------------------------------------\n\n*OFFICIAL GST TAX INVOICE AUDIT*\n📄 *Invoice ID:* ${generatedInvoiceId}\n📅 *Date of Issue:* ${currentDate}\n👤 *Billed To:* ${name} | ${company}\n💼 *GSTIN:* ${clientGstin}\n\n--------------------------------------------------\n*TAXABLE TRANSACTION SUMMARY*:\n${itemsList}\n💰 *Gross Base Subtotal:* ${baseSubtotal}\n🔻 *Client Discounts:* ${discount}\n📊 *Taxable Value:* ${taxable}\n⚖️ *GST Splitting:* ${gstBreakdown}\n🚚 *Transit Packing & Logistics:* ${delivery}\n💎 *Grand Total (All-Inclusive):* ${grandTotal}\n\n--------------------------------------------------\n*TRANSACTION AUDIT VERIFICATION*:\n✅ *Payment Status:* DRAFT / PENDING AUDIT\n🛡 *Warranty Status:* Full Manufacturer Coverage Activated\n🚚 *Delivery Method:* AURA Corporate Logistics Dispatch\n\n--------------------------------------------------\n_Please login to your storefront dashboard or click 'My Orders' with your email (${custEmail}) to review and track this registered invoice._`;
+                const message = `⚡️ *Roboart Transformers PVT. LTD.* ⚡️\n_Corporate Tax Audit Desk, Patna, Bihar_\n--------------------------------------------------\n\n*OFFICIAL GST TAX INVOICE AUDIT*\n📄 *Invoice ID:* ${generatedInvoiceId}\n📅 *Date of Issue:* ${currentDate}\n👤 *Billed To:* ${name} | ${company}\n💼 *GSTIN:* ${clientGstin}\n\n--------------------------------------------------\n*TAXABLE TRANSACTION SUMMARY*:\n${itemsList}\n💰 *Gross Base Subtotal:* ${baseSubtotal}\n🔻 *Client Discounts:* ${discount}\n📊 *Taxable Value:* ${taxable}\n⚖️ *GST Splitting:* ${gstBreakdown}\n🚚 *Transit Packing & Logistics:* ${delivery}\n💎 *Grand Total (All-Inclusive):* ${grandTotal}\n\n--------------------------------------------------\n*TRANSACTION AUDIT VERIFICATION*:\n✅ *Payment Status:* DRAFT / PENDING AUDIT\n🛡 *Warranty Status:* Full Manufacturer Coverage Activated\n🚚 *Delivery Method:* ROBOART Corporate Logistics Dispatch\n\n--------------------------------------------------\n_Please login to your storefront dashboard or click 'My Orders' with your email (${custEmail}) to review and track this registered invoice._`;
                 
                 // If the phone doesn't have a country code, prefix with 91 for India
                 let cleanPhone = phone.replace(/[^0-9]/g,"");

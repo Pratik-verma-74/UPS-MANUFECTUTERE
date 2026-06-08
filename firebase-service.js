@@ -1,4 +1,4 @@
-// Firebase Configuration & Service Layer for Aura Power Systems
+// Firebase Configuration & Service Layer for Roboart Power Systems
 const firebaseConfig = {
   apiKey: "AIzaSyAANGFVPMFcRmgbh720pYB58SJm0Xa4rXc",
   authDomain: "aura-power-systems-8c922.firebaseapp.com",
@@ -48,7 +48,7 @@ function initFirebase() {
 
 // Helper to check logged in customer email
 function getLoggedInUserEmail() {
-    return localStorage.getItem("aura-user-email") || "guest@aurapower.com";
+    return localStorage.getItem("aura-user-email") || "guest@roboartgrp.com";
 }
 
 initFirebase();
@@ -537,7 +537,7 @@ window.requireAuth = async function(redirectPage) {
         const user = await FirebaseService.checkSession();
         if (user || localStorage.getItem("aura-user-logged-in") === "true") return true;
     }
-    alert("AURA Security: Please sign in to continue!");
+    alert("ROBOART Security: Please sign in to continue!");
     if (redirectPage) {
         localStorage.setItem("aura-auth-redirect", redirectPage);
     }

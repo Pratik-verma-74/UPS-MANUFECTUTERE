@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AURA | B2C Catalog Management Desk</title>
+    <title>ROBOART | B2C Catalog Management Desk</title>
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -200,7 +200,7 @@
             </button>
             <div class="logo" onclick="window.location.href='index.html'">
                 <i class="fa-solid fa-bolt logo-icon"></i>
-                <span>AURA</span>
+                <span>ROBOART</span>
             </div>
             <span class="badge" style="background: rgba(0, 229, 255, 0.1); color: var(--primary); font-size: 10px; padding: 4px 10px; text-transform: uppercase; font-weight: 700; border: 1px solid rgba(0,229,255,0.2);">Admin Mode</span>
         </div>
@@ -288,7 +288,7 @@
                 <div class="grid-2-3-split">
                     <div class="form-group">
                         <label>Product Sizing Model Title</label>
-                        <input type="text" id="new-prod-title" placeholder="e.g. AURA HyperVolt 2000VA smart pack" required>
+                        <input type="text" id="new-prod-title" placeholder="e.g. ROBOART HyperVolt 2000VA smart pack" required>
                     </div>
                     <div class="form-group">
                         <label>Catalog Retail Price (₹)</label>
@@ -442,7 +442,7 @@
 
             // Initialize B2C Database from LocalStorage with cache checking overrides
             let currentDb = JSON.parse(localStorage.getItem("aura-b2c-products"));
-            if (!currentDb || !currentDb.tubular[0] || currentDb.tubular[0].title.includes("AURA")) {
+            if (!currentDb || !currentDb.tubular[0] || currentDb.tubular[0].title.includes("ROBOART")) {
                 currentDb = defaultDb;
                 localStorage.setItem("aura-b2c-products", JSON.stringify(defaultDb));
             }
