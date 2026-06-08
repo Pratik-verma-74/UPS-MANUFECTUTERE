@@ -1,4 +1,4 @@
-// Firebase Configuration & Service Layer for Aura Power Systems
+// Firebase Configuration & Service Layer for Roboart Power Systems
 const firebaseConfig = {
   apiKey: "AIzaSyAANGFVPMFcRmgbh720pYB58SJm0Xa4rXc",
   authDomain: "aura-power-systems-8c922.firebaseapp.com",
@@ -25,11 +25,15 @@ function initFirebase() {
         auth = firebase.auth();
 
         try {
+            // App Check is temporarily disabled as it may be causing network-request-failed errors
+            // if domains are not properly whitelisted in reCAPTCHA
+            /*
             if (firebase.appCheck) {
                 const appCheck = firebase.appCheck();
                 appCheck.activate('6LfEmhMtAAAAAOEh6v1pDo9SQtYvdiWmBHnxUnOR', true);
                 console.log("Firebase App Check initialized successfully.");
             }
+            */
         } catch (e) {
             console.warn("App Check initialization skipped or failed:", e);
         }
@@ -44,7 +48,7 @@ function initFirebase() {
 
 // Helper to check logged in customer email
 function getLoggedInUserEmail() {
-    return localStorage.getItem("aura-user-email") || "guest@aurapower.com";
+    return localStorage.getItem("aura-user-email") || "guest@roboartgrp.com";
 }
 
 initFirebase();
@@ -444,17 +448,37 @@ const FirebaseService = {
 
     async loginWithGoogle() {
         if (!auth) return;
+        const provider = new firebase.auth.GoogleAuthProvider();
         try {
-            const provider = new firebase.auth.GoogleAuthProvider();
-            // Using redirect instead of popup for better mobile support
-            await auth.signInWithRedirect(provider);
+            // Primary method: Popup (Most reliable on Desktop)
+            const result = await auth.signInWithPopup(provider);
+            return result;
         } catch (err) {
-            console.error("Firebase Auth: Google OAuth failed", err);
-            if (err.code === "auth/unauthorized-domain") {
-                alert("Google Sign-In Error: Please open the app using 'http://localhost' instead of your network IP, OR add your current IP/Domain to the Firebase Console -> Authentication -> Settings -> Authorized Domains.");
+            console.error("Firebase Auth: Google OAuth Popup failed", err);
+            // Fallback for Mobile or aggressive popup blockers
+            if (err.code === 'auth/popup-blocked' || err.code === 'auth/cancelled-popup-request') {
+                console.log("Popup blocked/cancelled, falling back to redirect...");
+                try {
+                    await auth.signInWithRedirect(provider);
+                } catch (redirectErr) {
+                    console.error("Redirect fallback failed:", redirectErr);
+                    this._handleAuthError(redirectErr);
+                    throw redirectErr;
+                }
             } else {
-                alert("Google Sign-In failed: " + err.message);
+                this._handleAuthError(err);
+                throw err;
             }
+        }
+    },
+
+    _handleAuthError(err) {
+        if (err.code === "auth/unauthorized-domain") {
+            alert("Google Sign-In Error: Domain not authorized in Firebase Console.");
+        } else if (err.code === "auth/network-request-failed") {
+            alert("Network Error: Could not reach Google. Please check your internet connection or disable ad-blockers (like Brave Shields/uBlock) which might be blocking Firebase.");
+        } else {
+            alert("Google Sign-In failed: " + err.message);
         }
     },
 
@@ -513,7 +537,7 @@ window.requireAuth = async function(redirectPage) {
         const user = await FirebaseService.checkSession();
         if (user || localStorage.getItem("aura-user-logged-in") === "true") return true;
     }
-    alert("AURA Security: Please sign in to continue!");
+    alert("ROBOART Security: Please sign in to continue!");
     if (redirectPage) {
         localStorage.setItem("aura-auth-redirect", redirectPage);
     }

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AURA | B2B Corporate Quotation Builder</title>
+    <title>ROBOART | B2B Corporate Quotation Builder</title>
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -323,6 +323,8 @@
             }
         }
     </style>
+    <!-- HTML2PDF library for generating documents -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
   <link rel="stylesheet" crossorigin href="/assets/style-Bg7YTivN.css">
 </head>
 <body class="admin-body">
@@ -343,7 +345,7 @@
         <div class="header-left-group" style="display: flex; align-items: center; gap: 16px;">
             <div class="logo" onclick="window.location.href='index.html'">
                 <i class="fa-solid fa-bolt logo-icon"></i>
-                <span>AURA</span>
+                <span>ROBOART</span>
             </div>
             <span class="badge" style="background: rgba(0, 229, 255, 0.1); color: var(--primary); font-size: 10px; padding: 4px 10px; text-transform: uppercase; font-weight: 700; border: 1px solid rgba(0,229,255,0.2);">Admin Mode</span>
         </div>
@@ -466,7 +468,7 @@
                     <div id="qtn-rows-container">
                         <!-- Default Line Item 1 -->
                         <div class="item-row-input" data-row-id="1">
-                            <input type="text" class="item-title" placeholder="Aura High-Yield Online UPS" value="Aura ICU-Safe Industrial Online UPS">
+                            <input type="text" class="item-title" placeholder="Roboart High-Yield Online UPS" value="Roboart ICU-Safe Industrial Online UPS">
                             <input type="text" class="item-rating" placeholder="100 kVA" value="100 kVA">
                             <input type="number" class="item-price" placeholder="480000" value="480000">
                             <input type="number" class="item-qty" placeholder="1" value="2">
@@ -524,13 +526,13 @@
                         <div>
                             <div class="qtn-brand">
                                 <i class="fa-solid fa-bolt"></i>
-                                <span>AURA</span>
+                                <span>ROBOART</span>
                             </div>
-                            <strong style="font-size: 12px; color: #0f172a; margin-top: 4px; display: block;">Aura Power Solutions Pvt. Ltd.</strong>
+                            <strong style="font-size: 12px; color: #0f172a; margin-top: 4px; display: block;">Roboart Transformers Pvt. Ltd.</strong>
                         </div>
                         <div class="qtn-company-info">
                             <span>Industrial Area Phase II, F-12, Patna, Bihar - 800013</span><br>
-                            <span>GSTIN: 10AAACA5534B1ZM | support@aurapower.com</span><br>
+                            <span>GSTIN: 10AAACA5534B1ZM | support@roboartgrp.com</span><br>
                             <span>Phone: +91 612 2988301 | Corporate B2B Plant Desk</span>
                         </div>
                     </div>
@@ -548,7 +550,7 @@
                         </div>
                         <div class="qtn-meta-column right">
                             <h4 style="font-size: 11px; text-transform: uppercase; color: #64748b; font-weight: bold; margin-bottom: 4px;">Quote specifications:</h4>
-                            <span style="color: #64748b;">Quote ID:</span> <strong style="color: #334155;" id="qtn-disp-id">AURA/QTN/2026/9934</strong><br>
+                            <span style="color: #64748b;">Quote ID:</span> <strong style="color: #334155;" id="qtn-disp-id">ROBOART/QTN/2026/9934</strong><br>
                             <span style="color: #64748b;">Date:</span> <strong style="color: #334155;" id="qtn-disp-date">19 May 2026</strong><br>
                             <span style="color: #64748b;">Validity:</span> <strong style="color: #334155;" id="qtn-disp-validity">15 Days</strong><br>
                             <span style="color: #64748b;">Technician SLA:</span> <strong style="color: #16a34a;">24-Hr Priority response</strong>
@@ -597,7 +599,7 @@
                         <div class="qtn-bank-details">
                             <strong style="text-transform: uppercase; font-size: 10px; display: block; border-bottom: 1px solid #cbd5e1; padding-bottom: 3px; margin-bottom: 6px; color: var(--primary);">RTGS / NEFT Remittance Details:</strong>
                             <span>Bank Name: </span><strong>State Bank of India</strong><br>
-                            <span>Account Name: </span><strong>AURA Power Solutions Pvt Ltd</strong><br>
+                            <span>Account Name: </span><strong>ROBOART Power Solutions Pvt Ltd</strong><br>
                             <span>Account Number: </span><strong>39882201923</strong><br>
                             <span>IFSC Code: </span><strong>SBIN0003423</strong> (Branch: Main Road Patna)
                         </div>
@@ -618,18 +620,18 @@
                             <!-- CS Rubber Stamp -->
                             <div class="rubber-stamp">
                                 <div class="rubber-stamp-inner">
-                                    <span>Aura Power</span><br>
+                                    <span>Roboart Power</span><br>
                                     <strong style="font-size: 6px;">PATNA</strong><br>
                                     <span>Authorized</span>
                                 </div>
                             </div>
                             <div class="handwritten-signature">A. K. Sharma</div>
-                            <strong style="font-size: 10px; color: #334155; border-top: 1px solid #cbd5e1; width: 100%; text-align: center; padding-top: 6px;">AURA Power Plant Director</strong>
+                            <strong style="font-size: 10px; color: #334155; border-top: 1px solid #cbd5e1; width: 100%; text-align: center; padding-top: 6px;">ROBOART Power Plant Director</strong>
                         </div>
                     </div>
 
                     <div class="qtn-footer-disclaimer">
-                        <span>This commercial proposal is generated automatically under audited B2B standard pricing modules and is subject to Aura corporate plant approval conditions.</span>
+                        <span>This commercial proposal is generated automatically under audited B2B standard pricing modules and is subject to Roboart corporate plant approval conditions.</span>
                     </div>
 
                 </div>
@@ -655,6 +657,11 @@
                         <button type="button" id="btn-whatsapp-qtn" class="btn btn-secondary w-full" style="height: 44px; background: rgba(34, 197, 94, 0.1); border: 1px solid rgba(34, 197, 94, 0.2); color: #22c55e;">
                             <span>Auto Share Quote via WhatsApp</span>
                             <i class="fa-brands fa-whatsapp"></i>
+                        </button>
+                        
+                        <button type="button" id="btn-share-qtn" class="btn btn-secondary w-full" style="height: 44px; background: rgba(14, 165, 233, 0.1); border: 1px solid rgba(14, 165, 233, 0.2); color: #0ea5e9;">
+                            <span>Share PDF Document</span>
+                            <i class="fa-solid fa-share-nodes"></i>
                         </button>
                     </div>
                 </div>
@@ -723,7 +730,7 @@
             // Dynamic Quote Number
             const dateStr = new Date().getFullYear();
             const randomSuffix = Math.floor(1000 + Math.random() * 9000);
-            const generatedQuoteId = `AURA/QTN/${dateStr}/${randomSuffix}`;
+            const generatedQuoteId = `ROBOART/QTN/${dateStr}/${randomSuffix}`;
             document.getElementById("qtn-disp-id").textContent = generatedQuoteId;
 
             addRowBtn.addEventListener("click", () => {
@@ -732,7 +739,7 @@
                 newRow.className = "item-row-input";
                 newRow.setAttribute("data-row-id", rowCounter);
                 newRow.innerHTML = `
-                    <input type="text" class="item-title" placeholder="Aura High-Yield Online UPS" value="Aura Lithium-Force Battery Bank">
+                    <input type="text" class="item-title" placeholder="Roboart High-Yield Online UPS" value="Roboart Lithium-Force Battery Bank">
                     <input type="text" class="item-rating" placeholder="100 kVA" value="200 Ah Modules">
                     <input type="number" class="item-price" placeholder="480000" value="125000">
                     <input type="number" class="item-qty" placeholder="1" value="2">
@@ -832,7 +839,24 @@
 
             // Download Quotation PDF Action
             document.getElementById("btn-print-qtn").addEventListener("click", () => {
-                window.print();
+                const element = document.getElementById("qtn-render-proposal");
+                const quoteId = document.getElementById("qtn-disp-id").textContent.replace(/\//g, '_');
+                const opt = {
+                    margin:       0.5,
+                    filename:     `${quoteId}.pdf`,
+                    image:        { type: 'jpeg', quality: 0.98 },
+                    html2canvas:  { scale: 2, useCORS: true },
+                    jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
+                };
+                
+                // Show loading state
+                const btn = document.getElementById("btn-print-qtn");
+                const originalText = btn.innerHTML;
+                btn.innerHTML = '<span>Generating PDF...</span> <i class="fa-solid fa-spinner fa-spin"></i>';
+                
+                html2pdf().set(opt).from(element).save().then(() => {
+                    btn.innerHTML = originalText;
+                });
             });
 
             // Register into CRM Registry Action
@@ -882,7 +906,7 @@
 
                 const currentDate = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
 
-                const message = `⚡️ *AURA POWER SOLUTIONS PVT. LTD.* ⚡️\n_Corporate B2B Dispatch Office, Patna, Bihar_\n--------------------------------------------------\n\n*OFFICIAL COMMERCIAL QUOTATION PROPOSAL*\n📄 *Quote Reference:* ${generatedQuoteId}\n📅 *Proposal Date:* ${currentDate}\n🤝 *Prepared For:* ${buyer} | ${company}\n\n--------------------------------------------------\n*PROJECT DESIGN SPECIFICATION*:\n📋 *Subject:* ${subject}\n📦 *UPS Systems & Sizing Modules*:\n${itemsList}\n--------------------------------------------------\n*COMMERCIAL VALUATION & TAX SUMMARY*:\n💰 *Gross Taxable Subtotal:* ${baseSubtotal}\n📊 *GST Surcharge (${gstRatePct.toFixed(1)}%):* ${totalGst}\n💎 *Grand Total (All-Inclusive):* ${grandTotal}\n\n--------------------------------------------------\n*B2B COMMERCIAL CONTRACT TERMS*:\n🛡 *Onsite Warranty:* ${warranty}\n🚚 *Dispatch Timeline:* ${delivery}\n💳 *NEFT/RTGS Terms:* ${payment}\n\n⚠️ *Quote Validity:* ${validity}\n📧 *CRM Portal Support:* support@aurapower.com\n--------------------------------------------------\n_This is an audited official B2B digital quotation. Please review and reply with your Purchase Order (PO)._`;
+                const message = `⚡️ *Roboart Transformers PVT. LTD.* ⚡️\n_Corporate B2B Dispatch Office, Patna, Bihar_\n--------------------------------------------------\n\n*OFFICIAL COMMERCIAL QUOTATION PROPOSAL*\n📄 *Quote Reference:* ${generatedQuoteId}\n📅 *Proposal Date:* ${currentDate}\n🤝 *Prepared For:* ${buyer} | ${company}\n\n--------------------------------------------------\n*PROJECT DESIGN SPECIFICATION*:\n📋 *Subject:* ${subject}\n📦 *UPS Systems & Sizing Modules*:\n${itemsList}\n--------------------------------------------------\n*COMMERCIAL VALUATION & TAX SUMMARY*:\n💰 *Gross Taxable Subtotal:* ${baseSubtotal}\n📊 *GST Surcharge (${gstRatePct.toFixed(1)}%):* ${totalGst}\n💎 *Grand Total (All-Inclusive):* ${grandTotal}\n\n--------------------------------------------------\n*B2B COMMERCIAL CONTRACT TERMS*:\n🛡 *Onsite Warranty:* ${warranty}\n🚚 *Dispatch Timeline:* ${delivery}\n💳 *NEFT/RTGS Terms:* ${payment}\n\n⚠️ *Quote Validity:* ${validity}\n📧 *CRM Portal Support:* support@roboartgrp.com\n--------------------------------------------------\n_This is an audited official B2B digital quotation. Please review and reply with your Purchase Order (PO)._`;
                 
                 let cleanPhone = phone.replace(/[^0-9]/g,"");
                 if (cleanPhone.length === 10) {
@@ -890,6 +914,48 @@
                 }
                 
                 window.open(`https://wa.me/${cleanPhone}?text=${encodeURIComponent(message)}`, "_blank");
+            });
+
+            // Share PDF Document Action
+            document.getElementById("btn-share-qtn").addEventListener("click", async () => {
+                const element = document.getElementById("qtn-render-proposal");
+                const quoteId = document.getElementById("qtn-disp-id").textContent.replace(/\//g, '_');
+                const opt = {
+                    margin:       0.5,
+                    filename:     `${quoteId}.pdf`,
+                    image:        { type: 'jpeg', quality: 0.98 },
+                    html2canvas:  { scale: 2, useCORS: true },
+                    jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
+                };
+                
+                const btn = document.getElementById("btn-share-qtn");
+                const originalText = btn.innerHTML;
+                btn.innerHTML = '<span>Preparing Document...</span> <i class="fa-solid fa-spinner fa-spin"></i>';
+                
+                try {
+                    const pdfBlob = await html2pdf().set(opt).from(element).outputPdf('blob');
+                    const file = new File([pdfBlob], opt.filename, { type: 'application/pdf' });
+                    
+                    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                        btn.innerHTML = originalText;
+                        await navigator.share({
+                            files: [file],
+                            title: 'ROBOART Commercial Quotation',
+                            text: 'Please find the attached B2B Quotation from ROBOART.'
+                        });
+                    } else {
+                        alert('Native file sharing is not supported on this device/browser. The PDF will be downloaded instead.');
+                        html2pdf().set(opt).from(element).save().then(() => {
+                            btn.innerHTML = originalText;
+                        });
+                    }
+                } catch (error) {
+                    console.error('Error sharing:', error);
+                    alert('Error sharing the document. It will be downloaded instead.');
+                    html2pdf().set(opt).from(element).save().then(() => {
+                        btn.innerHTML = originalText;
+                    });
+                }
             });
 
         });

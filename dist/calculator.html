@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AURA | Capacity Sizing Calculator</title>
+    <title>ROBOART | Capacity Sizing Calculator</title>
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -257,7 +257,7 @@
                 });
                 localStorage.setItem("aura-whatsapp-leads", JSON.stringify(leads));
 
-                const message = `Hello Aura Power Systems!\n\nI want to order using Calculator recommendations:\n- *Load demand:* ${baseLoad} kVA\n- *Recommended UPS:* ${recProduct} (${recUpsSize})\n- *Target Battery:* ${batterySize}\n\nPlease share commercial quotes. Reference ID: ${orderId}`;
+                const message = `Hello Roboart Power Systems!\n\nI want to order using Calculator recommendations:\n- *Load demand:* ${baseLoad} kVA\n- *Recommended UPS:* ${recProduct} (${recUpsSize})\n- *Target Battery:* ${batterySize}\n\nPlease share commercial quotes. Reference ID: ${orderId}`;
                 window.open(`https://wa.me/917463053829?text=${encodeURIComponent(message)}`, "_blank");
 
                 window.location.href = "orders.html";
